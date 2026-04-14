@@ -1,0 +1,1010 @@
+
+
+
+
+RANKPULSE
+
+Social Media SEO Intelligence Platform
+
+Product Requirements Document  ·  v1.0  ·  April 2026
+
+
+Platforms
+Instagram  ·  LinkedIn  ·  X (Twitter)
+Document Type
+Product Requirements Document (PRD)
+Version
+1.0 — Initial Release
+Prepared By
+Kittu
+Date
+April 2026
+IDE
+Antigravity IDE + Stitch MCP Server
+Status
+DRAFT — Awaiting Design Selection
+
+
+
+
+1. Executive Summary
+
+RankPulse is a production-grade Social Media SEO Intelligence Platform designed to help creators, brands, agencies, and social media managers maximize organic reach across Instagram, LinkedIn, and X (Twitter). The platform provides AI-powered content analysis, real-time SEO scoring, keyword research, competitor intelligence, hashtag strategy, and an automated optimization engine — all powered by the latest 2025-2026 platform algorithms.
+
+
+
+Unlike generic scheduling tools, RankPulse is purpose-built for social SEO with platform-specific intelligence baked into every feature. The system is not vibe-coded — it is engineered around verified algorithm signals, open-sourced ranking code (X), official platform documentation (Instagram/Meta, LinkedIn Engineering Blog), and continuous research from industry leaders.
+
+
+
+🎯  Mission: Give every creator and brand the unfair SEO advantage on social — free from guesswork.
+
+📊  Target Users: Content creators, SMM agencies, B2B marketers, e-commerce brands, consultants.
+
+🏆  Competitive Benchmarks: Semrush Social, Sprout Social, Metricool, Hootsuite, Later, Taplio.
+
+💡  Core Differentiator: Platform-specific algorithm-aware SEO scoring — not just scheduling.
+
+
+
+
+
+
+2. Product Vision &amp; Goals
+
+
+2.1 Vision Statement
+
+RankPulse becomes the definitive SEO layer for social media — the tool every serious creator and marketing team opens before they publish anything.
+
+
+2.2 Primary Goals
+
+
+Provide platform-specific SEO scoring with real algorithm signals for Instagram, LinkedIn, and X.
+
+
+Automate content optimization without replacing the creator&apos;s voice.
+
+
+Surface competitor gaps and keyword opportunities in real-time.
+
+
+Deliver actionable insights through a best-in-class analytics dashboard.
+
+
+Ship a fully functional Admin Panel for platform management, user oversight, and billing.
+
+
+Maintain zero technical debt from Day 1 — production-ready, accessible, and performant.
+
+
+2.3 Success Metrics
+Metric
+Target (3 months)
+Target (6 months)
+Registered Users
+1,000+
+5,000+
+Monthly Active Users
+400+
+2,500+
+Avg. Session Duration
+&gt; 8 min
+&gt; 12 min
+Core Web Vitals LCP
+&lt; 2.5s
+&lt; 2.0s
+SEO Score Accuracy (user-reported)
+&gt; 85%
+&gt; 92%
+Free-to-Paid Conversion
+4%+
+8%+
+NPS Score
+&gt; 40
+&gt; 55
+
+
+
+
+
+
+3. Target Users &amp; Personas
+
+
+3.1 User Personas
+
+
+Persona
+Description
+Primary Need
+Pain Point
+The Creator (Alex)
+Solo content creator, 10K–500K followers, posts daily across 2–3 platforms.
+Maximize reach without paying for ads.
+Guesswork on what content will perform — no data feedback loop.
+The Agency Manager (Priya)
+SMM agency, managing 10–50 client accounts across platforms.
+Bulk SEO audit + white-label reporting.
+Can&apos;t manually optimize every post for every client — need automation.
+The B2B Marketer (Raj)
+LinkedIn-first B2B SaaS marketer, focuses on thought leadership.
+LinkedIn profile + content SEO for lead gen.
+No tool gives them the LinkedIn Depth Score or keyword authority gap.
+The E-commerce Brand (WERA)
+D2C/streetwear brand, heavy Instagram + X presence.
+Product discovery via Instagram SEO.
+No visibility into whether their hashtags and captions are actually indexed.
+The Admin (Kittu)
+Platform owner managing all users, tools, billing, and SEO engine config.
+Full control over platform operations.
+No visibility into platform health, user issues, or revenue without a dashboard.
+
+
+
+
+
+
+4. Technical Architecture
+
+
+4.1 Tech Stack
+
+
+Layer
+Technology
+Rationale
+Frontend
+Next.js 14+ (App Router) + TypeScript
+SSR/SSG for SEO, type safety, performance.
+Styling
+Tailwind CSS + shadcn/ui components
+Consistent design system, rapid iteration.
+Backend / API
+Next.js API Routes + Edge Functions
+Serverless, low-latency, scalable on free-tier.
+Database
+Supabase (PostgreSQL) + Supabase Auth
+Free-tier, real-time, row-level security.
+AI/NLP Engine
+OpenAI GPT-4o / Anthropic Claude (API)
+Content analysis, SEO scoring, caption rewriting.
+Caching
+Vercel Edge Cache + Supabase Redis
+Fast keyword/competitor data retrieval.
+Payments
+Razorpay (INR) + Stripe (global)
+Dual-payment for Indian + global markets.
+Analytics
+PostHog (self-hosted) + Vercel Analytics
+Privacy-first, free-tier, funnel analysis.
+Dev Environment
+Antigravity IDE + Stitch MCP Server
+Seamless MCP tool integration.
+Deployment
+Vercel (frontend) + Supabase (backend)
+100% free-tier compatible.
+
+
+4.2 System Design Principles
+
+
+API-first architecture — all features callable via documented REST + GraphQL endpoints.
+
+
+Modular SEO Engine — each platform (Instagram, LinkedIn, X) has an isolated scoring module.
+
+
+Rate-limit aware — all social API calls go through a queue to respect platform quotas.
+
+
+Zero-trust auth — JWT + Supabase RLS ensures users only access their own data.
+
+
+Offline-capable dashboard — Service Worker caches analytics for 24h reading without network.
+
+
+Accessibility-first — WCAG 2.1 AA compliance on all UI components.
+
+
+
+
+
+
+5. Stitch MCP Server — Required Skills to Install
+
+The following skills must be installed in your Antigravity IDE Stitch MCP server before development begins. These are prioritized for maximum build efficiency and to avoid quota burn.
+
+
+
+
+5.1 Core Development Skills (Install First)
+#
+Skill / Tool
+Purpose
+Install Priority
+1
+next-app-scaffold
+Scaffold Next.js 14 app with TypeScript, Tailwind, shadcn/ui, and App Router in one command.
+🔴 Critical
+2
+supabase-schema
+Generate Supabase migrations, RLS policies, and typed client from schema definitions.
+🔴 Critical
+3
+api-route-gen
+Auto-generate typed Next.js API routes from OpenAPI spec or plain prompts.
+🔴 Critical
+4
+component-gen
+Generate production React components with Tailwind, responsive, and accessible.
+🟠 High
+5
+auth-scaffold
+Supabase Auth integration — magic link, OAuth (Google), JWT middleware.
+🔴 Critical
+6
+razorpay-integration
+Complete Razorpay subscription billing with webhook handlers and plan management.
+🟠 High
+7
+dashboard-scaffold
+Generate admin + user dashboard layouts with sidebar, nav, and data tables.
+🟠 High
+8
+chart-components
+Recharts/Chart.js wrappers — line, bar, donut, heatmap, radar charts.
+🟡 Medium
+9
+seo-meta-gen
+Automate Open Graph, Twitter Card, JSON-LD structured data across all pages.
+🟡 Medium
+10
+test-scaffold
+Generate Vitest + Playwright test scaffolds for components and API routes.
+🟡 Medium
+
+
+5.2 SEO Engine Skills (Install Second)
+#
+Skill / Tool
+Purpose
+11
+nlp-keyword-extractor
+Extract semantic keywords from user&apos;s content using TF-IDF + LLM scoring.
+12
+readability-scorer
+Flesch-Kincaid + platform-specific readability metrics for caption analysis.
+13
+hashtag-analyzer
+Hashtag volume, competition, trend velocity — Instagram + X specific.
+14
+competitor-scraper
+Public profile analysis via platform APIs — post frequency, top content, keyword gaps.
+15
+content-similarity
+Detect duplicate/low-originality content that triggers platform penalties.
+16
+sentiment-analyzer
+Tone scoring (positive/neutral/negative) aligned with each platform&apos;s preferred tone.
+17
+engagement-predictor
+ML-based engagement rate prediction per platform based on content signals.
+18
+posting-time-optimizer
+Analyze audience activity windows and recommend optimal posting times.
+
+
+5.3 Admin &amp; Ops Skills (Install Third)
+#
+Skill / Tool
+Purpose
+19
+admin-dashboard-gen
+CRUD admin panel with user management, billing oversight, feature flags.
+20
+email-transactional
+Resend.com integration — welcome, limit alerts, weekly SEO digest emails.
+21
+feature-flag-engine
+LaunchDarkly-style feature flags for gradual rollout without redeployment.
+22
+error-monitoring
+Sentry integration — frontend + API error capture with Slack alerts.
+23
+cron-scheduler
+Vercel cron jobs for daily SEO re-scoring, digest emails, and data refreshes.
+
+
+
+
+
+
+6. Platform-Specific SEO Algorithms (Research-Backed)
+
+This section defines the exact parameters each platform&apos;s SEO scoring module must implement. All parameters are sourced from official platform disclosures, open-sourced algorithm code (X), and verified 2025-2026 research.
+
+
+6.1 Instagram SEO Engine
+
+
+6.1.1 Algorithm Architecture (2026)
+
+Instagram runs FOUR separate AI ranking systems. The scoring module must apply a different weight matrix to each surface:
+
+
+Surface
+Primary Goal
+Top Ranking Signals
+Feed
+Relevance to existing followers
+Relationship strength, post recency, engagement velocity, carousel completion
+Reels
+Discovery by non-followers
+Watch time (first 3s critical), DM sends, likes per reach, audio match
+Stories
+Intimacy with active followers
+Recency, viewing history, close-friends overlap, reply frequency
+Explore
+Content discovery for new audiences
+Engagement velocity (first 60 min), content format, account authority score
+
+
+6.1.2 Instagram SEO Scoring Parameters (Weighted)
+
+
+Parameter
+Weight
+How to Score
+Notes
+Watch Time / Retention
+30%
+Target 60%+ completion rate on Reels. Score drops sharply below 40%.
+Mosseri-confirmed #1 signal (Jan 2025)
+DM Sends per Reach
+25%
+High-value signal — weighted 3–5x vs likes. Encourage &apos;send to a friend&apos; content.
+Strongest unconnected reach signal
+Likes per Reach
+15%
+Ratio matters more than absolute count. Target &gt; 3% for Reels.
+Secondary signal per Mosseri
+Caption Keyword Density
+10%
+Target 2–5% keyword density. Keywords must appear in first 125 chars.
+Instagram now semantic-indexes captions
+Hashtag Strategy
+8%
+Use 3–5 niche-specific hashtags. Penalized for &gt; 10 hashtags or banned tags.
+Hashtags are minor vs keyword SEO
+Alt Text Optimization
+5%
+Manual alt text on all images with natural keyword inclusion.
+Often ignored — high-leverage for indexing
+Profile Completeness
+4%
+Bio keywords, link in bio, category set, story highlights active.
+Boosts account authority score
+Posting Consistency
+3%
+Min 4x/week to maintain AI topic cluster membership.
+Inconsistency triggers re-categorization penalty
+
+
+6.1.3 Instagram 2026 Penalty Triggers (Auto-Detect)
+
+
+10+ reposts in 30 days → excluded from Recommendations (60–80% reach drop)
+
+
+Watermarked videos (TikTok repost) → suppressed in Reels discovery
+
+
+Engagement bait phrases detected by AI → distribution throttled
+
+
+Rapid follow/unfollow patterns → account flagged, content suppressed
+
+
+External link in caption → no direct penalty, but zero clickthrough from Explore
+
+
+Duplicate audio/template reuse → originality score penalized
+
+
+
+
+6.2 LinkedIn SEO Engine
+
+
+6.2.1 Algorithm Architecture (2026)
+
+LinkedIn&apos;s algorithm is unique: it is explicitly designed to prevent virality and instead optimize for professional relevance. It uses a 3-stage pipeline: Quality Filter → Engagement Test → Network+Relevance Ranking.
+
+
+
+KEY 2026 UPDATE: LinkedIn introduced the &apos;Depth Score&apos; metric. It now tracks exact dwell time per post.
+
+A user spending 45s reading without liking scores HIGHER than a 2-second like (indicates bot/pity behavior).
+
+Educational content gets 3–5x more reach than other post types (Q1 2026 data, 10,000 post study).
+
+External links in posts get significant reach penalties — use first comment strategy instead.
+
+AI-generated content with generic language is now detectable and de-prioritized.
+
+
+6.2.2 LinkedIn SEO Scoring Parameters (Weighted)
+
+
+Parameter
+Weight
+How to Score
+Notes
+Depth Score / Dwell Time
+28%
+Long-form posts (1,200–2,000 chars) with strong hooks score highest. Use line breaks.
+New 2026 signal — most underutilized
+Headline Keyword Optimization
+18%
+Profile headline must contain 3–5 buyer-intent keywords. Max 220 chars.
+Top LinkedIn search ranking factor
+Comment Quality Score
+15%
+Substantive comments (&gt; 5 words) from 1st-degree connections weighted 4x higher.
+Engagement bait like &apos;Comment YES&apos; now penalized
+Content Relevance / Topic Authority
+12%
+Consistent posting in 1–2 niches triggers &apos;topic cluster&apos; expert classification.
+Post 3–5x/week in same topic for expert tag
+Profile Completeness Score
+10%
+Complete profiles get 30% more views. All 7 sections filled = max score.
+LinkedIn confirmed — incomplete = algorithmic penalty
+About Section Keywords
+7%
+First 300 chars of About are indexed. Include &apos;Direct Answer Blocks&apos; for AI referencing.
+AI search surfaces structured bios first
+Skill Endorsements (Authority)
+5%
+Specific skills (not generic &apos;Leadership&apos;) endorsed by senior industry peers.
+Transfers authority from endorser to profile
+External Link Strategy
+3%
+Post link in first comment, not post body. First comment gets 0% reach penalty.
+Post body links suppressed by algorithm
+Posting Time (Golden Hour)
+2%
+First 60 min engagement is critical test window. Post Tue–Thu, 7–9am or 12–2pm.
+Miss golden hour = reduced amplification
+
+
+6.2.3 LinkedIn 2026 Penalty Triggers (Auto-Detect)
+
+
+&apos;Like if you agree&apos; / &apos;Comment YES&apos; type engagement bait → immediate suppression
+
+
+Low-effort AI-generated content (generic language, no specific details) → de-prioritized
+
+
+Posting external links in post body → 40–60% reach reduction
+
+
+Irregular posting (less than 2x/week) → topic authority classification reset
+
+
+Overly promotional content (&gt; 30% self-promotion ratio) → distribution throttled
+
+
+
+
+6.3 X (Twitter) SEO Engine
+
+
+6.3.1 Algorithm Architecture (2026)
+
+X is the most transparent platform — its algorithm is open-source (GitHub: xai-org/x-algorithm, Jan 2026). The scoring module must implement the 3-stage pipeline: Candidate Sourcing (1,500 posts from 500M) → Grok-Powered Neural Ranking → Heuristics &amp; Filtering.
+
+
+
+CRITICAL 2026 CHANGE: Grok AI replaced the legacy recommendation system in Jan 2026. It now reads
+
+every post and video (100M+/day) and ranks by predicted personal relevance — not just engagement counts.
+
+TweepCred Score: Every account has a hidden 0–100 score. Below 65 = only 3 posts considered for distribution.
+
+Premium accounts get +4 to +16 TweepCred boost — the pay-to-play gap is the largest of any platform.
+
+CONFIRMED ENGAGEMENT WEIGHTS (open-source code): Likes × 1, Replies × 13.5, Retweets × 20,
+
+Profile Clicks × 12, Link Clicks × 11, Bookmarks × 10. Author-reply to a reply = +75 (150x a like).
+
+
+6.3.2 X SEO Scoring Parameters (Weighted)
+
+
+Parameter
+Weight
+Algorithm Value / Score Logic
+Notes
+Reply-to-Reply (Conversation Depth)
+25%
+Author replies to replies = +75 weight. Single reply = +13.5. Highest leverage action.
+150x more valuable than a like. Must auto-prompt.
+Retweet Velocity (First 30 min)
+20%
+Retweet = 20x a Like in score. Early momentum determines full distribution.
+Critical window: 0–30 min post-publish
+TweepCred Score
+18%
+Account age, follower ratio, engagement quality, interactions with high-credibility users.
+Score &lt; 65 = severely limited reach
+Keyword &amp; Hashtag Match
+12%
+1–2 niche hashtags boost engagement 21%. Multiple hashtags penalized 40%.
+Content indexed by Grok semantic clusters
+External Link Penalty Score
+10%
+Links in post body = 30–50% reach penalty. Zero median engagement for free accounts.
+Post link in reply, not main tweet
+Content Format Score
+8%
+Text-only posts outperform video by 30% on X. Native video &gt; linked video.
+Unique to X — text is king
+Recency Score
+5%
+Time decay: post loses ~50% visibility score every 6 hours.
+Post at peak audience time, daily minimum
+X Premium Boost
+2%
+Premium subscribers get algorithmic multipliers (~10x reach per post vs free).
+Recommend Premium to power users
+
+
+6.3.3 X 2026 Penalty Triggers (Auto-Detect)
+
+
+External links in post body → 30–50% reach reduction (recommend first-reply link strategy)
+
+
+Multiple hashtags (&gt; 2) → 40% engagement penalty
+
+
+TweepCred below 65 → only 3 posts eligible for recommendation distribution
+
+
+Spam patterns / follow-unfollow / bot interactions → TweepCred score reduction
+
+
+Low originality / scraped content → Grok deprioritizes in semantic clusters
+
+
+
+
+
+
+7. Features, Pages &amp; Modules
+
+
+7.1 Public Website Pages
+Page
+Route
+Purpose
+Key Sections
+Landing Page
+/
+Primary conversion page. Hero with SEO score demo, feature grid, social proof, pricing CTA.
+Hero, Feature Grid, Live SEO Score Demo, Testimonials, Pricing Preview, CTA
+Features Page
+/features
+Deep-dive into all tools by platform with GIFs/screenshots.
+Platform Tabs (IG/LI/X), Tool cards, Comparison table vs competitors
+Pricing Page
+/pricing
+3-tier pricing with feature comparison table and Razorpay checkout.
+Free / Pro / Agency tiers, Annual/Monthly toggle, Feature matrix, FAQ
+Blog / Learn Hub
+/blog
+SEO content marketing — algorithm guides, how-tos, case studies.
+Featured posts, Category filters, Newsletter signup
+Changelog
+/changelog
+Public product updates to build trust and reduce churn.
+Version history, Feature announcements
+About
+/about
+Brand story, mission, team.
+Mission statement, Team grid
+Contact
+/contact
+Support form + live chat widget.
+Contact form, FAQ accordion, Chat CTA
+
+
+7.2 Authentication Pages
+Page
+Route
+Features
+Sign Up
+/auth/signup
+Email + Google OAuth, plan selection, onboarding questionnaire (platform focus, goals).
+Login
+/auth/login
+Email + Google OAuth, magic link option, remember device.
+Forgot Password
+/auth/forgot-password
+Email-based reset with rate limiting.
+Onboarding Flow
+/onboarding
+4-step wizard: platform connect → goal setting → competitor add → first SEO scan.
+
+
+7.3 User Dashboard Pages
+Page / Module
+Route
+Core Features
+Dashboard Home
+/dashboard
+SEO score cards per platform, engagement trends, top performing posts, AI recommendations feed, posting time heatmap.
+Content Analyzer
+/dashboard/analyzer
+Paste any caption/post → AI scores against platform algorithm, shows penalty flags, keyword density, readability grade, predicted engagement range, rewrite suggestions.
+Keyword Research
+/dashboard/keywords
+Platform-specific keyword explorer: search volume proxy, trending keywords, keyword gap vs competitors, SERP snapshot (Instagram/LinkedIn search preview).
+Hashtag Intelligence
+/dashboard/hashtags
+Hashtag builder: volume, trend velocity, competition score, banned tag detection, hashtag sets saved per content type.
+Competitor Tracker
+/dashboard/competitors
+Add up to 10 competitors. Track their top content, posting frequency, hashtag strategy, keyword themes. Shows gap analysis vs your account.
+Post Scheduler + SEO
+/dashboard/scheduler
+Calendar view. Each scheduled post runs through SEO checker before publish. Auto-suggests optimal time. Queue + draft management.
+Profile SEO Auditor
+/dashboard/profile-audit
+Per-platform profile scoring: bio keywords, profile completeness, link optimization, username SEO, call-to-action quality.
+Analytics &amp; Reporting
+/dashboard/analytics
+Impressions, reach, engagement, follower growth, SEO score trends. Custom date ranges. Exportable PDF/CSV reports.
+AI Content Suggestions
+/dashboard/ai-studio
+AI generates 5 post ideas per day based on your niche, trending topics, and competitor gaps. Each idea pre-scored by SEO engine.
+Account Settings
+/dashboard/settings
+Profile, connected accounts, notifications, billing, API keys, plan upgrade.
+
+
+7.4 Admin Dashboard Pages
+Page
+Route
+Features
+Admin Overview
+/admin
+Platform KPIs: total users, MAU, MRR, churn, top-used features, error rate, API quota usage.
+User Management
+/admin/users
+List all users, search/filter by plan/activity, impersonate user, manual plan override, ban/suspend, view user activity log.
+Subscription &amp; Billing
+/admin/billing
+Razorpay subscription dashboard, MRR graph, failed payments, refund processing, coupon management.
+SEO Engine Config
+/admin/seo-config
+Update algorithm weights per platform without code deploy. Feature-flag new scoring modules. A/B test scoring variants.
+Content Moderation
+/admin/moderation
+Flag review queue for any AI-generated content flagged by safety filters. Manual override panel.
+Platform API Health
+/admin/api-health
+Real-time status of Instagram, LinkedIn, X API rate limits, error rates, and quota consumption.
+Feature Flags
+/admin/flags
+Toggle features on/off per user cohort (free/pro/agency) without redeployment.
+Blog / Content CMS
+/admin/cms
+Create and manage blog posts, changelog entries, and SEO meta for public pages.
+Email Campaigns
+/admin/emails
+Create and send transactional emails, digest newsletters, and platform announcements.
+Audit Log
+/admin/audit
+Full activity log: who did what, when. Admin action history with rollback options.
+
+
+
+
+
+
+8. Design System &amp; Stitch Design Brief
+
+
+8.1 Design Direction
+
+Design 04 — Neo-Brutalist — has been selected as the visual direction for RankPulse. This aesthetic communicates: raw intelligence, zero-nonsense precision, and unapologetic authority. The design system uses a bold yellow base (#FFFCE8), thick 2-3px black borders, red (#FF3B00) as the primary action color, and Bebas Neue + Space Grotesk typography. Every UI element is intentional — nothing decorative, everything functional.
+
+This is not a generic SaaS dashboard. RankPulse looks different because it thinks differently. The neo-brutalist direction ensures it stands out in every screenshot, every product hunt launch, and every demo. It is built for creators and agencies who are serious about results.
+
+
+
+
+
+
+8.2 Design Concepts — Selected: Design 04 (Neo-Brutalist)
+
+
+
+SELECTED: Design 04 — Neo-Brutalist
+
+Aesthetic: Raw grid, thick black borders, yellow (#FFFCE8) base, red (#FF3B00) accent — zero visual noise.
+
+Colors: #FFFCE8 (background), #111111 (primary), #FF3B00 (action/accent), #22C55E (success), #F59E0B (warning)
+
+Typography: Bebas Neue (display headers) + Space Grotesk (body/UI) — bold, condensed, precise.
+
+Unique Trait: Every element has a hard border and a clear job. No gradients, no shadows, no decorative filler.
+
+UI Pattern: Newspaper-grid layout, thick dividers, platform scores in stark monochrome tiles.
+
+Inspiration: Linear (density), The Verge (editorial grid), Stripe (data clarity), Notion (hierarchy).
+
+Why it works: Stands out from every purple-gradient SaaS dashboard. Instantly memorable. Scales to mobile.
+
+
+8.3 Design Requirements (Apply to Final Selection)
+
+
+Production-grade component library — all states designed (hover, active, loading, empty, error).
+
+
+Responsive: Desktop-first, with full Mobile + Tablet breakpoints.
+
+
+Dark mode + Light mode toggle — both variants must be designed.
+
+
+Platform-specific color coding: Instagram (pink/purple gradient), LinkedIn (blue), X (black/white).
+
+
+SEO score visualization: Use consistent radial gauge or segmented bar component across all tools.
+
+
+Micro-animations on score changes, hover states, and page transitions.
+
+
+Icon system: Consistent icon library (Lucide or Phosphor Icons).
+
+
+
+
+
+
+9. Development Roadmap
+
+
+Phase 1 — Foundation (Weeks 1–2)
+
+
+Set up Antigravity IDE + install all Stitch MCP skills from Section 5.
+
+
+Scaffold Next.js 14 app with Supabase, Tailwind, shadcn/ui, Auth.
+
+
+Create Supabase schema: users, accounts, analyses, keywords, competitors, posts, plans.
+
+
+Build public pages: Landing, Pricing, Blog, Auth pages.
+
+
+Create 10 Stitch design concepts → present to stakeholder → select final design.
+
+
+Implement design system: tokens, components, dark/light mode.
+
+
+
+
+Phase 2 — SEO Engine (Weeks 3–4)
+
+
+Build Instagram SEO Scoring Module (all 8 parameters + penalty detection).
+
+
+Build LinkedIn SEO Scoring Module (all 9 parameters + Depth Score logic).
+
+
+Build X SEO Scoring Module (all 8 parameters + TweepCred estimator + link penalty).
+
+
+Content Analyzer UI — real-time scoring as user types caption.
+
+
+Keyword Research module with semantic clustering.
+
+
+Hashtag Intelligence module with ban detection.
+
+
+
+
+Phase 3 — User Dashboard (Weeks 5–6)
+
+
+Dashboard home with aggregated SEO health metrics.
+
+
+Competitor Tracker — public profile analysis + gap matrix.
+
+
+Post Scheduler with integrated SEO pre-check.
+
+
+Profile SEO Auditor — per-platform scoring.
+
+
+AI Content Suggestions via OpenAI/Claude API.
+
+
+Analytics &amp; Reporting with PDF export.
+
+
+
+
+Phase 4 — Admin &amp; Monetization (Week 7)
+
+
+Admin Dashboard — all 10 admin pages (user management, billing, SEO config, etc.)
+
+
+Razorpay subscription integration with webhook handlers.
+
+
+Feature flag system with plan-based gating.
+
+
+Email system: welcome, weekly digest, limit alerts.
+
+
+Error monitoring, performance monitoring, Core Web Vitals audit.
+
+
+Final QA, accessibility audit (WCAG 2.1 AA), security review, launch.
+
+
+
+
+
+
+10. Non-Functional Requirements
+Category
+Requirement
+Target
+Performance
+Core Web Vitals LCP
+&lt; 2.5s (Good)
+Performance
+Core Web Vitals CLS
+&lt; 0.1 (Good)
+Performance
+Core Web Vitals INP
+&lt; 200ms (Good)
+Security
+Auth
+JWT + Supabase RLS, zero cross-user data access
+Security
+API Keys
+Stored encrypted in Supabase Vault, never in env vars client-side
+Security
+Rate Limiting
+All public API endpoints rate-limited via Upstash Redis
+Accessibility
+WCAG Compliance
+WCAG 2.1 AA on all interactive components
+SEO (site itself)
+Lighthouse SEO Score
+&gt; 95 on all public pages
+Scalability
+Database
+Supabase connection pooling enabled. DB schema indexed on all query fields.
+Reliability
+Uptime Target
+99.5% (Vercel + Supabase SLA)
+Quota Efficiency
+AI API calls
+Cache all SEO analyses for 24h. Batch API calls. Use streaming for UX.
+Data Privacy
+GDPR/PDPB
+Data deletion on account close. No 3rd-party data resale.
+
+
+
+
+
+
+11. Quota &amp; Cost Optimization Strategy
+
+To build this product efficiently without burning free-tier quotas, the following strategies must be enforced throughout development:
+
+
+
+
+12.1 Development Phase Efficiencies
+
+
+Use Stitch MCP to scaffold all boilerplate — zero manual CRUD, zero manual auth setup.
+
+
+Build SEO scoring logic as pure TypeScript functions first — test without any API calls.
+
+
+Mock all social platform API calls in development using seed data fixtures.
+
+
+Use Supabase local development (supabase start) — never burn production quota in dev.
+
+
+12.2 Production Phase Efficiencies
+
+
+Cache all AI analysis results in Supabase for 24h — identical inputs never re-scored.
+
+
+Use streaming responses for AI-powered rewrites to reduce TTFB and avoid timeouts.
+
+
+Batch process scheduled post pre-checks — run all pending analyses in one cron job.
+
+
+Implement aggressive client-side caching with React Query — staleTime: 30 min for keyword data.
+
+
+Rate-limit user-facing AI calls by plan tier — free users get 15 analyses/month, pool the rest.
+
+
+Use Vercel Edge Cache for all public page ISR — landing page cached for 1 hour.
+
+
+12.3 Stitch MCP Usage Discipline
+
+
+Always use the most specific skill available — never ask for generic code when a skill exists.
+
+
+Combine skills in single commands where possible: &apos;scaffold + auth + schema in one pass&apos;.
+
+
+Reuse generated components via the component library — never regenerate identical UI twice.
+
+
+Use skills for design system tokens first, then generate all components from the same token set.
+
+
+
+
+
+
+12. Immediate Next Steps
+
+
+
+STEP 1  →  Install all 23 Stitch MCP skills listed in Section 5 into Antigravity IDE.
+
+STEP 2  →  Open Stitch and generate 10 design concepts using the briefs in Section 8.2.
+
+STEP 3  →  Review designs with Kittu and select the final visual direction.
+
+STEP 4  →  Scaffold the Next.js + Supabase base app using the next-app-scaffold + auth-scaffold skills.
+
+STEP 5  →  Begin Phase 1 development per the roadmap in Section 10.
+
+STEP 6  →  Check back against this PRD at start of each phase — treat it as the source of truth.
+
+
+
+— END OF DOCUMENT —
+
+RankPulse PRD v1.0  ·  Confidential  ·  April 2026
+
+

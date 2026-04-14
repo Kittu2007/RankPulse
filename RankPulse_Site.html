@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RankPulse — Social Media SEO Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   RANKPULSE DESIGN SYSTEM — NEO-BRUTALIST
+   Colors: #FFFCE8 bg · #111111 black · #FF3B00 red · #22C55E green
+   Type: Bebas Neue display · Space Grotesk body
+═══════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fffce8;--black:#111111;--red:#ff3b00;--white:#ffffff;
+  --green:#16a34a;--green-light:#dcfce7;--amber:#d97706;--amber-light:#fef3c7;
+  --blue:#1d4ed8;--blue-light:#dbeafe;--ig:#e1306c;--li:#0a66c2;
+  --border:2px solid #111111;--border-thin:1px solid #111111;
+  --border-light:1px solid #e8e4d0;
+  --font-d:'Bebas Neue',sans-serif;--font-b:'Space Grotesk',sans-serif;
+  --radius:0px;
+}
+html,body{font-family:var(--font-b);background:var(--bg);color:var(--black);min-height:100vh;font-size:14px}
+a{text-decoration:none;color:inherit;cursor:pointer}
+button{cursor:pointer;font-family:var(--font-b)}
+input,textarea,select{font-family:var(--font-b);outline:none}
+textarea{resize:vertical}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#bbb;border-radius:0}
+
+/* ── TYPOGRAPHY ── */
+.d1{font-family:var(--font-d);font-size:80px;line-height:.92;letter-spacing:1px}
+.d2{font-family:var(--font-d);font-size:56px;line-height:.95;letter-spacing:1px}
+.d3{font-family:var(--font-d);font-size:40px;line-height:1;letter-spacing:1px}
+.d4{font-family:var(--font-d);font-size:28px;line-height:1;letter-spacing:.5px}
+.d5{font-family:var(--font-d);font-size:22px;letter-spacing:.5px}
+.h1{font-size:24px;font-weight:700;line-height:1.2}
+.h2{font-size:18px;font-weight:700;line-height:1.3}
+.h3{font-size:15px;font-weight:600}
+.body{font-size:14px;font-weight:400;line-height:1.6}
+.body-sm{font-size:12px;font-weight:400;line-height:1.5;color:#555}
+.label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.label-sm{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase}
+.mono{font-family:'Courier New',monospace;font-size:12px}
+.inv{background:var(--black);color:var(--bg);padding:0 5px;display:inline-block}
+.acc{color:var(--red)}
+
+/* ── LAYOUT ── */
+.flex{display:flex}.flex-col{flex-direction:column}
+.items-center{align-items:center}.items-start{align-items:flex-start}
+.justify-between{justify-content:space-between}.justify-center{justify-content:center}
+.gap-4{gap:4px}.gap-6{gap:6px}.gap-8{gap:8px}.gap-10{gap:10px}
+.gap-12{gap:12px}.gap-16{gap:16px}.gap-20{gap:20px}.gap-24{gap:24px}
+.flex-1{flex:1}.flex-wrap{flex-wrap:wrap}
+.grid-2{display:grid;grid-template-columns:1fr 1fr}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr}
+.border{border:var(--border)}.border-b{border-bottom:var(--border)}
+.border-r{border-right:var(--border)}.border-t{border-top:var(--border)}
+.border-light{border:var(--border-light)}.border-b-light{border-bottom:var(--border-light)}
+.w-full{width:100%}.h-full{height:100%}
+.text-center{text-align:center}.text-right{text-align:right}
+.bg-black{background:var(--black)}.bg-white{background:var(--white)}
+.bg-red{background:var(--red)}.bg-yellow{background:var(--bg)}
+.text-white{color:var(--white)}.text-red{color:var(--red)}
+.text-green{color:var(--green)}.text-amber{color:var(--amber)}
+.text-muted{color:#777}.text-dimmed{color:#999}
+.overflow-hidden{overflow:hidden}.min-h-screen{min-height:100vh}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;border:var(--border);padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:opacity .15s;white-space:nowrap}
+.btn:hover{opacity:.88}
+.btn-red{background:var(--red);color:var(--bg);border-color:var(--black)}
+.btn-black{background:var(--black);color:var(--bg);border-color:var(--black)}
+.btn-outline{background:var(--bg);color:var(--black);border-color:var(--black)}
+.btn-white{background:var(--white);color:var(--black);border-color:var(--black)}
+.btn-ghost{background:transparent;color:#888;border-color:#444}
+.btn-sm{padding:5px 12px;font-size:10px}
+.btn-lg{padding:13px 28px;font-size:13px}
+
+/* ── BADGES & TAGS ── */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 9px;border:1.5px solid;letter-spacing:1px;text-transform:uppercase}
+.badge-ok{border-color:var(--green);color:var(--green);background:var(--green-light)}
+.badge-warn{border-color:var(--amber);color:var(--amber);background:var(--amber-light)}
+.badge-err{border-color:var(--red);color:var(--red);background:#fff5f5}
+.badge-blue{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.badge-black{border-color:var(--black);color:var(--bg);background:var(--black)}
+.platform-tag{font-size:9px;font-weight:700;padding:3px 10px;border:1.5px solid;letter-spacing:1px;text-transform:uppercase}
+.tag-ig{border-color:var(--ig);color:var(--ig);background:#fff0f3}
+.tag-li{border-color:var(--li);color:var(--li);background:#eff6ff}
+.tag-x{border-color:#555;color:#444;background:#f5f5f5}
+
+/* ── FORM ELEMENTS ── */
+.input{border:var(--border);padding:9px 12px;font-size:13px;color:var(--black);background:var(--white);width:100%}
+.input:focus{outline:2px solid var(--red);outline-offset:-2px}
+.textarea{border:var(--border);padding:10px 12px;font-size:13px;color:var(--black);background:var(--white);width:100%;min-height:80px}
+.textarea:focus{outline:2px solid var(--red);outline-offset:-2px}
+.select{border:var(--border);padding:8px 12px;font-size:12px;color:var(--black);background:var(--white);appearance:none;cursor:pointer}
+
+/* ── CARDS ── */
+.card{border:var(--border);background:var(--white);padding:20px}
+.card-dark{border:var(--border);background:var(--black);padding:20px}
+.stat-card{border:var(--border);padding:16px 20px}
+
+/* ── PROGRESS BARS ── */
+.progress-wrap{height:4px;background:#e8e4d0;overflow:hidden}
+.progress-fill{height:100%;transition:width .3s}
+.progress-hi{background:var(--green)}.progress-md{background:var(--amber)}.progress-lo{background:var(--red)}
+
+/* ── TABLES ── */
+.table{width:100%;border-collapse:collapse}
+.table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-bottom:var(--border);background:var(--black);color:var(--bg)}
+.table td{padding:10px 14px;font-size:12px;border-bottom:var(--border-light);vertical-align:middle}
+.table tr:hover td{background:#fffbf0}
+.table tr:last-child td{border-bottom:none}
+
+/* ── NAV (TOP) ── */
+#top-nav{display:flex;align-items:stretch;border-bottom:var(--border);background:var(--black);height:52px;position:sticky;top:0;z-index:100}
+.nav-logo-wrap{display:flex;align-items:center;border-right:var(--border)}
+.nav-logo-red{background:var(--red);padding:4px 10px;display:flex;align-items:center;margin:8px 0 8px 12px}
+.nav-logo-text{font-family:var(--font-d);font-size:24px;letter-spacing:3px;color:var(--bg);line-height:1}
+.nav-logo-sub{font-size:8px;color:#555;letter-spacing:2px;padding:0 10px 0 8px;line-height:1.3}
+.nav-items{display:flex;flex:1}
+.nav-item{display:flex;align-items:center;padding:0 16px;font-size:11px;font-weight:600;color:#888;letter-spacing:.5px;border-right:1px solid #222;cursor:pointer;transition:all .15s;text-transform:uppercase;white-space:nowrap}
+.nav-item:hover{color:#ccc;background:#1a1a1a}
+.nav-item.active{color:var(--bg);background:#1a1a1a;border-bottom:2px solid var(--red)}
+.nav-right{display:flex;align-items:center;gap:8px;padding:0 14px;margin-left:auto;border-left:1px solid #222}
+
+/* ── SIDEBAR (DASHBOARD) ── */
+.app-shell{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:220px;background:var(--black);border-right:var(--border);display:flex;flex-direction:column;flex-shrink:0;padding:8px 0}
+.sidebar-section{padding:12px 16px 4px;font-size:9px;color:#444;letter-spacing:3px;font-weight:700;text-transform:uppercase}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:12px;font-weight:500;color:#777;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.sidebar-item:hover{color:#ccc;background:#1a1a1a}
+.sidebar-item.active{color:var(--bg);background:#1a1a1a;border-left-color:var(--red)}
+.sidebar-icon{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.main-content{flex:1;overflow:auto;background:var(--bg)}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:var(--border);background:var(--bg)}
+.page-title-group{}
+.page-kicker{font-size:9px;font-weight:700;letter-spacing:3px;color:var(--red);text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.page-kicker::before{content:'';display:block;width:20px;height:2px;background:var(--red)}
+
+/* ── METRIC STRIP ── */
+.metric-strip{display:grid;grid-template-columns:repeat(4,1fr);background:var(--black);border-bottom:var(--border)}
+.ms-cell{padding:16px 20px;border-right:1px solid #222}
+.ms-cell:last-child{border-right:none}
+.ms-num{font-family:var(--font-d);font-size:36px;letter-spacing:-1px;line-height:1}
+.ms-num.c-white{color:var(--bg)}
+.ms-num.c-red{color:var(--red)}
+.ms-num.c-green{color:#4ade80}
+.ms-num.c-amber{color:#fbbf24}
+.ms-label{font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.ms-delta{font-size:11px;font-weight:600;margin-top:3px}
+.ms-delta.up{color:#4ade80}.ms-delta.dn{color:var(--red)}.ms-delta.flat{color:#888}
+
+/* ── SCORE GAUGE ── */
+.score-gauge{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.score-big{font-family:var(--font-d);font-size:96px;line-height:1;letter-spacing:-4px}
+.score-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#888}
+
+/* ── PLATFORM SCORE GRID ── */
+.platform-score-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.psg-cell{padding:14px;text-align:center}
+.psg-name{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.psg-score{font-family:var(--font-d);font-size:36px;line-height:1;letter-spacing:-1px}
+
+/* ── PLATFORM BREAKDOWN TABLE ── */
+.plat-breakdown{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:var(--border)}
+.pb-col{border-right:var(--border)}
+.pb-col:last-child{border-right:none}
+.pb-header{padding:12px 16px;border-bottom:var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg)}
+.pb-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.pb-score{font-family:var(--font-d);font-size:24px;letter-spacing:-1px}
+.pb-metric{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:var(--border-light)}
+.pb-metric:last-child{border-bottom:none}
+.pb-m-label{font-size:11px;color:#555;flex:1;font-weight:500}
+.pb-m-bar{width:64px;height:3px;background:#e8e4d0;flex-shrink:0}
+.pb-m-fill{height:100%}
+.pb-m-val{font-size:11px;font-weight:700;min-width:32px;text-align:right;flex-shrink:0}
+.pb-m-val.hi{color:var(--green)}.pb-m-val.md{color:var(--amber)}.pb-m-val.lo{color:var(--red)}
+
+/* ── PENALTY FEED ── */
+.pen-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:var(--border-light)}
+.pen-item:last-child{border-bottom:none}
+.pen-icon{width:24px;height:24px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:2px}
+.pen-icon.err{border-color:var(--red);color:var(--red)}.pen-icon.warn{border-color:var(--amber);color:var(--amber)}
+.pen-body{flex:1}
+.pen-platform{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.pen-title{font-size:12px;font-weight:700;margin-bottom:3px}
+.pen-desc{font-size:11px;color:#555;line-height:1.5}
+.pen-fix-btn{font-size:10px;font-weight:700;color:var(--red);letter-spacing:.5px;text-transform:uppercase;cursor:pointer;margin-top:4px;display:inline-block}
+
+/* ── ANALYSER FLAGS ── */
+.flag-row{display:flex;gap:6px;flex-wrap:wrap}
+.flag{font-size:9px;font-weight:700;padding:4px 10px;border:1.5px solid;letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;gap:4px}
+.flag.ok{border-color:var(--green);color:var(--green);background:#f0fdf4}
+.flag.warn{border-color:var(--amber);color:var(--amber);background:#fffbeb}
+.flag.err{border-color:var(--red);color:var(--red);background:#fff5f5}
+
+/* ── LANDING SPECIFIC ── */
+.landing-hero{display:grid;grid-template-columns:1fr 340px;border-bottom:var(--border);min-height:420px}
+.lh-left{padding:48px 40px;border-right:var(--border)}
+.lh-right{display:flex;flex-direction:column;background:var(--black)}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:var(--border)}
+.feat-cell{padding:28px 24px;border-right:var(--border);border-bottom:var(--border)}
+.feat-cell:nth-child(3n){border-right:none}
+.feat-cell:nth-child(n+4){border-bottom:none}
+.feat-icon{width:36px;height:36px;border:var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;background:var(--white)}
+.how-step{display:flex;gap:20px;padding:24px;border-bottom:var(--border-light)}
+.how-step:last-child{border-bottom:none}
+.step-num{font-family:var(--font-d);font-size:48px;color:var(--red);line-height:1;flex-shrink:0;width:48px}
+.tools-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.tool-card{padding:24px;border-right:var(--border);border-bottom:var(--border)}
+.tool-card:nth-child(2n){border-right:none}
+
+/* ── KEYWORD PAGE ── */
+.kw-table-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:var(--border-light);cursor:pointer}
+.kw-table-row:hover{background:#fffbf0}
+.kw-rank{font-family:var(--font-d);font-size:22px;color:#ccc;min-width:28px;line-height:1}
+.kw-term{font-size:13px;font-weight:600;flex:1}
+.kw-volume-bar{width:80px;height:3px;background:#e8e4d0}
+.kw-volume-fill{height:100%;background:var(--black)}
+.kw-vol-label{font-size:10px;color:#888;min-width:60px}
+.kw-trend{font-size:11px;font-weight:700;min-width:48px;text-align:right}
+.kw-trend.up{color:var(--green)}.kw-trend.dn{color:var(--red)}.kw-trend.flat{color:var(--amber)}
+.kw-difficulty{font-size:10px;font-weight:700;padding:2px 8px;border:1.5px solid;min-width:40px;text-align:center}
+.kw-difficulty.easy{border-color:var(--green);color:var(--green)}
+.kw-difficulty.med{border-color:var(--amber);color:var(--amber)}
+.kw-difficulty.hard{border-color:var(--red);color:var(--red)}
+
+/* ── COMPETITOR PAGE ── */
+.comp-card{border:var(--border);background:var(--white);margin-bottom:12px}
+.comp-header{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:var(--border)}
+.comp-avatar{width:36px;height:36px;background:var(--black);color:var(--bg);font-family:var(--font-d);font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:var(--border)}
+.comp-name{font-size:14px;font-weight:700}
+.comp-handle{font-size:11px;color:#888}
+.comp-metrics{display:grid;grid-template-columns:repeat(4,1fr)}
+.comp-metric{padding:12px;border-right:var(--border-light);text-align:center}
+.comp-metric:last-child{border-right:none}
+.comp-m-val{font-family:var(--font-d);font-size:22px;letter-spacing:-1px}
+.comp-m-label{font-size:9px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* ── ADMIN ── */
+.admin-shell{display:flex;min-height:calc(100vh - 52px)}
+.admin-sidebar{width:200px;background:var(--black);border-right:var(--border);padding:8px 0;flex-shrink:0}
+.admin-main{flex:1;background:#f5f2e8;overflow:auto}
+.admin-metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.admin-metric{padding:20px;border-right:var(--border);border-bottom:var(--border);background:var(--white)}
+.admin-metric:nth-child(4n){border-right:none}
+
+/* ── SECTION HEADING ── */
+.section-heading{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:var(--border)}
+.sh-title-row{display:flex;align-items:center;gap:10px}
+.sh-accent{width:20px;height:3px;background:var(--red)}
+.sh-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+
+/* ── LOGIN / SIGNUP ── */
+.auth-page{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.auth-left{background:var(--black);padding:60px 48px;display:flex;flex-direction:column;justify-content:space-between;border-right:var(--border)}
+.auth-right{background:var(--bg);padding:60px 48px;display:flex;flex-direction:column;justify-content:center}
+.auth-form{border:var(--border);padding:32px;background:var(--white);max-width:400px;width:100%}
+.form-group{margin-bottom:16px}
+.form-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
+.form-divider{display:flex;align-items:center;gap:12px;margin:16px 0}
+.form-divider-line{flex:1;height:1px;background:#ddd}
+.form-divider-text{font-size:10px;color:#999;letter-spacing:1px;text-transform:uppercase}
+
+/* ── SCHEDULER ── */
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0}
+.cal-day-header{padding:8px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-right:var(--border-light);border-bottom:var(--border)}
+.cal-day{min-height:80px;padding:8px;border-right:var(--border-light);border-bottom:var(--border-light);cursor:pointer;position:relative}
+.cal-day:nth-child(7n){border-right:none}
+.cal-date{font-size:11px;font-weight:600;margin-bottom:4px}
+.cal-post{font-size:9px;padding:2px 5px;border:1px solid;margin-bottom:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.cal-post.ig{border-color:var(--ig);color:var(--ig);background:#fff0f3}
+.cal-post.li{border-color:var(--li);color:var(--li);background:#eff6ff}
+.cal-post.x{border-color:#555;color:#555;background:#f5f5f5}
+.cal-day.today{background:#fffbf0}
+.cal-day.has-post{background:#fffff5}
+
+/* ── ANALYTICS ── */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:4px;height:120px}
+.chart-bar{flex:1;background:var(--black);min-width:12px;transition:height .3s;position:relative}
+.chart-bar:hover{background:var(--red)}
+.chart-bar-label{font-size:8px;color:#888;text-align:center;margin-top:4px;letter-spacing:.5px}
+
+/* ── PROFILE AUDIT ── */
+.audit-section{border:var(--border);background:var(--white);margin-bottom:16px}
+.audit-header{padding:14px 16px;border-bottom:var(--border);display:flex;justify-content:space-between;align-items:center}
+.audit-score-ring{width:60px;height:60px;border:var(--border);display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
+.audit-score-n{font-family:var(--font-d);font-size:24px;color:var(--red);line-height:1}
+.audit-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:var(--border-light)}
+.audit-item:last-child{border-bottom:none}
+.audit-check{width:18px;height:18px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.audit-check.ok{border-color:var(--green);color:var(--green);background:var(--green-light)}
+.audit-check.warn{border-color:var(--amber);color:var(--amber);background:var(--amber-light)}
+.audit-check.err{border-color:var(--red);color:var(--red);background:#fff5f5}
+.audit-field{font-size:12px;font-weight:600;flex:1}
+.audit-detail{font-size:11px;color:#888}
+
+/* ── AI STUDIO ── */
+.ai-idea{border:var(--border);padding:16px;margin-bottom:10px;background:var(--white);cursor:pointer;transition:background .15s}
+.ai-idea:hover{background:#fffbf0}
+.ai-idea-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.ai-idea-score{font-family:var(--font-d);font-size:28px;color:var(--red);line-height:1;flex-shrink:0}
+
+/* ── HASHTAG PAGE ── */
+.hashtag-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:var(--border-light);cursor:pointer}
+.hashtag-item:hover{background:#fffbf0}
+.ht-name{font-size:13px;font-weight:600;flex:1}
+.ht-bar-wrap{width:100px;height:3px;background:#e8e4d0;flex-shrink:0}
+.ht-bar-fill{height:100%;background:var(--black)}
+.ht-volume{font-size:10px;color:#888;min-width:52px}
+.ht-comp{font-size:10px;font-weight:700;padding:2px 8px;border:1.5px solid;min-width:36px;text-align:center}
+.ht-banned{font-size:9px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase}
+
+/* ── LANDING FOOTER ── */
+.site-footer{background:var(--black);border-top:var(--border);padding:48px 40px 24px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
+.footer-logo{font-family:var(--font-d);font-size:28px;letter-spacing:2px;color:var(--bg);margin-bottom:10px}
+.footer-logo span{color:var(--red)}
+.footer-desc{font-size:12px;color:#555;line-height:1.6;max-width:240px}
+.footer-heading{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#888;margin-bottom:14px}
+.footer-link{font-size:12px;color:#666;display:block;margin-bottom:8px;cursor:pointer}
+.footer-link:hover{color:var(--bg)}
+.footer-bottom{border-top:1px solid #222;padding-top:20px;display:flex;justify-content:space-between;align-items:center}
+.footer-bottom-text{font-size:11px;color:#444;letter-spacing:.5px}
+.footer-live{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#4ade80;letter-spacing:1.5px;text-transform:uppercase}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
+
+/* ── UTILITIES ── */
+.p-0{padding:0}.p-4{padding:4px}.p-8{padding:8px}.p-12{padding:12px}
+.p-16{padding:16px}.p-20{padding:20px}.p-24{padding:24px}.p-32{padding:32px}
+.px-16{padding-left:16px;padding-right:16px}.px-20{padding-left:20px;padding-right:20px}
+.px-24{padding-left:24px;padding-right:24px}.px-28{padding-left:28px;padding-right:28px}
+.py-12{padding-top:12px;padding-bottom:12px}.py-16{padding-top:16px;padding-bottom:16px}
+.py-20{padding-top:20px;padding-bottom:20px}.py-24{padding-top:24px;padding-bottom:24px}
+.mb-4{margin-bottom:4px}.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}
+.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.mt-4{margin-top:4px}.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.ml-auto{margin-left:auto}
+.hidden{display:none}
+.cursor-pointer{cursor:pointer}
+.opacity-60{opacity:.6}
+.divider{height:1px;background:#e8e4d0;margin:16px 0}
+.divider-dark{height:1px;background:#222;margin:12px 0}
+.tag-strip{display:flex;gap:6px;flex-wrap:wrap}
+.section-wrap{padding:20px 28px}
+.two-col-layout{display:grid;grid-template-columns:1fr 360px;min-height:calc(100vh - 52px - 56px)}
+.col-main{border-right:var(--border);overflow:auto}
+.col-side{overflow:auto;background:var(--white)}
+
+/* ── STATUS DOT ── */
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.status-dot.live{background:#4ade80}.status-dot.warn{background:var(--amber)}.status-dot.dead{background:var(--red)}
+
+/* ── NOTIFICATION ── */
+.notif{border-left:3px solid var(--red);background:var(--white);border:var(--border);border-left:4px solid var(--red);padding:12px 14px;margin-bottom:10px}
+.notif.ok{border-left-color:var(--green)}.notif.warn{border-left-color:var(--amber)}
+
+/* ── PAGE TRANSITION ── */
+#app{animation:fadein .2s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+/* ── RESPONSIVE GUARDS ── */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .landing-hero{grid-template-columns:1fr}
+  .lh-right{display:none}
+  .feature-grid{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .plat-breakdown{grid-template-columns:1fr}
+  .metric-strip{grid-template-columns:1fr 1fr}
+  .auth-page{grid-template-columns:1fr}
+  .auth-left{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   STATE & ROUTER
+═══════════════════════════════════════════════════ */
+const S = {
+  page: 'landing',
+  analyzerPlatform: 'instagram',
+  analyzerScore: 74,
+  kwSearch: '',
+  dashPlatform: 'all',
+  adminSection: 'overview',
+  schedulerView: 'calendar',
+};
+
+function nav(page, extra){
+  S.page = page;
+  if(extra) Object.assign(S, extra);
+  render();
+  window.scrollTo(0,0);
+}
+
+function render(){
+  const app = document.getElementById('app');
+  const isAuthPage = ['login','signup'].includes(S.page);
+  const isDash = ['dashboard','analyzer','keywords','hashtags','competitors','scheduler','audit','analytics','ai-studio','settings'].includes(S.page);
+  const isAdmin = ['admin','admin-users','admin-seo','admin-api','admin-flags'].includes(S.page);
+  const isPublic = ['landing','features','about','contact'].includes(S.page);
+
+  let html = '';
+  if(!isAuthPage) html += renderTopNav(isDash || isAdmin);
+  switch(S.page){
+    case 'landing':    html += renderLanding(); break;
+    case 'features':   html += renderFeatures(); break;
+    case 'about':      html += renderAbout(); break;
+    case 'contact':    html += renderContact(); break;
+    case 'login':      html += renderLogin(); break;
+    case 'signup':     html += renderSignup(); break;
+    case 'dashboard':  html += renderAppShell(renderDashboard()); break;
+    case 'analyzer':   html += renderAppShell(renderAnalyzer()); break;
+    case 'keywords':   html += renderAppShell(renderKeywords()); break;
+    case 'hashtags':   html += renderAppShell(renderHashtags()); break;
+    case 'competitors':html += renderAppShell(renderCompetitors()); break;
+    case 'scheduler':  html += renderAppShell(renderScheduler()); break;
+    case 'audit':      html += renderAppShell(renderAudit()); break;
+    case 'analytics':  html += renderAppShell(renderAnalytics()); break;
+    case 'ai-studio':  html += renderAppShell(renderAIStudio()); break;
+    case 'settings':   html += renderAppShell(renderSettings()); break;
+    case 'admin':      html += renderAdminShell(renderAdminOverview()); break;
+    case 'admin-users':html += renderAdminShell(renderAdminUsers()); break;
+    case 'admin-seo':  html += renderAdminShell(renderAdminSEO()); break;
+    case 'admin-api':  html += renderAdminShell(renderAdminAPI()); break;
+    case 'admin-flags':html += renderAdminShell(renderAdminFlags()); break;
+    default: html += renderLanding();
+  }
+  if(isPublic) html += renderFooter();
+  app.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════════════════ */
+function renderTopNav(isDash){
+  const isDashboard = ['dashboard','analyzer','keywords','hashtags','competitors','scheduler','audit','analytics','ai-studio','settings'].includes(S.page);
+  const isAdmin = S.page.startsWith('admin');
+  const publicItems = [
+    {label:'Features', page:'features'},
+    {label:'About', page:'about'},
+    {label:'Contact', page:'contact'},
+  ];
+  const dashItems = [
+    {label:'Dashboard', page:'dashboard'},
+    {label:'Analyser', page:'analyzer'},
+    {label:'Keywords', page:'keywords'},
+    {label:'Hashtags', page:'hashtags'},
+    {label:'Competitors', page:'competitors'},
+    {label:'Scheduler', page:'scheduler'},
+    {label:'Analytics', page:'analytics'},
+    {label:'AI Studio', page:'ai-studio'},
+  ];
+  const adminItems = [
+    {label:'Overview', page:'admin'},
+    {label:'Users', page:'admin-users'},
+    {label:'SEO Config', page:'admin-seo'},
+    {label:'API Health', page:'admin-api'},
+    {label:'Feature Flags', page:'admin-flags'},
+  ];
+  const items = isAdmin ? adminItems : isDash ? dashItems : publicItems;
+  return `
+  <nav id="top-nav">
+    <div class="nav-logo-wrap" onclick="nav('${isDash||isAdmin?'dashboard':'landing'}')" style="cursor:pointer">
+      <div style="display:flex;align-items:center">
+        <div class="nav-logo-red"><div class="nav-logo-text">RANK<br>PULSE</div></div>
+        <div class="nav-logo-sub">SOCIAL<br>SEO</div>
+      </div>
+    </div>
+    <div class="nav-items">
+      ${items.map(i=>`<div class="nav-item${S.page===i.page?' active':''}" onclick="nav('${i.page}')">${i.label}</div>`).join('')}
+    </div>
+    <div class="nav-right">
+      ${isDash||isAdmin
+        ? `<button class="btn btn-outline btn-sm" onclick="nav('admin')">Admin</button>
+           <div style="width:32px;height:32px;background:var(--red);border:var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer"><span class="label-sm text-white">K</span></div>`
+        : `<button class="btn btn-ghost btn-sm" onclick="nav('login')">Sign In</button>
+           <button class="btn btn-red btn-sm" onclick="nav('signup')">Start Free →</button>`
+      }
+    </div>
+  </nav>`;
+}
+
+function renderSidebar(){
+  const sections = [
+    { label:'Main', items:[
+      {icon:'📊',label:'Dashboard',page:'dashboard'},
+      {icon:'🔍',label:'Content Analyser',page:'analyzer'},
+      {icon:'🔑',label:'Keyword Research',page:'keywords'},
+      {icon:'#',label:'Hashtag Intel',page:'hashtags'},
+    ]},
+    { label:'Research', items:[
+      {icon:'👥',label:'Competitors',page:'competitors'},
+      {icon:'📅',label:'Scheduler',page:'scheduler'},
+      {icon:'👤',label:'Profile Audit',page:'audit'},
+    ]},
+    { label:'Insights', items:[
+      {icon:'📈',label:'Analytics',page:'analytics'},
+      {icon:'✨',label:'AI Studio',page:'ai-studio'},
+    ]},
+    { label:'Account', items:[
+      {icon:'⚙️',label:'Settings',page:'settings'},
+    ]},
+  ];
+  return `<div class="sidebar">
+    ${sections.map(s=>`
+      <div class="sidebar-section">${s.label}</div>
+      ${s.items.map(i=>`
+        <div class="sidebar-item${S.page===i.page?' active':''}" onclick="nav('${i.page}')">
+          <span style="font-size:13px">${i.icon}</span>
+          <span>${i.label}</span>
+        </div>`).join('')}
+    `).join('')}
+  </div>`;
+}
+
+function renderAppShell(content){
+  return `<div class="app-shell">${renderSidebar()}<div class="main-content">${content}</div></div>`;
+}
+
+function renderAdminSidebar(){
+  const items = [
+    {icon:'📊',label:'Overview',page:'admin'},
+    {icon:'👥',label:'User Management',page:'admin-users'},
+    {icon:'⚙️',label:'SEO Engine Config',page:'admin-seo'},
+    {icon:'🔌',label:'API Health',page:'admin-api'},
+    {icon:'🚩',label:'Feature Flags',page:'admin-flags'},
+  ];
+  return `<div class="admin-sidebar">
+    <div style="padding:14px 16px;border-bottom:1px solid #222;margin-bottom:8px">
+      <div class="label-sm" style="color:#444">ADMIN PANEL</div>
+    </div>
+    ${items.map(i=>`<div class="sidebar-item${S.page===i.page?' active':''}" onclick="nav('${i.page}')">
+      <span style="font-size:13px">${i.icon}</span><span>${i.label}</span>
+    </div>`).join('')}
+    <div class="sidebar-item" onclick="nav('dashboard')" style="margin-top:auto;border-top:1px solid #222;position:absolute;bottom:0;width:200px">
+      <span>←</span><span>Back to App</span>
+    </div>
+  </div>`;
+}
+
+function renderAdminShell(content){
+  return `<div class="admin-shell">${renderAdminSidebar()}<div class="admin-main">${content}</div></div>`;
+}
+
+function renderFooter(){
+  return `<footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">RANK<span>PULSE</span></div>
+        <div class="footer-desc">Algorithm-native SEO intelligence for Instagram, LinkedIn, and X. Built on verified 2026 ranking signals — free forever.</div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <span class="platform-tag tag-ig">Instagram</span>
+          <span class="platform-tag tag-li">LinkedIn</span>
+          <span class="platform-tag tag-x">X</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Product</div>
+        <a class="footer-link" onclick="nav('features')">Features</a>
+        <a class="footer-link" onclick="nav('analyzer')">Content Analyser</a>
+        <a class="footer-link" onclick="nav('keywords')">Keyword Research</a>
+        <a class="footer-link" onclick="nav('hashtags')">Hashtag Intelligence</a>
+        <a class="footer-link" onclick="nav('competitors')">Competitor Tracker</a>
+      </div>
+      <div>
+        <div class="footer-heading">Platform</div>
+        <a class="footer-link">Instagram SEO Guide</a>
+        <a class="footer-link">LinkedIn SEO Guide</a>
+        <a class="footer-link">X / Twitter SEO Guide</a>
+        <a class="footer-link">Algorithm Updates</a>
+        <a class="footer-link">2026 Ranking Signals</a>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <a class="footer-link" onclick="nav('about')">About</a>
+        <a class="footer-link" onclick="nav('contact')">Contact</a>
+        <a class="footer-link">Changelog</a>
+        <a class="footer-link">Privacy Policy</a>
+        <a class="footer-link">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-text">© 2026 RankPulse. Built free on Supabase + Vercel. Open infrastructure.</div>
+      <div class="footer-live"><div class="live-dot"></div>All Systems Live</div>
+    </div>
+  </footer>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: LANDING
+═══════════════════════════════════════════════════ */
+function renderLanding(){
+  return `
+  <!-- HERO -->
+  <div class="landing-hero">
+    <div class="lh-left">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div style="width:24px;height:3px;background:var(--red)"></div>
+        <span class="label-sm" style="color:var(--red)">Social Media SEO Intelligence — 2026</span>
+      </div>
+      <div class="d1 mb-16">
+        SEO THAT<br>
+        <span class="inv">ACTUALLY</span><br>
+        <span class="acc">WORKS.</span>
+      </div>
+      <p class="body mb-20" style="max-width:480px;color:#444">
+        Algorithm-native SEO scoring for Instagram, LinkedIn &amp; X. Built on verified 2026 ranking signals —
+        watch time, DM sends, Depth Score, TweepCred. Not opinions. The real algorithm.
+      </p>
+      <div style="display:flex;gap:0;border:var(--border);width:fit-content;margin-bottom:24px">
+        <span class="platform-tag" style="background:var(--black);border:none;color:#ff8fab;letter-spacing:1.5px">INSTAGRAM</span>
+        <span class="platform-tag" style="background:var(--black);border:none;border-left:1px solid #333;color:#7eb8f7;letter-spacing:1.5px">LINKEDIN</span>
+        <span class="platform-tag" style="background:#222;border:none;border-left:1px solid #333;color:#aaa;letter-spacing:1.5px">X / TWITTER</span>
+      </div>
+      <div style="display:flex;gap:0">
+        <button class="btn btn-red btn-lg" onclick="nav('signup')">Analyse My Content</button>
+        <button class="btn btn-outline btn-lg" onclick="nav('features')" style="border-left:none">See How It Works</button>
+      </div>
+      <div style="margin-top:28px;display:flex;gap:20px">
+        <div><span class="label-sm" style="color:var(--red)">FREE</span><br><span class="body-sm">No credit card ever</span></div>
+        <div><span class="label-sm">ACCURATE</span><br><span class="body-sm">2026 algo signals</span></div>
+        <div><span class="label-sm">FAST</span><br><span class="body-sm">Results in seconds</span></div>
+      </div>
+    </div>
+    <div class="lh-right">
+      <div style="padding:24px;border-bottom:var(--border)">
+        <div class="label-sm" style="color:#555;margin-bottom:4px">Overall SEO Health</div>
+        <div style="font-family:var(--font-d);font-size:104px;color:var(--red);line-height:1;letter-spacing:-4px">78</div>
+        <div class="label-sm" style="color:#555">/ 100 — GOOD · Updated just now</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:var(--border)">
+        <div style="padding:14px 12px;text-align:center;border-right:1px solid #222">
+          <div class="label-sm" style="color:#ff8fab;margin-bottom:6px">INSTAGRAM</div>
+          <div style="font-family:var(--font-d);font-size:36px;color:var(--bg);letter-spacing:-1px">82</div>
+        </div>
+        <div style="padding:14px 12px;text-align:center;border-right:1px solid #222">
+          <div class="label-sm" style="color:#7eb8f7;margin-bottom:6px">LINKEDIN</div>
+          <div style="font-family:var(--font-d);font-size:36px;color:var(--bg);letter-spacing:-1px">74</div>
+        </div>
+        <div style="padding:14px 12px;text-align:center">
+          <div class="label-sm" style="color:#888;margin-bottom:6px">X / TW</div>
+          <div style="font-family:var(--font-d);font-size:36px;color:var(--bg);letter-spacing:-1px">79</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:var(--border)">
+        <div style="padding:12px;border-right:1px solid #222"><div style="font-family:var(--font-d);font-size:28px;color:var(--bg)">24K</div><div class="label-sm" style="color:#555">Est Reach</div></div>
+        <div style="padding:12px"><div style="font-family:var(--font-d);font-size:28px;color:var(--red)">3</div><div class="label-sm" style="color:#555">Penalties</div></div>
+        <div style="padding:12px;border-right:1px solid #222;border-top:1px solid #222"><div style="font-family:var(--font-d);font-size:28px;color:#4ade80">+18%</div><div class="label-sm" style="color:#555">Growth</div></div>
+        <div style="padding:12px;border-top:1px solid #222"><div style="font-family:var(--font-d);font-size:28px;color:var(--bg)">91</div><div class="label-sm" style="color:#555">Keyword Score</div></div>
+      </div>
+      <div style="padding:12px 16px;background:var(--red);cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="nav('signup')">
+        <span class="label-sm" style="color:var(--bg)">Run Your Free Scan Now</span>
+        <span style="color:var(--bg);font-size:18px">→</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRIC STRIP -->
+  <div class="metric-strip">
+    <div class="ms-cell"><div class="ms-num c-white">3</div><div class="ms-label">Platforms Covered</div><div class="ms-delta flat">IG · LI · X</div></div>
+    <div class="ms-cell"><div class="ms-num c-red">17</div><div class="ms-label">SEO Parameters</div><div class="ms-delta up">↑ 2026 Updated</div></div>
+    <div class="ms-cell"><div class="ms-num c-green">100%</div><div class="ms-label">Free Forever</div><div class="ms-delta flat">No credit card</div></div>
+    <div class="ms-cell"><div class="ms-num c-amber">0</div><div class="ms-label">Guesswork</div><div class="ms-delta flat">Pure algorithm data</div></div>
+  </div>
+
+  <!-- SECTION: FEATURES -->
+  <div style="padding:40px 40px 0;border-bottom:var(--border)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="width:28px;height:3px;background:var(--red)"></div>
+      <span class="label-sm" style="color:var(--red)">Everything You Need</span>
+    </div>
+    <div class="d3 mb-16">BUILT FOR SERIOUS CREATORS.</div>
+  </div>
+  <div class="feature-grid">
+    ${[
+      {icon:'📊',title:'Content Analyser',desc:'Paste any caption and get an instant SEO score. Every parameter from Instagram watch time hooks to LinkedIn Depth Score to X TweepCred — all in one shot.'},
+      {icon:'🔑',title:'Keyword Research',desc:'Platform-specific keyword explorer. Find what your audience searches on each network. Track volume, trend velocity, and gap vs your competitors.'},
+      {icon:'🏷️',title:'Hashtag Intelligence',desc:'Not just volume — banned tag detection, trend velocity, competition score, platform-specific set builder. Stop guessing which hashtags actually work.'},
+      {icon:'👥',title:'Competitor Tracker',desc:'Add up to 10 competitors. Track their top content, posting frequency, keyword themes, and algorithm alignment. Know exactly where you\'re behind.'},
+      {icon:'📅',title:'Post Scheduler + SEO',desc:'Every post runs through the SEO engine before it goes live. Built-in optimal time suggestions, calendar view, draft management.'},
+      {icon:'👤',title:'Profile SEO Auditor',desc:'Your bio, headline, about section, skills, profile photo — all scored against platform-specific algorithms. Field-by-field fix list.'},
+      {icon:'📈',title:'Analytics & Reporting',desc:'90-day history. Engagement trends, reach graphs, keyword rank tracking, SEO score over time. Exportable. All your data in one place.'},
+      {icon:'✨',title:'AI Content Studio',desc:'5 pre-scored post ideas per day. Each generated for your niche and pre-optimised by the SEO engine. One-click expand, edit, schedule.'},
+      {icon:'⚙️',title:'Admin Dashboard',desc:'Full platform management — user oversight, SEO engine config, API health monitoring, feature flags. Built for operators.'},
+    ].map(f=>`
+    <div class="feat-cell">
+      <div class="feat-icon">${f.icon}</div>
+      <div class="h3 mb-8">${f.title}</div>
+      <div class="body-sm">${f.desc}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- SECTION: HOW IT WORKS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-top:var(--border)">
+    <div style="border-right:var(--border);padding:40px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+        <div style="width:28px;height:3px;background:var(--red)"></div>
+        <span class="label-sm" style="color:var(--red)">How It Works</span>
+      </div>
+      <div class="d3 mb-24">THREE STEPS.<br>REAL RESULTS.</div>
+      <div style="border:var(--border)">
+        <div class="how-step">
+          <div class="step-num">01</div>
+          <div><div class="h3 mb-6">Connect your platforms</div><div class="body-sm">Sign up and link your Instagram, LinkedIn, and X accounts. Takes 60 seconds.</div></div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">02</div>
+          <div><div class="h3 mb-6">Run your SEO scan</div><div class="body-sm">Paste a caption or let RankPulse scan your profile automatically. Get a score in under 3 seconds.</div></div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">03</div>
+          <div><div class="h3 mb-6">Fix, optimise, publish</div><div class="body-sm">Follow the specific fix list. Every recommendation is algorithm-backed with a source. No fluff.</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:40px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+        <div style="width:28px;height:3px;background:var(--red)"></div>
+        <span class="label-sm" style="color:var(--red)">2026 Algorithm Parameters</span>
+      </div>
+      <div class="d3 mb-24">WHAT WE<br>ACTUALLY<br>MEASURE.</div>
+      <div style="border:var(--border)">
+        ${[
+          {plat:'Instagram',color:'var(--ig)',params:'Watch Time · DM Sends/Reach · Caption Keywords · Hashtag Strategy · Alt Text · Profile Completeness · Posting Consistency · Originality Score'},
+          {plat:'LinkedIn',color:'var(--li)',params:'Depth Score (Dwell Time) · Headline Keywords · Comment Quality · Profile Completeness · Topic Authority · About Section · Skill Endorsements · Link Strategy'},
+          {plat:'X / Twitter',color:'#555',params:'Reply Depth (+75 Weight) · RT Velocity · TweepCred Score · External Link Penalty · Hashtag Count · Content Originality · Recency Score · Grok Semantic Cluster'},
+        ].map(p=>`
+        <div style="padding:14px 16px;border-bottom:var(--border-light)">
+          <div class="label-sm mb-6" style="color:${p.color}">${p.plat}</div>
+          <div class="body-sm">${p.params}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER -->
+  <div style="background:var(--black);border-top:var(--border);border-bottom:var(--border);padding:40px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div class="d3 mb-8" style="color:var(--bg)">READY TO RANK HIGHER?</div>
+      <div class="body" style="color:#666">Free. No credit card. Built on open infrastructure.</div>
+    </div>
+    <div style="display:flex;gap:0">
+      <button class="btn btn-red btn-lg" onclick="nav('signup')">Start For Free →</button>
+      <button class="btn btn-outline btn-lg" onclick="nav('dashboard')" style="border-left:none;color:var(--bg);border-color:#444">View Demo</button>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: FEATURES
+═══════════════════════════════════════════════════ */
+function renderFeatures(){
+  return `
+  <div style="padding:40px;border-bottom:var(--border)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <div style="width:28px;height:3px;background:var(--red)"></div>
+      <span class="label-sm" style="color:var(--red)">Full Feature List</span>
+    </div>
+    <div class="d2 mb-12">EVERY TOOL.<br>ONE PLATFORM.</div>
+    <div class="body" style="color:#555;max-width:520px">RankPulse gives you the exact SEO engine used by top creators — without the enterprise price tag. Every feature is free. Every parameter is real.</div>
+  </div>
+  <!-- Platform Deep Dive -->
+  ${['Instagram','LinkedIn','X / Twitter'].map((plt,i)=>{
+    const color = [('var(--ig)'),('var(--li)'),('#555')][i];
+    const params = [
+      [
+        {name:'Watch Time (Reels)',weight:'30%',desc:'The #1 ranking signal confirmed by Adam Mosseri Jan 2025. Target 60%+ completion. Score drops sharply below 40%.'},
+        {name:'DM Sends per Reach',weight:'25%',desc:'Weighted 3–5x higher than likes. Instagram sees DM sends as the strongest signal of content value for unconnected reach.'},
+        {name:'Caption Keywords',weight:'10%',desc:'Instagram now semantic-indexes captions. Target 2–5% keyword density in first 125 characters.'},
+        {name:'Hashtag Strategy',weight:'8%',desc:'3–5 niche hashtags optimal. Penalised for >10 hashtags or banned tags. Hashtags are now secondary to keywords.'},
+        {name:'Alt Text Optimisation',weight:'5%',desc:'Manual alt text with natural keyword inclusion. Often ignored — high-leverage for indexing.'},
+        {name:'Profile Completeness',weight:'4%',desc:'Bio keywords, link in bio, category set, story highlights — all boost account authority score.'},
+        {name:'Posting Consistency',weight:'3%',desc:'Minimum 4x/week to maintain AI topic cluster classification. Inconsistency triggers re-categorisation.'},
+        {name:'Content Originality',weight:'5%',desc:'10+ reposts in 30 days = excluded from Recommendations. Watermarked TikTok videos suppressed.'},
+      ],[
+        {name:'Depth Score (Dwell Time)',weight:'28%',desc:'NEW 2026. LinkedIn tracks exact reading time. 45s of reading scores HIGHER than a 2-second like. Long-form posts win.'},
+        {name:'Headline Keywords',weight:'18%',desc:'Top LinkedIn search signal. Headline must contain 3–5 buyer-intent keywords. Max 220 chars, fully utilised.'},
+        {name:'Comment Quality Score',weight:'15%',desc:'Substantive comments (>5 words) from 1st-degree connections weighted 4x. Engagement bait now penalised.'},
+        {name:'Content Relevance / Topic Authority',weight:'12%',desc:'Consistent posting in 1–2 niches triggers expert classification. 3–5x/week in same topic required.'},
+        {name:'Profile Completeness',weight:'10%',desc:'LinkedIn confirms complete profiles get 30% more views. All 7 sections filled = max algorithmic boost.'},
+        {name:'About Section Keywords',weight:'7%',desc:'First 300 chars indexed. Include "Direct Answer Blocks" for AI referencing. Structured bios surface in AI search.'},
+        {name:'Skill Endorsements',weight:'5%',desc:'Specific skills endorsed by senior peers transfer authority to your profile. Generic skills have zero SEO value.'},
+        {name:'External Link Strategy',weight:'3%',desc:'Post link in first comment — NOT post body. Post body links receive 40–60% reach reduction.'},
+      ],[
+        {name:'Reply Depth (Conversation)',weight:'25%',desc:'Open-sourced algorithm: author reply to a reply = +75 weight. A like = +1. Responding to replies is the #1 leverage point.'},
+        {name:'Retweet Velocity',weight:'20%',desc:'Retweet = 20x a Like in engagement score. First 30 minutes determine full distribution. Post at peak times.'},
+        {name:'TweepCred Score',weight:'18%',desc:'Hidden 0–100 account score. Below 65 = only 3 posts considered for distribution. Premium boosts score +4 to +16.'},
+        {name:'Keyword & Hashtag Match',weight:'12%',desc:'1–2 niche hashtags boost engagement 21%. Multiple hashtags penalised 40%. Content indexed by Grok semantic clusters.'},
+        {name:'External Link Penalty',weight:'10%',desc:'Links in post body = 30–50% reach penalty. Zero median engagement for free accounts since March 2025. Use first-reply strategy.'},
+        {name:'Content Format Score',weight:'8%',desc:'Text-only posts outperform video by 30% on X. Unique to X — the only major platform where text is king.'},
+        {name:'Recency Score',weight:'5%',desc:'Time decay: post loses ~50% visibility every 6 hours. Post daily at peak audience activity windows.'},
+        {name:'Grok Semantic Cluster',weight:'2%',desc:'Grok AI reads every post and matches to interest clusters. Stay consistent in niche for cluster authority.'},
+      ]
+    ][i];
+    return `
+    <div style="border-top:var(--border)">
+      <div style="display:grid;grid-template-columns:200px 1fr">
+        <div style="background:var(--black);padding:28px 20px;border-right:var(--border)">
+          <div class="label-sm mb-8" style="color:${color}">${plt.toUpperCase()}</div>
+          <div class="d4" style="color:var(--bg);margin-bottom:16px">${plt} SEO Engine</div>
+          <div class="body-sm" style="color:#555;margin-bottom:20px">8 weighted parameters. All sourced from official platform disclosures and verified 2026 research.</div>
+          <button class="btn btn-red btn-sm" onclick="nav('analyzer')">Analyse Now →</button>
+        </div>
+        <div>
+          ${params.map(p=>`
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 20px;border-bottom:var(--border-light)">
+            <div style="min-width:48px;text-align:right">
+              <span class="badge badge-black">${p.weight}</span>
+            </div>
+            <div>
+              <div class="h3 mb-4">${p.name}</div>
+              <div class="body-sm">${p.desc}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('')}`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: ABOUT
+═══════════════════════════════════════════════════ */
+function renderAbout(){
+  return `
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:var(--border);min-height:340px">
+    <div style="padding:48px 40px;border-right:var(--border)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:28px;height:3px;background:var(--red)"></div>
+        <span class="label-sm" style="color:var(--red)">About RankPulse</span>
+      </div>
+      <div class="d2 mb-16">BUILT BY<br>CREATORS.<br>FOR CREATORS.</div>
+      <div class="body mb-16" style="color:#444;max-width:400px">RankPulse was built out of frustration. Every SEO tool either cost a fortune or gave advice based on blog posts from 2022. We went straight to the source — official platform documentation, open-sourced algorithm code, and verified research — and built a tool that actually works.</div>
+      <div class="body mb-20" style="color:#444;max-width:400px">It's free. It always will be. Built on open infrastructure: Supabase, Vercel, and whatever free-tier tools work best. No VC money. No growth-at-all-costs. Just a useful tool for serious creators.</div>
+      <div style="display:flex;gap:16px">
+        <div><div style="font-family:var(--font-d);font-size:36px;color:var(--red)">3</div><div class="label-sm">Platforms</div></div>
+        <div><div style="font-family:var(--font-d);font-size:36px">17</div><div class="label-sm">Parameters</div></div>
+        <div><div style="font-family:var(--font-d);font-size:36px">0</div><div class="label-sm">Revenue Model</div></div>
+      </div>
+    </div>
+    <div style="background:var(--black);padding:48px 40px">
+      <div class="label-sm mb-24" style="color:#555">Our Principles</div>
+      ${[
+        {n:'01',title:'Algorithm-first, always',desc:'Every scoring parameter is sourced from official disclosures or open-sourced code. We update when platforms update.'},
+        {n:'02',title:'Free. No asterisks.',desc:'No freemium tricks. No paywalled features. No "upgrade to see your actual score." Everything works for everyone.'},
+        {n:'03',title:'Built on open infra',desc:'Supabase. Vercel. Free tiers. The same infrastructure available to any developer. No black box tech.'},
+        {n:'04',title:'Clarity over cleverness',desc:'The UI shows you what matters, in the order it matters. No gamification, no dark patterns, no engagement tricks.'},
+      ].map(p=>`
+      <div style="display:flex;gap:16px;margin-bottom:24px">
+        <div style="font-family:var(--font-d);font-size:32px;color:var(--red);line-height:1;min-width:32px">${p.n}</div>
+        <div><div class="h3 mb-4" style="color:var(--bg)">${p.title}</div><div class="body-sm" style="color:#555">${p.desc}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div style="border-bottom:var(--border);padding:40px;display:flex;align-items:center;justify-content:space-between;background:var(--red)">
+    <div>
+      <div class="d3 mb-4" style="color:var(--bg)">START RANKING TODAY.</div>
+      <div class="body" style="color:rgba(255,252,232,.7)">Free. No credit card. No catch.</div>
+    </div>
+    <button class="btn btn-black btn-lg" onclick="nav('signup')">Get Started →</button>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: CONTACT
+═══════════════════════════════════════════════════ */
+function renderContact(){
+  return `
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:var(--border);min-height:400px">
+    <div style="background:var(--black);padding:48px 40px;border-right:var(--border)">
+      <div class="label-sm mb-16" style="color:var(--red)">Get In Touch</div>
+      <div class="d2 mb-16" style="color:var(--bg)">LET'S TALK<br>SOCIAL SEO.</div>
+      <div class="body mb-32" style="color:#555">Bug report? Feature idea? Algorithm question? We read everything. Response within 24 hours.</div>
+      ${[
+        {icon:'📧',label:'Email',value:'hello@rankpulse.app'},
+        {icon:'🐦',label:'X / Twitter',value:'@rankpulse'},
+        {icon:'💼',label:'LinkedIn',value:'RankPulse SEO'},
+      ].map(c=>`
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #222">
+        <span style="font-size:20px">${c.icon}</span>
+        <div><div class="label-sm mb-2" style="color:#555">${c.label}</div><div class="body" style="color:var(--bg)">${c.value}</div></div>
+      </div>`).join('')}
+    </div>
+    <div style="padding:48px 40px">
+      <div class="label-sm mb-24" style="color:var(--red)">Send a Message</div>
+      <div style="border:var(--border);padding:28px;background:var(--white)">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input class="input" placeholder="e.g. Kittu">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="input" type="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <select class="select w-full">
+            <option>Bug Report</option>
+            <option>Feature Request</option>
+            <option>Algorithm Question</option>
+            <option>General Feedback</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="textarea" rows="5" placeholder="Tell us everything..."></textarea>
+        </div>
+        <button class="btn btn-red w-full" style="justify-content:center">Send Message →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: LOGIN
+═══════════════════════════════════════════════════ */
+function renderLogin(){
+  return `
+  <div class="auth-page">
+    <div class="auth-left">
+      <div>
+        <div style="display:flex;align-items:center;gap:0;margin-bottom:40px;cursor:pointer" onclick="nav('landing')">
+          <div style="background:var(--red);padding:4px 10px"><div style="font-family:var(--font-d);font-size:22px;letter-spacing:3px;color:var(--bg)">RANKPULSE</div></div>
+        </div>
+        <div class="d2 mb-16" style="color:var(--bg)">GOOD TO<br>HAVE YOU<br>BACK.</div>
+        <div class="body" style="color:#555;max-width:320px">Your SEO scores, penalty feeds, and keyword data — all waiting for you.</div>
+      </div>
+      <div>
+        ${[
+          {num:'82',label:'Your Instagram SEO Score'},
+          {num:'3',label:'Penalties to fix today'},
+          {num:'+18%',label:'Reach growth this week'},
+        ].map(s=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #222">
+          <span class="body-sm" style="color:#555">${s.label}</span>
+          <span style="font-family:var(--font-d);font-size:22px;color:var(--red)">${s.num}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="auth-right">
+      <div style="max-width:400px;width:100%">
+        <div class="label-sm mb-8" style="color:var(--red)">Welcome Back</div>
+        <div class="d3 mb-24">SIGN IN.</div>
+        <div class="auth-form">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="input" type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="input" type="password" placeholder="••••••••">
+          </div>
+          <button class="btn btn-red w-full mb-12" style="justify-content:center" onclick="nav('dashboard')">Sign In →</button>
+          <div class="form-divider"><div class="form-divider-line"></div><div class="form-divider-text">or</div><div class="form-divider-line"></div></div>
+          <button class="btn btn-outline w-full mb-16" style="justify-content:center">Continue with Google</button>
+          <div class="text-center body-sm">Don't have an account? <a onclick="nav('signup')" style="color:var(--red);font-weight:700;cursor:pointer">Sign up free →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: SIGNUP
+═══════════════════════════════════════════════════ */
+function renderSignup(){
+  return `
+  <div class="auth-page">
+    <div class="auth-left">
+      <div>
+        <div style="display:flex;align-items:center;gap:0;margin-bottom:40px;cursor:pointer" onclick="nav('landing')">
+          <div style="background:var(--red);padding:4px 10px"><div style="font-family:var(--font-d);font-size:22px;letter-spacing:3px;color:var(--bg)">RANKPULSE</div></div>
+        </div>
+        <div class="d2 mb-16" style="color:var(--bg)">STOP<br>GUESSING.<br>START<br>RANKING.</div>
+        <div class="body mb-28" style="color:#555;max-width:320px">Join creators who optimise with real algorithm data, not blog post opinions.</div>
+      </div>
+      <div>
+        <div class="label-sm mb-12" style="color:#555">What you get — free:</div>
+        ${['Real-time SEO scoring for 3 platforms','Penalty detection and fix guide','Keyword research and hashtag intel','Competitor analysis (1 competitor)','Profile SEO audit','AI content suggestions (5/day)'].map(f=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #222">
+          <span style="color:var(--red);font-weight:700;font-size:13px">✓</span>
+          <span class="body-sm" style="color:var(--bg)">${f}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="auth-right">
+      <div style="max-width:400px;width:100%">
+        <div class="label-sm mb-8" style="color:var(--red)">Get Started — It's Free</div>
+        <div class="d3 mb-24">CREATE<br>ACCOUNT.</div>
+        <div class="auth-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div><label class="form-label">First Name</label><input class="input" placeholder="Kittu"></div>
+            <div><label class="form-label">Last Name</label><input class="input" placeholder="Last name"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="input" type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="input" type="password" placeholder="Min. 8 characters">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Platform Focus</label>
+            <select class="select w-full">
+              <option>Instagram</option>
+              <option>LinkedIn</option>
+              <option>X / Twitter</option>
+              <option>All Three</option>
+            </select>
+          </div>
+          <button class="btn btn-red w-full mb-12" style="justify-content:center" onclick="nav('dashboard')">Create Free Account →</button>
+          <div class="form-divider"><div class="form-divider-line"></div><div class="form-divider-text">or</div><div class="form-divider-line"></div></div>
+          <button class="btn btn-outline w-full mb-16" style="justify-content:center">Continue with Google</button>
+          <div class="text-center body-sm">Already have an account? <a onclick="nav('login')" style="color:var(--red);font-weight:700;cursor:pointer">Sign in →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: DASHBOARD
+═══════════════════════════════════════════════════ */
+function renderDashboard(){
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Welcome back, Kittu</div>
+      <div class="d4">Dashboard Overview</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-outline btn-sm" onclick="nav('analyzer')">+ Analyse Post</button>
+      <button class="btn btn-red btn-sm" onclick="nav('audit')">Run Full Scan</button>
+    </div>
+  </div>
+
+  <!-- METRIC STRIP -->
+  <div class="metric-strip">
+    <div class="ms-cell"><div class="ms-num c-white">78.4</div><div class="ms-label">Overall SEO Score</div><div class="ms-delta up">↑ +4.2 this week</div></div>
+    <div class="ms-cell"><div class="ms-num c-red">3</div><div class="ms-label">Active Penalties</div><div class="ms-delta dn">↓ Needs action</div></div>
+    <div class="ms-cell"><div class="ms-num c-green">+18%</div><div class="ms-label">Reach Growth</div><div class="ms-delta up">↑ vs last week</div></div>
+    <div class="ms-cell"><div class="ms-num c-amber">91</div><div class="ms-label">Keyword Score</div><div class="ms-delta up">↑ On track</div></div>
+  </div>
+
+  <!-- PLATFORM SCORES -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:var(--border)">
+    ${[
+      {name:'Instagram',score:82,color:'var(--ig)',tag:'tag-ig',change:'+3 this week',params:[{l:'Watch Time',v:82,c:'hi'},{l:'DM Sends',v:61,c:'md'},{l:'Caption KW',v:79,c:'hi'},{l:'Alt Text',v:38,c:'lo'}]},
+      {name:'LinkedIn',score:74,color:'var(--li)',tag:'tag-li',change:'+1 this week',params:[{l:'Depth Score',v:88,c:'hi'},{l:'Headline KW',v:44,c:'lo'},{l:'Comment Qual',v:67,c:'md'},{l:'Profile',v:90,c:'hi'}]},
+      {name:'X / Twitter',score:79,color:'#555',tag:'tag-x',change:'Stable',params:[{l:'Reply Depth',v:91,c:'hi'},{l:'RT Velocity',v:55,c:'md'},{l:'TweepCred',v:73,c:'hi'},{l:'Link Penalty',v:0,c:'lo'}]},
+    ].map((p,i)=>`
+    <div style="border-right:${i<2?'var(--border)':'none'}">
+      <div style="padding:14px 16px;border-bottom:var(--border);display:flex;justify-content:space-between;align-items:center">
+        <span class="platform-tag ${p.tag}">${p.name}</span>
+        <div style="text-align:right"><div style="font-family:var(--font-d);font-size:28px;color:${p.color};letter-spacing:-1px">${p.score}</div><div class="label-sm" style="color:#888">${p.change}</div></div>
+      </div>
+      ${p.params.map(m=>`
+      <div class="pb-metric">
+        <span class="pb-m-label">${m.l}</span>
+        <div class="pb-m-bar"><div class="pb-m-fill progress-${m.c}" style="width:${m.v}%"></div></div>
+        <span class="pb-m-val ${m.c}">${m.v>0?m.v+'%':'Active ✗'}</span>
+      </div>`).join('')}
+    </div>`).join('')}
+  </div>
+
+  <!-- PENALTIES + RECENT ANALYSES -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:var(--border)">
+    <div style="border-right:var(--border)">
+      <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Active Penalties — Fix These</span></div><span class="badge badge-err">3 Issues</span></div>
+      <div class="pen-item">
+        <div class="pen-icon err">✗</div>
+        <div class="pen-body"><div class="pen-platform" style="color:var(--ig)">Instagram</div><div class="pen-title">External link in caption</div><div class="pen-desc">Caption links suppress Explore reach by 30–50%. Move link to bio or use a Link-in-Bio tool.</div><div class="pen-fix-btn" onclick="nav('analyzer')">Fix in Analyser →</div></div>
+      </div>
+      <div class="pen-item">
+        <div class="pen-icon err">✗</div>
+        <div class="pen-body"><div class="pen-platform" style="color:var(--li)">LinkedIn</div><div class="pen-title">Headline missing target keywords</div><div class="pen-desc">Your headline has 0 of your 3 target buyer-intent keywords. Headline KW is the #1 LinkedIn search signal.</div><div class="pen-fix-btn" onclick="nav('audit')">Fix in Profile Audit →</div></div>
+      </div>
+      <div class="pen-item">
+        <div class="pen-icon warn">⚠</div>
+        <div class="pen-body"><div class="pen-platform" style="color:#555">X / Twitter</div><div class="pen-title">External link in tweet body</div><div class="pen-desc">X penalises links 30–50% reach. Post link in first reply instead.</div><div class="pen-fix-btn">View Guide →</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Recent Analyses</span></div><button class="btn btn-outline btn-sm" onclick="nav('analyzer')">+ New</button></div>
+      <table class="table" style="border:none">
+        <thead><tr><th>Caption Preview</th><th>Platform</th><th>Score</th></tr></thead>
+        <tbody>
+          ${[
+            {text:'Just dropped a new reel — save this for later...',plat:'ig',score:74},
+            {text:'Excited to share this exciting news with my LinkedIn...',plat:'li',score:58},
+            {text:'Hot take: the X algorithm is actually predictable if...',plat:'x',score:88},
+            {text:'5 arm workout moves that hit every angle. No...',plat:'ig',score:81},
+            {text:'What I learned from 6 months of daily posting on...',plat:'li',score:77},
+          ].map(r=>`
+          <tr>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.text}</td>
+            <td><span class="platform-tag tag-${r.plat}">${r.plat==='ig'?'IG':r.plat==='li'?'LI':'X'}</span></td>
+            <td><span style="font-family:var(--font-d);font-size:20px;color:${r.score>=80?'var(--green)':r.score>=60?'var(--amber)':'var(--red)'}">${r.score}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section-wrap">
+    <div class="section-heading" style="padding:0 0 14px 0"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Quick Actions</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      ${[
+        {icon:'🔍',title:'Analyse a caption',sub:'Paste any text for instant scoring',page:'analyzer'},
+        {icon:'🔑',title:'Find keywords',sub:'Discover what\'s ranking on each platform',page:'keywords'},
+        {icon:'👥',title:'Track competitors',sub:'See how you compare to your competitors',page:'competitors'},
+        {icon:'✨',title:'Get AI ideas',sub:'5 pre-scored post ideas for today',page:'ai-studio'},
+      ].map(a=>`
+      <div style="border:var(--border);padding:16px;cursor:pointer;background:var(--white);transition:background .15s" onclick="nav('${a.page}')" onmouseover="this.style.background='#fffbf0'" onmouseout="this.style.background='var(--white)'">
+        <div style="font-size:24px;margin-bottom:8px">${a.icon}</div>
+        <div class="h3 mb-4">${a.title}</div>
+        <div class="body-sm">${a.sub}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: CONTENT ANALYSER
+═══════════════════════════════════════════════════ */
+function renderAnalyzer(){
+  const platforms = ['instagram','linkedin','x'];
+  const pCurrent = S.analyzerPlatform;
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Real-time SEO scoring</div>
+      <div class="d4">Content Analyser</div>
+    </div>
+    <div style="display:flex;gap:0;border:var(--border)">
+      ${platforms.map(p=>`<button class="btn${pCurrent===p?' btn-black':' btn-outline'}" style="border:none;border-right:1px solid #111" onclick="S.analyzerPlatform='${p}';render()">${p==='instagram'?'Instagram':p==='linkedin'?'LinkedIn':'X / Twitter'}</button>`).join('')}
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;min-height:calc(100vh - 130px)">
+    <div style="border-right:var(--border)">
+      <!-- Input -->
+      <div style="padding:20px;border-bottom:var(--border)">
+        <div class="label-sm mb-8">Paste Caption or Post Text</div>
+        <textarea class="textarea" rows="5" id="analyzerInput" placeholder="Paste your Instagram caption, LinkedIn post, or tweet here...&#10;&#10;RankPulse will score it against the 2026 algorithm in real-time.">Just dropped a new reel — save this for later if you want quick arm workouts at home. No equipment needed. These 5 moves hit triceps, biceps and shoulders. Try them today! Link in bio for full program.</textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-red">Analyse Now →</button>
+          <button class="btn btn-outline">AI Rewrite</button>
+          <button class="btn btn-outline">Clear</button>
+          <span class="body-sm" style="margin-left:auto;align-self:center;color:#888">143 characters</span>
+        </div>
+      </div>
+
+      <!-- Flags -->
+      <div style="padding:16px 20px;border-bottom:var(--border)">
+        <div class="label-sm mb-10">Detected Issues & Signals</div>
+        <div class="flag-row">
+          <span class="flag ok">✓ Caption Keywords</span>
+          <span class="flag warn">⚠ No Alt Text</span>
+          <span class="flag err">✗ Link in Caption</span>
+          <span class="flag ok">✓ Hashtags (4)</span>
+          <span class="flag warn">⚠ Hook Weak (first 3s)</span>
+          <span class="flag ok">✓ Originality</span>
+          <span class="flag warn">⚠ DM-ability Low</span>
+          <span class="flag ok">✓ No Banned Tags</span>
+        </div>
+      </div>
+
+      <!-- Parameter Breakdown -->
+      <div style="padding:0">
+        <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Parameter Breakdown — ${pCurrent==='instagram'?'Instagram':pCurrent==='linkedin'?'LinkedIn':'X / Twitter'}</span></div></div>
+        ${(pCurrent==='instagram'?[
+          {n:'Watch Time / Hook Strength',v:60,c:'md',weight:'30%',note:'First 3 seconds weak. Add a hook that stops scroll. Target: 60%+ Reel completion.'},
+          {n:'DM Sends per Reach',v:40,c:'lo',weight:'25%',note:'Content not DM-worthy. Add a "send this to a friend" moment or shareable insight.'},
+          {n:'Caption Keywords',v:82,c:'hi',weight:'10%',note:'Good keyword density. "arm workouts", "triceps", "biceps" all indexed.'},
+          {n:'Hashtag Strategy',v:90,c:'hi',weight:'8%',note:'4 relevant hashtags — optimal. No banned tags detected.'},
+          {n:'Alt Text Optimisation',v:0,c:'lo',weight:'5%',note:'No alt text on image. Add keyword-rich alt text to boost indexing.'},
+          {n:'Profile Completeness',v:85,c:'hi',weight:'4%',note:'Profile strong. Category, bio keywords, and link in bio all set.'},
+          {n:'Posting Consistency',v:70,c:'md',weight:'3%',note:'Posting 3x/week. Target 4x minimum to maintain topic cluster.'},
+          {n:'Content Originality',v:95,c:'hi',weight:'5%',note:'Original content. No watermarks or duplicate audio detected.'},
+        ]:pCurrent==='linkedin'?[
+          {n:'Depth Score (Dwell Time)',v:55,c:'md',weight:'28%',note:'Post length too short. Add more context and line breaks for longer reading time.'},
+          {n:'Headline Keywords',v:44,c:'lo',weight:'18%',note:'Critical: Your headline has 0 target buyer-intent keywords. Fix immediately.'},
+          {n:'Comment Quality Score',v:70,c:'md',weight:'15%',note:'Posts generating decent comments. Avoid engagement bait phrasing.'},
+          {n:'Topic Authority',v:75,c:'hi',weight:'12%',note:'Consistent posting in fitness niche. LinkedIn has you in topic cluster.'},
+          {n:'Profile Completeness',v:90,c:'hi',weight:'10%',note:'Profile is 90% complete. Add certifications to reach 100%.'},
+          {n:'About Section Keywords',v:60,c:'md',weight:'7%',note:'About section partially optimised. Add direct answer block in first 300 chars.'},
+          {n:'Skill Endorsements',v:55,c:'md',weight:'5%',note:'Get specific skills endorsed by senior connections. Generic skills have zero SEO value.'},
+          {n:'Link Strategy',v:0,c:'lo',weight:'3%',note:'External link in post body detected. Move to first comment to avoid 40-60% reach penalty.'},
+        ]:[
+          {n:'Reply Depth Score',v:88,c:'hi',weight:'25%',note:'Actively responding to replies. Author reply = +75 algorithm weight.'},
+          {n:'Retweet Velocity (30min)',v:55,c:'md',weight:'20%',note:'Moderate RT speed. Post at 12-3pm or 7-9am for peak audience window.'},
+          {n:'TweepCred Score',v:73,c:'hi',weight:'18%',note:'Above critical threshold (65). All posts eligible for distribution.'},
+          {n:'Keyword / Hashtag Match',v:80,c:'hi',weight:'12%',note:'2 niche hashtags used. Optimal. Grok has categorised into fitness cluster.'},
+          {n:'External Link Penalty',v:0,c:'lo',weight:'10%',note:'ACTIVE PENALTY: Link in tweet body. 30-50% reach reduction. Move to first reply.'},
+          {n:'Content Format Score',v:85,c:'hi',weight:'8%',note:'Text-first content. X rewards text over video by 30%.'},
+          {n:'Recency Score',v:72,c:'hi',weight:'5%',note:'Posted within last 3 hours. Good. Posts decay 50% every 6 hours.'},
+          {n:'Grok Semantic Cluster',v:80,c:'hi',weight:'2%',note:'Content consistently categorised in fitness / wellness cluster.'},
+        ]).map(p=>`
+        <div style="padding:12px 20px;border-bottom:var(--border-light);display:flex;align-items:flex-start;gap:12px">
+          <div style="min-width:40px"><span class="badge badge-black" style="font-size:8px">${p.weight}</span></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+              <span class="h3">${p.n}</span>
+              <div style="flex:1;height:3px;background:#e8e4d0"><div class="progress-fill progress-${p.c}" style="width:${p.v}%"></div></div>
+              <span class="pb-m-val ${p.c}" style="min-width:36px">${p.v>0?p.v+'%':'Active ✗'}</span>
+            </div>
+            <div class="body-sm">${p.note}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Right Side Score Panel -->
+    <div style="background:var(--black);display:flex;flex-direction:column">
+      <div style="padding:24px;border-bottom:1px solid #222;text-align:center">
+        <div class="label-sm mb-4" style="color:#555">Content SEO Score</div>
+        <div style="font-family:var(--font-d);font-size:96px;color:var(--red);line-height:1;letter-spacing:-4px">74</div>
+        <div class="label-sm" style="color:#555">/ 100 — NEEDS WORK</div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid #222">
+          <div class="body-sm" style="color:#666">Fix the 3 flagged issues to reach</div>
+          <div style="font-family:var(--font-d);font-size:32px;color:#4ade80">88+</div>
+        </div>
+      </div>
+      <div style="padding:16px;border-bottom:1px solid #222">
+        <div class="label-sm mb-10" style="color:#555">Top 3 Fixes</div>
+        ${[
+          {icon:'✗',text:'Move link out of caption body',impact:'Est. +8 pts'},
+          {icon:'⚠',text:'Strengthen first 3-second hook',impact:'Est. +6 pts'},
+          {icon:'⚠',text:'Add alt text to image',impact:'Est. +3 pts'},
+        ].map(f=>`
+        <div style="display:flex;gap:8px;margin-bottom:10px;align-items:flex-start">
+          <span style="color:var(--red);font-weight:700;font-size:12px;margin-top:2px">${f.icon}</span>
+          <div style="flex:1"><div class="body-sm" style="color:var(--bg)">${f.text}</div><div class="label-sm" style="color:#4ade80">${f.impact}</div></div>
+        </div>`).join('')}
+      </div>
+      <div style="padding:16px;border-bottom:1px solid #222">
+        <div class="label-sm mb-10" style="color:#555">Predicted Performance</div>
+        ${[
+          {l:'Reach Estimate',v:'12K – 18K'},
+          {l:'Engagement Rate',v:'2.8% – 4.1%'},
+          {l:'Discovery Potential',v:'MEDIUM'},
+        ].map(s=>`
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a">
+          <span class="label-sm" style="color:#555">${s.l}</span>
+          <span style="font-size:11px;font-weight:600;color:var(--bg)">${s.v}</span>
+        </div>`).join('')}
+      </div>
+      <div style="padding:16px;margin-top:auto">
+        <button class="btn btn-red w-full mb-8" style="justify-content:center">AI Rewrite for Max Score</button>
+        <button class="btn btn-ghost w-full" style="justify-content:center">Save Analysis</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: KEYWORDS
+═══════════════════════════════════════════════════ */
+function renderKeywords(){
+  const keywords = [
+    {rank:1,term:'social media tips',vol:92,trend:'+34%',diff:'easy',plats:['ig','li','x']},
+    {rank:2,term:'instagram reels 2026',vol:88,trend:'+22%',diff:'med',plats:['ig']},
+    {rank:3,term:'content strategy',vol:75,trend:'stable',diff:'med',plats:['ig','li']},
+    {rank:4,term:'linkedin growth',vol:70,trend:'+18%',diff:'med',plats:['li']},
+    {rank:5,term:'arm workout home',vol:68,trend:'+41%',diff:'easy',plats:['ig']},
+    {rank:6,term:'twitter algorithm 2026',vol:60,trend:'-8%',diff:'hard',plats:['x']},
+    {rank:7,term:'social seo',vol:55,trend:'+29%',diff:'easy',plats:['ig','li','x']},
+    {rank:8,term:'reel ideas for creators',vol:52,trend:'+16%',diff:'easy',plats:['ig']},
+    {rank:9,term:'b2b content marketing',vol:48,trend:'+12%',diff:'hard',plats:['li']},
+    {rank:10,term:'hashag strategy 2026',vol:44,trend:'+8%',diff:'med',plats:['ig','x']},
+  ];
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Discover what ranks</div>
+      <div class="d4">Keyword Research</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input class="input" placeholder="Search keywords..." style="width:240px">
+      <button class="btn btn-red">Search</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 280px;min-height:calc(100vh - 120px)">
+    <div style="border-right:var(--border)">
+      <!-- Filters -->
+      <div style="padding:12px 16px;border-bottom:var(--border);display:flex;gap:8px;align-items:center">
+        <span class="label-sm" style="color:#888">Filter:</span>
+        ${['All Platforms','Instagram','LinkedIn','X / Twitter'].map((f,i)=>`<button class="btn btn-${i===0?'black':'outline'} btn-sm">${f}</button>`).join('')}
+        <span class="ml-auto body-sm" style="color:#888">Showing 10 of 2,847 keywords</span>
+      </div>
+      <!-- Table Header -->
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:var(--border);background:var(--black)">
+        <div style="min-width:28px" class="label-sm text-white">#</div>
+        <div class="label-sm text-white" style="flex:1">Keyword</div>
+        <div class="label-sm text-white" style="width:100px">Volume</div>
+        <div class="label-sm text-white" style="width:64px">Trend</div>
+        <div class="label-sm text-white" style="width:60px">Diff.</div>
+        <div class="label-sm text-white" style="width:80px">Platforms</div>
+      </div>
+      ${keywords.map(k=>`
+      <div class="kw-table-row">
+        <div class="kw-rank">${String(k.rank).padStart(2,'0')}</div>
+        <div class="kw-term" style="flex:1">${k.term}</div>
+        <div style="width:100px;display:flex;align-items:center;gap:6px">
+          <div class="kw-volume-bar" style="width:64px"><div class="kw-volume-fill" style="width:${k.vol}%"></div></div>
+          <span class="kw-vol-label">${k.vol}/100</span>
+        </div>
+        <div style="width:64px"><span class="kw-trend ${k.trend.startsWith('+')?'up':k.trend===('stable')?'flat':'dn'}">${k.trend}</span></div>
+        <div style="width:60px"><span class="kw-difficulty ${k.diff}">${k.diff}</span></div>
+        <div style="width:80px;display:flex;gap:3px">${k.plats.map(p=>`<span class="platform-tag tag-${p}" style="font-size:8px;padding:1px 4px">${p.toUpperCase()}</span>`).join('')}</div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Right Panel -->
+    <div>
+      <div style="padding:16px;border-bottom:var(--border)">
+        <div class="label-sm mb-12" style="color:var(--red)">Trending Now</div>
+        ${[
+          {term:'arm workout home',trend:'+41%',hot:true},
+          {term:'social media tips',trend:'+34%',hot:true},
+          {term:'social seo',trend:'+29%',hot:false},
+        ].map(k=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:var(--border-light)">
+          <span class="body" style="font-weight:600">${k.term}</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${k.hot?'<span class="badge badge-err" style="font-size:8px">HOT</span>':''}
+            <span class="kw-trend up">${k.trend}</span>
+          </div>
+        </div>`).join('')}
+      </div>
+      <div style="padding:16px;border-bottom:var(--border)">
+        <div class="label-sm mb-12">Keyword Sets</div>
+        ${[
+          {name:'Fitness Content Set',count:12,plat:'ig'},
+          {name:'LinkedIn B2B Set',count:8,plat:'li'},
+          {name:'X Growth Set',count:6,plat:'x'},
+        ].map(s=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:var(--border-light);cursor:pointer">
+          <div>
+            <div class="body" style="font-weight:600;font-size:12px">${s.name}</div>
+            <span class="platform-tag tag-${s.plat}" style="font-size:8px;margin-top:3px;display:inline-block">${s.plat.toUpperCase()}</span>
+          </div>
+          <span class="body-sm">${s.count} keywords</span>
+        </div>`).join('')}
+        <button class="btn btn-outline btn-sm w-full mt-12" style="justify-content:center;margin-top:12px">+ Create Set</button>
+      </div>
+      <div style="padding:16px">
+        <div class="label-sm mb-12">Keyword Gap vs Competitors</div>
+        <div class="notif">
+          <div class="label-sm mb-4" style="color:var(--red)">OPPORTUNITY FOUND</div>
+          <div class="body-sm">"fitness creator tips" — your top competitor ranks for this keyword. You don't.</div>
+        </div>
+        <button class="btn btn-red btn-sm w-full" style="justify-content:center;margin-top:8px" onclick="nav('competitors')">View Competitor Analysis →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: HASHTAGS
+═══════════════════════════════════════════════════ */
+function renderHashtags(){
+  const tags = [
+    {name:'#armworkout',vol:94,comp:'high',trend:'+12%',banned:false,plat:'ig'},
+    {name:'#homeworkout',vol:90,comp:'high',trend:'+8%',banned:false,plat:'ig'},
+    {name:'#fitnesscreator',vol:76,comp:'med',trend:'+34%',banned:false,plat:'ig'},
+    {name:'#contentcreator',vol:85,comp:'high',trend:'-3%',banned:false,plat:'ig'},
+    {name:'#linkedinmarketing',vol:72,comp:'med',trend:'+22%',banned:false,plat:'li'},
+    {name:'#socialmediatips',vol:88,comp:'high',trend:'+6%',banned:false,plat:'ig'},
+    {name:'#growthhacking',vol:55,comp:'med',trend:'stable',banned:false,plat:'x'},
+    {name:'#viral',vol:98,comp:'high',trend:'-',banned:true,plat:'ig'},
+    {name:'#follow4follow',vol:80,comp:'high',trend:'-',banned:true,plat:'ig'},
+    {name:'#gymlife',vol:78,comp:'med',trend:'+4%',banned:false,plat:'ig'},
+  ];
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Hashtag Intelligence</div>
+      <div class="d4">Hashtag Research</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input class="input" placeholder="Search hashtags..." style="width:220px">
+      <button class="btn btn-red">Search</button>
+      <button class="btn btn-outline" onclick="nav('keywords')">Switch to Keywords</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 260px;min-height:calc(100vh - 120px)">
+    <div style="border-right:var(--border)">
+      <div style="padding:10px 16px;border-bottom:var(--border);display:flex;gap:8px;align-items:center">
+        ${['All','Instagram','LinkedIn','X'].map((f,i)=>`<button class="btn btn-${i===0?'black':'outline'} btn-sm">${f}</button>`).join('')}
+        <span class="ml-auto"><span class="badge badge-err" style="margin-right:6px">2 Banned</span><span class="body-sm" style="color:#888">10 hashtags shown</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:var(--border);background:var(--black)">
+        <div class="label-sm text-white" style="flex:1">Hashtag</div>
+        <div class="label-sm text-white" style="width:120px">Volume</div>
+        <div class="label-sm text-white" style="width:80px">Trend</div>
+        <div class="label-sm text-white" style="width:72px">Compet.</div>
+        <div class="label-sm text-white" style="width:60px">Platform</div>
+      </div>
+      ${tags.map(t=>`
+      <div class="hashtag-item${t.banned?' err':''}" style="${t.banned?'background:#fff5f5;':''}">
+        <div class="ht-name" style="${t.banned?'text-decoration:line-through;color:var(--red);':''}">
+          ${t.name}
+          ${t.banned?'<span class="ht-banned" style="margin-left:8px">BANNED</span>':''}
+        </div>
+        <div style="width:120px;display:flex;align-items:center;gap:6px">
+          <div class="ht-bar-wrap" style="width:72px"><div class="ht-bar-fill" style="width:${t.vol}%;background:${t.banned?'var(--red)':'var(--black)'}"></div></div>
+          <span class="ht-volume">${t.vol}/100</span>
+        </div>
+        <div style="width:80px"><span class="kw-trend ${t.banned?'dn':t.trend.startsWith('+')?'up':t.trend==='stable'?'flat':'dn'}">${t.banned?'AVOID':t.trend}</span></div>
+        <div style="width:72px"><span class="ht-comp ${t.comp==='high'?'kw-difficulty hard':t.comp==='med'?'kw-difficulty med':'kw-difficulty easy'}" style="border:1.5px solid;padding:2px 8px;font-size:10px;font-weight:700">${t.comp}</span></div>
+        <div style="width:60px"><span class="platform-tag tag-${t.plat}" style="font-size:8px;padding:1px 6px">${t.plat.toUpperCase()}</span></div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Right Panel -->
+    <div>
+      <div style="padding:16px;border-bottom:var(--border)">
+        <div class="label-sm mb-12" style="color:var(--red)">My Hashtag Sets</div>
+        ${[
+          {name:'Arm Workout Set',tags:['#armworkout','#homeworkout','#fitnesscreator','#noequipment'],plat:'ig'},
+          {name:'Creator Set',tags:['#contentcreator','#socialmediatips','#creatoreconomy'],plat:'ig'},
+        ].map(s=>`
+        <div style="border:var(--border);padding:12px;margin-bottom:8px;background:var(--white)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span class="body" style="font-weight:600;font-size:12px">${s.name}</span>
+            <span class="platform-tag tag-${s.plat}" style="font-size:8px">${s.plat.toUpperCase()}</span>
+          </div>
+          <div style="display:flex;gap:3px;flex-wrap:wrap">
+            ${s.tags.map(t=>`<span style="font-size:9px;background:var(--bg);border:1px solid #ccc;padding:2px 6px">${t}</span>`).join('')}
+          </div>
+        </div>`).join('')}
+        <button class="btn btn-outline btn-sm w-full" style="justify-content:center;margin-top:6px">+ Create Set</button>
+      </div>
+      <div style="padding:16px">
+        <div class="label-sm mb-10" style="color:var(--red)">Banned Tag Checker</div>
+        <div class="notif" style="border-left-color:var(--red)">
+          <div class="label-sm mb-4" style="color:var(--red)">2 BANNED TAGS IN LIBRARY</div>
+          <div class="body-sm">#viral and #follow4follow are banned on Instagram. Using these suppresses your entire post's reach.</div>
+        </div>
+        <div class="notif ok" style="margin-top:8px">
+          <div class="label-sm mb-4" style="color:var(--green)">8 CLEAN TAGS</div>
+          <div class="body-sm">Your other hashtags are safe to use across platforms.</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: COMPETITORS
+═══════════════════════════════════════════════════ */
+function renderCompetitors(){
+  const comps = [
+    {handle:'@fitnesswithsarah',name:'Fitness With Sarah',ig:87,li:0,x:74,posts:42,eng:'4.2%',gap:['arm workout tips','no equipment workout']},
+    {handle:'@socialmediaguru',name:'Social Media Guru',ig:91,li:82,x:88,posts:38,eng:'3.8%',gap:['linkedin algorithm','content strategy b2b']},
+    {handle:'@creatortips',name:'Creator Tips Hub',ig:84,li:65,x:79,posts:55,eng:'5.1%',gap:['reel ideas 2026','creator economy']},
+  ];
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">See where you stand</div>
+      <div class="d4">Competitor Tracker</div>
+    </div>
+    <button class="btn btn-red">+ Add Competitor</button>
+  </div>
+
+  <!-- Your Score vs Theirs -->
+  <div style="background:var(--black);border-bottom:var(--border);padding:16px 20px;display:flex;align-items:center;gap:24px">
+    <div><div class="label-sm" style="color:#555;margin-bottom:4px">Your Score</div><div style="font-family:var(--font-d);font-size:36px;color:var(--red)">78.4</div></div>
+    <div style="flex:1;height:2px;background:#333"></div>
+    <div style="text-align:center"><div class="label-sm" style="color:#555;margin-bottom:4px">Market Avg</div><div style="font-family:var(--font-d);font-size:36px;color:#888">75.2</div></div>
+    <div style="flex:1;height:2px;background:#333"></div>
+    <div style="text-align:right"><div class="label-sm" style="color:#555;margin-bottom:4px">Top Competitor</div><div style="font-family:var(--font-d);font-size:36px;color:#4ade80">91.0</div></div>
+  </div>
+
+  <div style="padding:20px 20px 0">
+    <div class="section-heading" style="padding:0 0 14px 0"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Tracked Competitors (${comps.length} / 10)</span></div></div>
+    ${comps.map(c=>`
+    <div class="comp-card">
+      <div class="comp-header">
+        <div class="comp-avatar">${c.name[0]}</div>
+        <div style="flex:1">
+          <div class="comp-name">${c.name}</div>
+          <div class="comp-handle">${c.handle}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${c.ig?`<span class="platform-tag tag-ig" style="font-size:9px">IG: ${c.ig}</span>`:''}
+          ${c.li?`<span class="platform-tag tag-li" style="font-size:9px">LI: ${c.li}</span>`:''}
+          ${c.x?`<span class="platform-tag tag-x" style="font-size:9px">X: ${c.x}</span>`:''}
+        </div>
+        <button class="btn btn-outline btn-sm">View Detail</button>
+      </div>
+      <div class="comp-metrics">
+        <div class="comp-metric"><div class="comp-m-val" style="font-family:var(--font-d)">${c.posts}</div><div class="comp-m-label">Posts / month</div></div>
+        <div class="comp-metric"><div class="comp-m-val" style="font-family:var(--font-d)">${c.eng}</div><div class="comp-m-label">Avg Engagement</div></div>
+        <div class="comp-metric">
+          <div class="comp-m-val" style="font-size:13px;color:var(--red)">
+            ${c.gap.slice(0,1).map(g=>`<div style="font-family:var(--font-b);font-size:11px;font-weight:600;margin-bottom:2px">• ${g}</div>`).join('')}
+          </div>
+          <div class="comp-m-label">Keyword Gaps (You Missing)</div>
+        </div>
+        <div class="comp-metric">
+          <div><button class="btn btn-red btn-sm">Close Gap →</button></div>
+        </div>
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <!-- Gap Analysis -->
+  <div style="padding:0 20px 20px">
+    <div class="section-heading" style="padding:16px 0 14px"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Keyword Gap Analysis — All Competitors</span></div></div>
+    <div style="border:var(--border)">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:var(--border);background:var(--black);padding:10px 14px">
+        <div class="label-sm text-white">Keyword</div>
+        <div class="label-sm text-white">Competitor Ranks</div>
+        <div class="label-sm text-white">Action</div>
+      </div>
+      ${[
+        {kw:'arm workout tips',comps:['@fitnesswithsarah'],action:'Add to caption, target IG'},
+        {kw:'no equipment workout',comps:['@fitnesswithsarah','@creatortips'],action:'High opportunity — start immediately'},
+        {kw:'reel ideas 2026',comps:['@creatortips'],action:'Use in hashtag + caption KW'},
+        {kw:'linkedin algorithm',comps:['@socialmediaguru'],action:'Write a LinkedIn article targeting this'},
+        {kw:'content strategy b2b',comps:['@socialmediaguru'],action:'Create LinkedIn carousel on this topic'},
+      ].map((g,i)=>`
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:10px 14px;border-bottom:${i<4?'var(--border-light)':'none'}">
+        <div class="body" style="font-weight:600">${g.kw}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">${g.comps.map(c=>`<span style="font-size:10px;background:#fee2e2;color:var(--red);padding:2px 6px;border:1px solid var(--red)">${c}</span>`).join('')}</div>
+        <div class="body-sm" style="color:var(--red)">${g.action}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: SCHEDULER
+═══════════════════════════════════════════════════ */
+function renderScheduler(){
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const posts = {
+    2:{type:'ig',text:'Arm workout reel'},
+    5:{type:'li',text:'LinkedIn article'},
+    8:{type:'ig',text:'Transformation post'},
+    9:{type:'x',text:'Hot take thread'},
+    12:{type:'ig',text:'Tutorial carousel'},
+    15:{type:'li',text:'Industry insight'},
+    16:{type:'x',text:'Poll + discussion'},
+    19:{type:'ig',text:'Q&A story backup'},
+    22:{type:'ig',text:'New reel drop'},
+    23:{type:'li',text:'Behind the scenes'},
+  };
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Plan with SEO built in</div>
+      <div class="d4">Post Scheduler</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">← April</button>
+      <button class="btn btn-black btn-sm">Today</button>
+      <button class="btn btn-outline btn-sm">May →</button>
+      <button class="btn btn-red" onclick="">+ Schedule Post</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 260px;min-height:calc(100vh - 120px)">
+    <div style="border-right:var(--border)">
+      <!-- Calendar -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:var(--border)">
+        ${days.map(d=>`<div class="cal-day-header">${d}</div>`).join('')}
+      </div>
+      <div class="calendar-grid">
+        ${Array.from({length:35},(_, idx)=>{
+          const date = idx - 1;
+          const dayNum = date + 1;
+          const hasPost = posts[dayNum];
+          const isToday = dayNum === 11;
+          if(dayNum < 1 || dayNum > 30) return `<div class="cal-day" style="background:#f9f7f0;opacity:.4"></div>`;
+          return `<div class="cal-day${isToday?' today':''}${hasPost?' has-post':''}">
+            <div class="cal-date" style="${isToday?'color:var(--red);font-weight:700':''}${dayNum===11?'':''}">
+              ${dayNum}${isToday?' ●':''}
+            </div>
+            ${hasPost?`<div class="cal-post ${hasPost.type}">${hasPost.text}</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div>
+      <div style="padding:16px;border-bottom:var(--border)">
+        <div class="label-sm mb-12" style="color:var(--red)">Optimal Posting Times</div>
+        ${[
+          {plat:'Instagram',times:['7–9 AM','12–2 PM','6–8 PM'],best:'Tue, Wed, Thu'},
+          {plat:'LinkedIn',times:['7–9 AM','12–1 PM'],best:'Tue, Wed'},
+          {plat:'X / Twitter',times:['8–10 AM','6–8 PM'],best:'Wed, Fri'},
+        ].map(p=>`
+        <div style="padding:10px 0;border-bottom:var(--border-light)">
+          <div class="label-sm mb-4">${p.plat}</div>
+          <div class="body-sm mb-2">${p.times.join(' · ')}</div>
+          <div class="body-sm" style="color:#888">Best days: ${p.best}</div>
+        </div>`).join('')}
+      </div>
+      <div style="padding:16px;border-bottom:var(--border)">
+        <div class="label-sm mb-12">Upcoming Queue</div>
+        ${[
+          {date:'Apr 12',text:'Arm workout reel',plat:'ig',score:81},
+          {date:'Apr 14',text:'LinkedIn article drop',plat:'li',score:74},
+          {date:'Apr 15',text:'Hot take thread',plat:'x',score:88},
+          {date:'Apr 16',text:'Tutorial carousel',plat:'ig',score:77},
+        ].map(p=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:var(--border-light)">
+          <div style="min-width:48px;font-size:10px;color:#888;font-weight:600">${p.date}</div>
+          <div style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.text}</div>
+          <span class="platform-tag tag-${p.plat}" style="font-size:8px;flex-shrink:0">${p.plat.toUpperCase()}</span>
+          <span style="font-family:var(--font-d);font-size:18px;color:${p.score>=80?'var(--green)':p.score>=60?'var(--amber)':'var(--red)'};flex-shrink:0">${p.score}</span>
+        </div>`).join('')}
+      </div>
+      <div style="padding:16px">
+        <div class="label-sm mb-10">This Month</div>
+        ${[
+          {l:'Posts Scheduled',v:'10'},
+          {l:'Instagram',v:'5 posts'},
+          {l:'LinkedIn',v:'3 posts'},
+          {l:'X / Twitter',v:'2 posts'},
+          {l:'Avg SEO Score',v:'80.2'},
+        ].map(s=>`
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:var(--border-light)">
+          <span class="body-sm">${s.l}</span>
+          <span class="body" style="font-weight:600">${s.v}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: PROFILE AUDIT
+═══════════════════════════════════════════════════ */
+function renderAudit(){
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Is your profile working for you?</div>
+      <div class="d4">Profile SEO Auditor</div>
+    </div>
+    <div style="display:flex;gap:0;border:var(--border)">
+      ${['Instagram','LinkedIn','X / Twitter'].map((p,i)=>`<button class="btn btn-${i===0?'black':'outline'}" style="border:none;border-right:1px solid #111">${p}</button>`).join('')}
+    </div>
+  </div>
+
+  <div class="section-wrap">
+    <!-- Overall Score -->
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:20px;border:var(--border);padding:20px;margin-bottom:16px;background:var(--black)">
+      <div style="display:flex;align-items:center;gap:20px">
+        <div class="audit-score-ring" style="width:80px;height:80px">
+          <div style="font-family:var(--font-d);font-size:36px;color:var(--red);line-height:1">72</div>
+          <div class="label-sm" style="color:#555">/100</div>
+        </div>
+        <div>
+          <div class="d4 mb-4" style="color:var(--bg)">INSTAGRAM PROFILE</div>
+          <div class="body-sm mb-8" style="color:#555">@yourhandle · Creator account · 12.4K followers</div>
+          <div style="display:flex;gap:6px">
+            <span class="badge badge-err">5 Issues</span>
+            <span class="badge badge-warn">3 Warnings</span>
+            <span class="badge" style="border-color:#4ade80;color:#4ade80;background:transparent">8 Good</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px">
+        <button class="btn btn-red" onclick="nav('analyzer')">Auto-Fix with AI →</button>
+        <button class="btn btn-ghost">Export Report</button>
+      </div>
+    </div>
+
+    <!-- Profile Fields -->
+    ${[
+      {section:'Profile Basics',items:[
+        {field:'Username',status:'ok',detail:'@yourhandle — clean, brandable, searchable'},
+        {field:'Profile Photo',status:'ok',detail:'Professional photo detected. High contrast, face visible.'},
+        {field:'Display Name',status:'warn',detail:'No keywords in display name. Add your niche (e.g. "Kittu | Fitness Creator")'},
+        {field:'Account Category',status:'ok',detail:'Set to "Creator" — correct for algorithmic classification'},
+        {field:'Verified Status',status:'warn',detail:'Account not verified. Verification improves trust signals.'},
+      ]},
+      {section:'Bio & Keywords',items:[
+        {field:'Bio Keywords',status:'err',detail:'CRITICAL: Bio has 0 of your 3 target keywords. Instagram indexes bio text for search.'},
+        {field:'Bio Length',status:'ok',detail:'148/150 characters used — good utilisation'},
+        {field:'Link in Bio',status:'ok',detail:'Active link detected. Use a link aggregator for multiple destinations.'},
+        {field:'Call to Action',status:'warn',detail:'No clear CTA in bio. Add "↓ Free workout guide" or similar.'},
+        {field:'Story Highlights',status:'err',detail:'No story highlights active. Highlights signal account authority to the algorithm.'},
+      ]},
+      {section:'Content Signals',items:[
+        {field:'Posting Frequency',status:'warn',detail:'3 posts/week detected. Target: 4+ to maintain topic cluster membership.'},
+        {field:'Content Originality',status:'ok',detail:'No watermarked or duplicate content in last 30 posts.'},
+        {field:'Reels vs Static Ratio',status:'ok',detail:'68% Reels — good. Reels drive discovery, carousels drive engagement.'},
+        {field:'Hashtag Consistency',status:'err',detail:'3 banned hashtags found in recent posts (#viral, #f4f, #likeforlike). Remove immediately.'},
+        {field:'Alt Text Usage',status:'err',detail:'Only 2% of posts have alt text. This is a critical SEO miss. Enable for all posts.'},
+      ]},
+    ].map(s=>`
+    <div class="audit-section">
+      <div class="audit-header">
+        <div class="h2">${s.section}</div>
+        <div style="display:flex;gap:4px">
+          ${['ok','warn','err'].map(t=>`<span class="badge badge-${t==='ok'?'ok':t==='warn'?'warn':'err'}">${s.items.filter(i=>i.status===t).length} ${t==='ok'?'Good':t==='warn'?'Warn':'Issue'}</span>`).join('')}
+        </div>
+      </div>
+      ${s.items.map(item=>`
+      <div class="audit-item">
+        <div class="audit-check ${item.status}">${item.status==='ok'?'✓':item.status==='warn'?'!':'✗'}</div>
+        <div style="flex:1">
+          <div class="audit-field">${item.field}</div>
+          <div class="audit-detail">${item.detail}</div>
+        </div>
+        ${item.status!=='ok'?`<button class="btn btn-outline btn-sm">Fix →</button>`:''}
+      </div>`).join('')}
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: ANALYTICS
+═══════════════════════════════════════════════════ */
+function renderAnalytics(){
+  const bars = [38,52,61,48,74,80,88,77,65,82,91,78];
+  const labels = ['Mar 30','Apr 1','Apr 2','Apr 3','Apr 4','Apr 5','Apr 6','Apr 7','Apr 8','Apr 9','Apr 10','Today'];
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Track your growth</div>
+      <div class="d4">Analytics & Reporting</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select class="select">
+        <option>Last 14 Days</option>
+        <option>Last 30 Days</option>
+        <option>Last 90 Days</option>
+      </select>
+      <button class="btn btn-outline btn-sm">Export PDF</button>
+      <button class="btn btn-outline btn-sm">Export CSV</button>
+    </div>
+  </div>
+
+  <div class="metric-strip">
+    <div class="ms-cell"><div class="ms-num c-white">78.4</div><div class="ms-label">Avg SEO Score</div><div class="ms-delta up">↑ +4.2 vs prev period</div></div>
+    <div class="ms-cell"><div class="ms-num c-green">+18%</div><div class="ms-label">Reach Growth</div><div class="ms-delta up">↑ Up from 6% last period</div></div>
+    <div class="ms-cell"><div class="ms-num c-amber">3.4%</div><div class="ms-label">Avg Engagement</div><div class="ms-delta up">↑ +0.6% vs prev period</div></div>
+    <div class="ms-cell"><div class="ms-num c-red">3</div><div class="ms-label">Penalties Fixed</div><div class="ms-delta flat">2 new added</div></div>
+  </div>
+
+  <div class="section-wrap">
+    <!-- SEO Score Over Time -->
+    <div style="border:var(--border);padding:20px;margin-bottom:16px;background:var(--white)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div><div class="label-sm mb-4" style="color:var(--red)">SEO Score Trend</div><div class="h2">Last 12 Days</div></div>
+        <div style="display:flex;gap:6px">
+          ${['IG','LI','X','All'].map((p,i)=>`<button class="btn btn-${i===3?'black':'outline'} btn-sm">${p}</button>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:140px">
+        ${bars.map((b,i)=>`
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="font-size:8px;color:${b>=80?'var(--green)':b>=60?'var(--amber)':'var(--red)'};font-weight:700">${b}</div>
+          <div style="width:100%;background:${b>=80?'var(--green)':b>=60?'var(--amber)':'var(--red)'};height:${b*1.1}px;transition:height .3s"></div>
+          <div style="font-size:7px;color:#888;text-align:center;white-space:nowrap">${labels[i]}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Platform Comparison -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="border:var(--border);padding:20px;background:var(--white)">
+        <div class="label-sm mb-16" style="color:var(--red)">Platform SEO Comparison</div>
+        ${[
+          {plat:'Instagram',score:82,prev:79,color:'var(--ig)'},
+          {plat:'LinkedIn',score:74,prev:73,color:'var(--li)'},
+          {plat:'X / Twitter',score:79,prev:76,color:'#555'},
+        ].map(p=>`
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span class="body" style="font-weight:600">${p.plat}</span>
+            <div><span style="font-family:var(--font-d);font-size:20px;color:${p.color}">${p.score}</span><span class="body-sm" style="color:var(--green);margin-left:6px">+${p.score-p.prev}</span></div>
+          </div>
+          <div class="progress-wrap"><div class="progress-fill" style="width:${p.score}%;background:${p.color}"></div></div>
+        </div>`).join('')}
+      </div>
+      <div style="border:var(--border);padding:20px;background:var(--white)">
+        <div class="label-sm mb-16" style="color:var(--red)">Top Performing Posts</div>
+        ${[
+          {text:'Hot take: X algorithm is predictable',plat:'x',score:88,reach:'34K'},
+          {text:'5 arm moves, no equipment needed',plat:'ig',score:81,reach:'22K'},
+          {text:'What I learned from 6mo of posting',plat:'li',score:77,reach:'18K'},
+        ].map((p,i)=>`
+        <div style="padding:10px 0;border-bottom:${i<2?'var(--border-light)':'none'};display:flex;gap:10px;align-items:center">
+          <span style="font-family:var(--font-d);font-size:20px;color:var(--red);min-width:24px">${String(i+1).padStart(2,'0')}</span>
+          <div style="flex:1"><div class="body" style="font-size:11px;font-weight:600">${p.text}</div><div style="display:flex;gap:6px;margin-top:3px"><span class="platform-tag tag-${p.plat}" style="font-size:8px">${p.plat.toUpperCase()}</span><span class="body-sm">${p.reach} reach</span></div></div>
+          <span style="font-family:var(--font-d);font-size:22px;color:var(--green)">${p.score}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Reach & Engagement Over Time -->
+    <div style="border:var(--border);padding:20px;background:var(--white)">
+      <div class="label-sm mb-16" style="color:var(--red)">Reach & Engagement — Weekly</div>
+      <table class="table">
+        <thead><tr><th>Week</th><th>Total Reach</th><th>Avg Engagement</th><th>Avg SEO Score</th><th>Penalties</th><th>Top Platform</th></tr></thead>
+        <tbody>
+          ${[
+            {week:'Apr 7–10',reach:'24,200',eng:'3.4%',score:78,pen:3,top:'Instagram'},
+            {week:'Mar 31–Apr 6',reach:'20,500',eng:'2.8%',score:74,pen:5,top:'X / Twitter'},
+            {week:'Mar 24–30',reach:'18,800',eng:'3.1%',score:71,pen:4,top:'Instagram'},
+            {week:'Mar 17–23',reach:'16,200',eng:'2.6%',score:68,pen:6,top:'LinkedIn'},
+          ].map(r=>`
+          <tr>
+            <td style="font-weight:600">${r.week}</td>
+            <td>${r.reach}</td>
+            <td><span style="color:${parseFloat(r.eng)>=3?'var(--green)':'var(--amber)'};font-weight:600">${r.eng}</span></td>
+            <td><span style="font-family:var(--font-d);font-size:18px;color:${r.score>=75?'var(--green)':'var(--amber)'}">${r.score}</span></td>
+            <td><span style="color:var(--red);font-weight:700">${r.pen}</span></td>
+            <td>${r.top}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: AI STUDIO
+═══════════════════════════════════════════════════ */
+function renderAIStudio(){
+  const ideas = [
+    {score:92,title:'"5 arm moves that hit EVERY angle (no equipment)"',hook:'This gets DMs. Lead with the result, not the exercise.',tags:['ig'],format:'Reel'},
+    {score:88,title:'"The one LinkedIn mistake killing your reach in 2026"',hook:'Controversy + specificity = depth score gold.',tags:['li'],format:'Long-form Post'},
+    {score:86,title:'"Hot take: the X algorithm rewards this one behaviour 150x more than likes"',hook:'Use the +75 reply weight as your hook. Cite the source.',tags:['x'],format:'Thread'},
+    {score:83,title:'"What 6 months of daily Instagram posting taught me (brutal truth)"',hook:'Personal transformation + data = DM-worthy content.',tags:['ig','li'],format:'Carousel'},
+    {score:79,title:'"3 hashtags you\'re using that are banned on Instagram right now"',hook:'Fear + utility. Creators WILL DM this to others.',tags:['ig'],format:'Reel / Carousel'},
+  ];
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Pre-scored content ideas, daily</div>
+      <div class="d4">AI Content Studio</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">Regenerate Ideas</button>
+      <button class="btn btn-red">+ Create Brief</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 280px;min-height:calc(100vh - 120px)">
+    <div style="border-right:var(--border)">
+      <div style="padding:14px 20px;border-bottom:var(--border);display:flex;align-items:center;gap:10px;background:var(--black)">
+        <span class="label-sm" style="color:#555">Today's Ideas — April 11, 2026</span>
+        <span class="badge" style="border-color:#4ade80;color:#4ade80;background:transparent;margin-left:auto">5 / 5 Generated</span>
+      </div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:10px">
+        ${ideas.map((idea,i)=>`
+        <div class="ai-idea">
+          <div class="ai-idea-header">
+            <div style="flex:1">
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                ${idea.tags.map(t=>`<span class="platform-tag tag-${t}" style="font-size:9px">${t.toUpperCase()}</span>`).join('')}
+                <span class="badge badge-black" style="font-size:8px">${idea.format}</span>
+              </div>
+              <div class="h2 mb-6">${idea.title}</div>
+              <div class="body-sm">${idea.hook}</div>
+            </div>
+            <div style="text-align:center">
+              <div class="ai-idea-score">${idea.score}</div>
+              <div class="label-sm" style="color:#888">/100</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-red btn-sm">Use This Idea</button>
+            <button class="btn btn-outline btn-sm">Expand with AI</button>
+            <button class="btn btn-outline btn-sm">Schedule →</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div>
+      <div style="padding:16px;border-bottom:var(--border)">
+        <div class="label-sm mb-12" style="color:var(--red)">Content Brief</div>
+        <div style="border:var(--border);padding:12px;background:var(--white)">
+          <div class="form-group mb-10">
+            <label class="form-label">Your Niche</label>
+            <input class="input" value="Fitness / Home Workouts">
+          </div>
+          <div class="form-group mb-10">
+            <label class="form-label">Target Platform</label>
+            <select class="select w-full">
+              <option>Instagram (Reels)</option>
+              <option>LinkedIn</option>
+              <option>X / Twitter</option>
+              <option>All Platforms</option>
+            </select>
+          </div>
+          <div class="form-group mb-10">
+            <label class="form-label">Content Style</label>
+            <select class="select w-full">
+              <option>Educational</option>
+              <option>Controversial / Hot Take</option>
+              <option>Personal Story</option>
+              <option>Tutorial</option>
+            </select>
+          </div>
+          <div class="form-group mb-12">
+            <label class="form-label">Keywords to Target</label>
+            <input class="input" placeholder="e.g. arm workout, home fitness">
+          </div>
+          <button class="btn btn-red w-full" style="justify-content:center">Generate 5 Ideas →</button>
+        </div>
+      </div>
+      <div style="padding:16px">
+        <div class="label-sm mb-12">Saved Ideas (12)</div>
+        ${[
+          {title:'"Why your IG reach dropped 40%"',score:85,plat:'ig'},
+          {title:'"LinkedIn algorithm cheat sheet"',score:88,plat:'li'},
+          {title:'"Thread: X engagement weights"',score:91,plat:'x'},
+        ].map(s=>`
+        <div style="padding:8px 0;border-bottom:var(--border-light);display:flex;gap:8px;align-items:center;cursor:pointer">
+          <span class="platform-tag tag-${s.plat}" style="font-size:8px;flex-shrink:0">${s.plat.toUpperCase()}</span>
+          <div style="flex:1;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.title}</div>
+          <span style="font-family:var(--font-d);font-size:18px;color:var(--green)">${s.score}</span>
+        </div>`).join('')}
+        <button class="btn btn-outline btn-sm w-full" style="justify-content:center;margin-top:10px">View All Saved →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE: SETTINGS
+═══════════════════════════════════════════════════ */
+function renderSettings(){
+  return `
+  <div class="page-header">
+    <div class="page-title-group">
+      <div class="page-kicker">Your account</div>
+      <div class="d4">Settings</div>
+    </div>
+    <button class="btn btn-red btn-sm">Save Changes</button>
+  </div>
+  <div style="display:grid;grid-template-columns:200px 1fr">
+    <div style="border-right:var(--border);padding:8px 0">
+      ${['Profile','Connected Accounts','Notifications','Data & Privacy','Developer / API'].map((s,i)=>`
+      <div style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;border-left:3px solid ${i===0?'var(--red)':'transparent'};color:${i===0?'var(--black)':'#888'};background:${i===0?'var(--white)':'transparent'}">${s}</div>`).join('')}
+    </div>
+    <div style="padding:24px">
+      <div style="border:var(--border);padding:24px;background:var(--white);max-width:560px">
+        <div class="h2 mb-20">Profile Information</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div><label class="form-label">First Name</label><input class="input" value="Kittu"></div>
+          <div><label class="form-label">Last Name</label><input class="input" value=""></div>
+        </div>
+        <div class="form-group mb-14"><label class="form-label">Email Address</label><input class="input" value="kittu@example.com" type="email"></div>
+        <div class="form-group mb-20"><label class="form-label">Primary Niche</label><input class="input" value="Fitness / Home Workouts"></div>
+        <div class="divider"></div>
+        <div class="h2 mb-16">Connected Platforms</div>
+        ${[
+          {plat:'Instagram',handle:'@yourhandle',connected:true,tag:'ig'},
+          {plat:'LinkedIn',handle:'Not connected',connected:false,tag:'li'},
+          {plat:'X / Twitter',handle:'Not connected',connected:false,tag:'x'},
+        ].map(p=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:var(--border-light)">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="platform-tag tag-${p.tag}">${p.plat}</span>
+            <span class="body" style="font-size:12px;color:${p.connected?'var(--black)':'#999'}">${p.handle}</span>
+          </div>
+          <button class="btn btn-${p.connected?'outline':'red'} btn-sm">${p.connected?'Disconnect':'Connect →'}</button>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN PAGES
+═══════════════════════════════════════════════════ */
+function renderAdminOverview(){
+  return `
+  <div class="page-header" style="background:#f5f2e8">
+    <div class="page-title-group">
+      <div class="page-kicker" style="color:var(--red)">Platform Administration</div>
+      <div class="d4">Admin Overview</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <div class="footer-live"><div class="live-dot"></div>All Systems Live</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);background:var(--black);border-bottom:var(--border)">
+    ${[
+      {n:'1,247',l:'Total Users',d:'↑ +84 this week',c:'c-white'},
+      {n:'612',l:'Monthly Active',d:'49% MAU rate',c:'c-green'},
+      {n:'0',l:'Revenue',d:'Free platform',c:'c-amber'},
+      {n:'3',l:'Open Bugs',d:'↓ Fixed 2 today',c:'c-red'},
+    ].map(m=>`
+    <div class="ms-cell">
+      <div class="ms-num ${m.c}">${m.n}</div>
+      <div class="ms-label">${m.l}</div>
+      <div class="ms-delta ${m.d.startsWith('↑')?'up':m.d.startsWith('↓')?'dn':'flat'}">${m.d}</div>
+    </div>`).join('')}
+  </div>
+
+  <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <!-- User Growth -->
+    <div style="border:var(--border);background:var(--white)">
+      <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">User Growth — Last 7 Days</span></div></div>
+      <div style="padding:16px">
+        ${[
+          {date:'Apr 10',signups:18,active:524},
+          {date:'Apr 9',signups:22,active:511},
+          {date:'Apr 8',signups:14,active:498},
+          {date:'Apr 7',signups:31,active:487},
+          {date:'Apr 6',signups:19,active:462},
+        ].map(d=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:var(--border-light)">
+          <span class="body-sm" style="min-width:48px;font-weight:600">${d.date}</span>
+          <div style="flex:1;height:3px;background:#e8e4d0"><div style="width:${(d.signups/31)*100}%;height:100%;background:var(--red)"></div></div>
+          <span class="body-sm" style="min-width:80px;text-align:right">+${d.signups} signups · ${d.active} MAU</span>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- API Health -->
+    <div style="border:var(--border);background:var(--white)">
+      <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Platform API Health</span></div><button class="btn btn-outline btn-sm" onclick="nav('admin-api')">Full View →</button></div>
+      <div style="padding:16px">
+        ${[
+          {api:'Instagram API',status:'live',rate:'2,847 / 5,000/hr',pct:57},
+          {api:'LinkedIn API',status:'live',rate:'891 / 2,000/hr',pct:44},
+          {api:'X API v2',status:'warn',rate:'1,987 / 2,000/hr',pct:99},
+          {api:'OpenAI API',status:'live',rate:'342 / 1,000/hr',pct:34},
+          {api:'Supabase DB',status:'live',rate:'24ms avg latency',pct:0},
+        ].map(a=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:var(--border-light)">
+          <span class="status-dot ${a.status}"></span>
+          <span class="body" style="flex:1;font-size:12px;font-weight:600">${a.api}</span>
+          <span class="body-sm">${a.rate}</span>
+          ${a.pct>=90?`<span class="badge badge-err">NEAR LIMIT</span>`:''}
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div style="border:var(--border);background:var(--white)">
+      <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">Recent Signups</span></div><button class="btn btn-outline btn-sm" onclick="nav('admin-users')">All Users →</button></div>
+      <table class="table" style="border:none">
+        <thead><tr><th>User</th><th>Platform</th><th>Score</th><th>Joined</th></tr></thead>
+        <tbody>
+          ${[
+            {name:'Rohan K.',email:'rohan@...',plat:'ig',score:72,joined:'2h ago'},
+            {name:'Sanya M.',email:'sanya@...',plat:'li',score:65,joined:'4h ago'},
+            {name:'Arjun P.',email:'arjun@...',plat:'x',score:80,joined:'6h ago'},
+            {name:'Priya S.',email:'priya@...',plat:'ig',score:58,joined:'8h ago'},
+          ].map(u=>`
+          <tr>
+            <td><div style="font-weight:600;font-size:12px">${u.name}</div><div class="body-sm">${u.email}</div></td>
+            <td><span class="platform-tag tag-${u.plat}" style="font-size:8px">${u.plat.toUpperCase()}</span></td>
+            <td><span style="font-family:var(--font-d);font-size:18px;color:${u.score>=70?'var(--green)':'var(--amber)'}">${u.score}</span></td>
+            <td class="body-sm">${u.joined}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- System Stats -->
+    <div style="border:var(--border);background:var(--white)">
+      <div class="section-heading"><div class="sh-title-row"><div class="sh-accent"></div><span class="sh-title">System Stats</span></div></div>
+      <div style="padding:16px">
+        ${[
+          {l:'Total Analyses Run',v:'18,247'},
+          {l:'Avg Analysis Time',v:'2.3s'},
+          {l:'Avg SEO Score (all users)',v:'69.4'},
+          {l:'Most Used Feature',v:'Content Analyser'},
+          {l:'Most Used Platform',v:'Instagram'},
+          {l:'Penalties Detected Total',v:'4,821'},
+          {l:'Supabase DB Size',v:'342 MB / 500 MB'},
+          {l:'Vercel Bandwidth',v:'8.2 GB / 100 GB'},
+        ].map(s=>`
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:var(--border-light)">
+          <span class="body-sm">${s.l}</span>
+          <span class="body" style="font-weight:700;font-size:12px">${s.v}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAdminUsers(){
+  const users = [
+    {name:'Kittu',email:'kittu@example.com',plat:'All',score:78,analyses:42,status:'active',joined:'Apr 1'},
+    {name:'Rohan K.',email:'rohan@example.com',plat:'Instagram',score:72,analyses:18,status:'active',joined:'Apr 10'},
+    {name:'Sanya M.',email:'sanya@gmail.com',plat:'LinkedIn',score:65,analyses:9,status:'active',joined:'Apr 10'},
+    {name:'Arjun P.',email:'arjun@gmail.com',plat:'X',score:80,analyses:31,status:'active',joined:'Apr 9'},
+    {name:'Priya S.',email:'priya@outlook.com',plat:'Instagram',score:58,analyses:7,status:'inactive',joined:'Apr 9'},
+    {name:'Dev R.',email:'dev@startup.io',plat:'LinkedIn',score:84,analyses:55,status:'active',joined:'Apr 5'},
+    {name:'Meena J.',email:'meena@gmail.com',plat:'All',score:71,analyses:23,status:'active',joined:'Apr 3'},
+    {name:'Siddharth K.',email:'sid@example.com',plat:'X',score:63,analyses:12,status:'inactive',joined:'Mar 29'},
+  ];
+  return `
+  <div class="page-header" style="background:#f5f2e8">
+    <div class="page-title-group">
+      <div class="page-kicker" style="color:var(--red)">User Management</div>
+      <div class="d4">All Users (1,247)</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input class="input" placeholder="Search users..." style="width:220px">
+      <select class="select"><option>All Status</option><option>Active</option><option>Inactive</option></select>
+      <button class="btn btn-outline btn-sm">Export CSV</button>
+    </div>
+  </div>
+  <div style="padding:20px">
+    <table class="table">
+      <thead><tr><th>User</th><th>Platform</th><th>SEO Score</th><th>Analyses</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${users.map(u=>`
+        <tr>
+          <td><div style="font-weight:700;font-size:13px">${u.name}</div><div class="body-sm">${u.email}</div></td>
+          <td><span class="body-sm">${u.plat}</span></td>
+          <td><span style="font-family:var(--font-d);font-size:22px;color:${u.score>=75?'var(--green)':u.score>=60?'var(--amber)':'var(--red)'}">${u.score}</span></td>
+          <td style="font-weight:600">${u.analyses}</td>
+          <td><span class="badge badge-${u.status==='active'?'ok':'warn'}">${u.status}</span></td>
+          <td class="body-sm">${u.joined}</td>
+          <td><div style="display:flex;gap:4px"><button class="btn btn-outline btn-sm">View</button><button class="btn btn-outline btn-sm">Suspend</button></div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderAdminSEO(){
+  return `
+  <div class="page-header" style="background:#f5f2e8">
+    <div class="page-title-group">
+      <div class="page-kicker" style="color:var(--red)">Algorithm Configuration</div>
+      <div class="d4">SEO Engine Config</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm">Reset to Default</button>
+      <button class="btn btn-red btn-sm">Save & Deploy</button>
+    </div>
+  </div>
+  <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+    ${[
+      {plat:'Instagram',color:'var(--ig)',tag:'ig',params:[
+        {n:'Watch Time',w:30},{n:'DM Sends/Reach',w:25},{n:'Caption Keywords',w:10},
+        {n:'Hashtag Strategy',w:8},{n:'Alt Text',w:5},{n:'Profile Completeness',w:4},
+        {n:'Posting Consistency',w:3},{n:'Content Originality',w:5},
+      ]},
+      {plat:'LinkedIn',color:'var(--li)',tag:'li',params:[
+        {n:'Depth Score',w:28},{n:'Headline Keywords',w:18},{n:'Comment Quality',w:15},
+        {n:'Topic Authority',w:12},{n:'Profile Complete',w:10},{n:'About Keywords',w:7},
+        {n:'Skill Endorsements',w:5},{n:'Link Strategy',w:3},
+      ]},
+      {plat:'X / Twitter',color:'#555',tag:'x',params:[
+        {n:'Reply Depth',w:25},{n:'RT Velocity',w:20},{n:'TweepCred',w:18},
+        {n:'KW/Hashtag Match',w:12},{n:'Link Penalty',w:10},{n:'Content Format',w:8},
+        {n:'Recency Score',w:5},{n:'Grok Cluster',w:2},
+      ]},
+    ].map(p=>`
+    <div style="border:var(--border);background:var(--white)">
+      <div style="padding:14px 16px;border-bottom:var(--border);background:var(--black)">
+        <span class="label-sm" style="color:${p.color}">${p.plat} Parameters</span>
+      </div>
+      ${p.params.map(m=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:var(--border-light)">
+        <span class="body-sm" style="flex:1;font-weight:600">${m.n}</span>
+        <input type="number" class="input" value="${m.w}" style="width:56px;padding:4px 8px;text-align:center">
+        <span class="body-sm">%</span>
+      </div>`).join('')}
+      <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+        <span class="label-sm">Total:</span>
+        <span class="label-sm" style="color:var(--green)">${p.params.reduce((a,b)=>a+b.w,0)}% ✓</span>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderAdminAPI(){
+  return `
+  <div class="page-header" style="background:#f5f2e8">
+    <div class="page-title-group">
+      <div class="page-kicker" style="color:var(--red)">Platform API Monitoring</div>
+      <div class="d4">API Health Dashboard</div>
+    </div>
+    <button class="btn btn-outline btn-sm">Refresh</button>
+  </div>
+  <div style="padding:20px">
+    ${[
+      {api:'Instagram Graph API',status:'live',quota:'2,847 / 5,000 req/hr',latency:'124ms',errors:'0',pct:57},
+      {api:'LinkedIn API v2',status:'live',quota:'891 / 2,000 req/hr',latency:'188ms',errors:'2',pct:44},
+      {api:'X API v2 (Free Tier)',status:'warn',quota:'1,987 / 2,000 req/hr',latency:'211ms',errors:'0',pct:99},
+      {api:'OpenAI GPT-4o',status:'live',quota:'342 / 1,000 req/hr',latency:'890ms',errors:'1',pct:34},
+      {api:'Supabase PostgreSQL',status:'live',quota:'342 MB / 500 MB',latency:'24ms',errors:'0',pct:68},
+      {api:'Vercel Serverless',status:'live',quota:'8.2 GB / 100 GB bandwidth',latency:'18ms',errors:'0',pct:8},
+    ].map(a=>`
+    <div style="border:var(--border);background:var(--white);padding:16px;margin-bottom:10px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="status-dot ${a.status}" style="width:10px;height:10px"></span>
+        <div>
+          <div class="h3 mb-2">${a.api}</div>
+          <div class="body-sm">${a.quota}</div>
+        </div>
+      </div>
+      <div style="padding:0 16px">
+        <div class="progress-wrap"><div class="progress-fill ${a.pct>=90?'progress-lo':a.pct>=70?'progress-md':'progress-hi'}" style="width:${a.pct}%"></div></div>
+        <div class="body-sm" style="margin-top:4px">${a.pct}% quota used</div>
+      </div>
+      <div style="text-align:right;display:flex;gap:20px">
+        <div><div class="label-sm">Latency</div><div class="h3">${a.latency}</div></div>
+        <div><div class="label-sm">Errors</div><div class="h3" style="color:${parseInt(a.errors)>0?'var(--red)':'var(--green)'}">${a.errors}</div></div>
+        ${a.pct>=90?`<span class="badge badge-err">NEAR LIMIT</span>`:''}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderAdminFlags(){
+  const flags = [
+    {name:'ai_rewrite_enabled',desc:'AI-powered caption rewrite in Content Analyser',enabled:true,users:'all'},
+    {name:'competitor_tracking',desc:'Competitor analysis feature in Competitors page',enabled:true,users:'all'},
+    {name:'post_scheduler',desc:'Calendar-based post scheduler with SEO pre-check',enabled:true,users:'all'},
+    {name:'ai_studio',desc:'Daily AI content ideas generation (5/day)',enabled:true,users:'all'},
+    {name:'profile_audit_linkedin',desc:'LinkedIn profile audit (beta — accuracy improving)',enabled:false,users:'none'},
+    {name:'hashtag_ban_checker',desc:'Real-time banned hashtag detection API',enabled:true,users:'all'},
+    {name:'bulk_analyzer',desc:'Upload CSV of captions for bulk SEO scoring',enabled:false,users:'none'},
+  ];
+  return `
+  <div class="page-header" style="background:#f5f2e8">
+    <div class="page-title-group">
+      <div class="page-kicker" style="color:var(--red)">Feature Control</div>
+      <div class="d4">Feature Flags</div>
+    </div>
+    <div><span class="badge badge-ok" style="margin-right:6px">${flags.filter(f=>f.enabled).length} Active</span><span class="badge badge-warn">${flags.filter(f=>!f.enabled).length} Disabled</span></div>
+  </div>
+  <div style="padding:20px">
+    <table class="table">
+      <thead><tr><th>Flag Name</th><th>Description</th><th>Users</th><th>Status</th><th>Toggle</th></tr></thead>
+      <tbody>
+        ${flags.map(f=>`
+        <tr>
+          <td><code style="font-family:Courier New;font-size:11px;background:#f5f5f5;padding:2px 6px;border:1px solid #ddd">${f.name}</code></td>
+          <td class="body-sm">${f.desc}</td>
+          <td class="body-sm">${f.users}</td>
+          <td><span class="badge badge-${f.enabled?'ok':'warn'}">${f.enabled?'ENABLED':'DISABLED'}</span></td>
+          <td><button class="btn btn-${f.enabled?'outline':'red'} btn-sm">${f.enabled?'Disable':'Enable'}</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>
