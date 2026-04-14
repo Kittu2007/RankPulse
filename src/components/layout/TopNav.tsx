@@ -9,9 +9,9 @@ interface NavItem {
 }
 
 const publicItems: NavItem[] = [
-  { label: "Features", href: "/features" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "API", href: "#api" },
 ];
 
 const dashboardItems: NavItem[] = [

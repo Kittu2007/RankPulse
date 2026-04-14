@@ -11,7 +11,7 @@ export default function LandingPage() {
   return (
     <div className="page-transition">
       {/* ── HERO ── */}
-      <div className="grid border-b-2 border-[var(--black)]" style={{ gridTemplateColumns: "1fr 340px", minHeight: "420px" }}>
+      <div className="flex flex-col lg:grid border-b-2 border-[var(--black)]" style={{ gridTemplateColumns: "1fr 340px", minHeight: "420px" }}>
         {/* Left */}
         <div className="p-12 px-10 border-r-2 border-[var(--black)]">
           <div className="flex items-center gap-2.5 mb-5">
@@ -45,7 +45,7 @@ export default function LandingPage() {
             <Link href="/signup" className="btn btn-red btn-lg">
               Analyse My Content
             </Link>
-            <Link href="/features" className="btn btn-outline btn-lg" style={{ borderLeft: "none" }}>
+            <Link href="#features" className="btn btn-outline btn-lg" style={{ borderLeft: "none" }}>
               See How It Works
             </Link>
           </div>
@@ -149,7 +149,7 @@ export default function LandingPage() {
       </div>
 
       {/* ── FEATURES SECTION ── */}
-      <div className="px-10 pt-10 border-b-2 border-[var(--black)]">
+      <div id="features" className="px-10 pt-10 border-b-2 border-[var(--black)]">
         <div className="flex items-center gap-3 mb-1.5">
           <div className="w-7 h-[3px] bg-[var(--red)]" />
           <span className="label-sm text-[var(--red)]">Everything You Need</span>
