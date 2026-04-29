@@ -2,85 +2,95 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  Bell,
+  Home,
+  LineChart,
+  Package2,
+  Users,
+  Settings,
+  PenSquare,
+  Shield,
+  Hash,
+  Search,
+  Calendar,
+  BarChart,
+  Bot,
+} from "lucide-react";
 
-interface SidebarSection {
-  label: string;
-  items: SidebarItem[];
-}
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
-interface SidebarItem {
-  icon: string;
-  label: string;
-  href: string;
-}
-
-const sections: SidebarSection[] = [
-  {
-    label: "Main",
-    items: [
-      { icon: "📊", label: "Dashboard", href: "/dashboard" },
-      { icon: "🔍", label: "Content Analyser", href: "/dashboard/analyzer" },
-      { icon: "🔑", label: "Keyword Research", href: "/dashboard/keywords" },
-      { icon: "#", label: "Hashtag Intel", href: "/dashboard/hashtags" },
-    ],
-  },
-  {
-    label: "Research",
-    items: [
-      { icon: "👥", label: "Competitors", href: "/dashboard/competitors" },
-      { icon: "📅", label: "Scheduler", href: "/dashboard/scheduler" },
-      { icon: "👤", label: "Profile Audit", href: "/dashboard/audit" },
-    ],
-  },
-  {
-    label: "Insights",
-    items: [
-      { icon: "📈", label: "Analytics", href: "/dashboard/analytics" },
-      { icon: "✨", label: "AI Studio", href: "/dashboard/ai-studio" },
-    ],
-  },
-  {
-    label: "Account",
-    items: [
-      { icon: "⚙️", label: "Settings", href: "/dashboard/settings" },
-    ],
-  },
+const navItems = [
+  { href: "/dashboard", icon: Home, label: "Dashboard" },
+  { href: "/dashboard/analyser", icon: Search, label: "Analyser" },
+  { href: "/dashboard/ai-studio", icon: Bot, label: "AI Studio" },
+  { href: "/dashboard/scheduler", icon: Calendar, label: "Scheduler" },
+  { href: "/dashboard/analytics", icon: BarChart, label: "Analytics" },
+  { href: "/dashboard/keywords", icon: LineChart, label: "Keywords" },
+  { href: "/dashboard/hashtags", icon: Hash, label: "Hashtags" },
+  { href: "/dashboard/competitors", icon: Users, label: "Competitors" },
+  { href: "/dashboard/profile-audit", icon: Shield, label: "Profile Audit" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[220px] bg-[var(--black)] border-r-2 border-[var(--black)] flex flex-col shrink-0 py-2 sidebar-responsive-hide">
-      {sections.map((section) => (
-        <div key={section.label}>
-          {/* Section Label */}
-          <div className="px-4 pt-3 pb-1 text-[9px] text-[#444] tracking-[3px] font-bold uppercase">
-            {section.label}
-          </div>
-
-          {/* Section Items */}
-          {section.items.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 py-[9px] px-4 text-xs font-medium cursor-pointer transition-all duration-150 border-l-[3px] ${
-                  isActive
-                    ? "text-[var(--bg)] bg-[#1a1a1a] border-l-[var(--red)]"
-                    : "text-[#777] hover:text-[#ccc] hover:bg-[#1a1a1a] border-l-transparent"
-                }`}
-              >
-                <span className="text-[13px] shrink-0 opacity-70">
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
+    <div className="hidden border-r bg-muted/40 md:block">
+      <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+          <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Package2 className="h-6 w-6" />
+            <span className="">RankPulse</span>
+          </Link>
+          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+            <Bell className="h-4 w-4" />
+            <span className="sr-only">Toggle notifications</span>
+          </Button>
         </div>
-      ))}
-    </aside>
+        <div className="flex-1">
+          <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+            {navItems.map(({ href, icon: Icon, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                  { "bg-muted text-primary": pathname === href }
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="mt-auto p-4">
+          <Card>
+            <CardHeader className="p-2 pt-0 md:p-4">
+              <CardTitle>Upgrade to Pro</CardTitle>
+              <CardDescription>
+                Unlock all features and get unlimited access to our support
+                team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
+              <Button size="sm" className="w-full">
+                Upgrade
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

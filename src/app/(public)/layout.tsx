@@ -7,10 +7,10 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <TopNav variant="public" />
-      <main>{children}</main>
+    <div className="flex flex-col min-h-screen">
+      <TopNav />
+      <main className="flex-grow">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 }

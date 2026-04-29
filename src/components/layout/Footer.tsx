@@ -97,6 +97,18 @@ export default function Footer() {
           All Systems Live
         </div>
       </div>
+
+      <footer className="p-4 border-t text-center text-sm text-muted-foreground">
+        <p>&copy; {new Date().getFullYear()} RankPulse. All rights reserved.</p>
+        <div className="flex justify-center gap-4 mt-2">
+          <Link href="/privacy" className="hover:underline">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="hover:underline">
+            Terms of Service
+          </Link>
+        </div>
+      </footer>
     </footer>
   );
 }
