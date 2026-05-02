@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import OpenAI from "openai";
 
 const router = Router();
@@ -8,10 +8,16 @@ const openai = new OpenAI({
   baseURL: process.env.NVIDIA_API_KEY ? "https://integrate.api.nvidia.com/v1" : undefined,
 });
 
-router.post("/analyse", async (req, res) => {
+const hasAiKey = () => !!(process.env.NVIDIA_API_KEY || process.env.OPENAI_API_KEY);
+const aiModel = () => process.env.NVIDIA_API_KEY ? "meta/llama-3.1-8b-instruct" : "gpt-4o-mini";
+
+router.post("/analyse", async (req: Request, res: Response): Promise<void> => {
   try {
     const { text, platform } = req.body;
-    if (!text || !platform) return res.status(400).json({ error: "text and platform required" });
+    if (!text || !platform) {
+      res.status(400).json({ error: "text and platform required" });
+      return;
+    }
     res.json({ ok: true, message: "Analysis stored" });
   } catch (err) {
     console.error(err);
@@ -19,40 +25,46 @@ router.post("/analyse", async (req, res) => {
   }
 });
 
-router.get("/keywords", async (req, res) => {
-  const keywords = [
-    { rank: 1, term: "social media tips", vol: 92, trend: "+34%", diff: "easy" },
-    { rank: 2, term: "instagram reels 2026", vol: 88, trend: "+22%", diff: "med" },
-    { rank: 3, term: "content strategy", vol: 75, trend: "stable", diff: "med" },
-    { rank: 4, term: "linkedin growth", vol: 70, trend: "+18%", diff: "med" },
-    { rank: 5, term: "arm workout home", vol: 68, trend: "+41%", diff: "easy" },
-  ];
-  res.json({ keywords });
+router.get("/keywords", async (_req: Request, res: Response): Promise<void> => {
+  res.json({
+    keywords: [
+      { rank: 1, term: "social media tips", vol: 92, trend: "+34%", diff: "easy" },
+      { rank: 2, term: "instagram reels 2026", vol: 88, trend: "+22%", diff: "med" },
+      { rank: 3, term: "content strategy", vol: 75, trend: "stable", diff: "med" },
+      { rank: 4, term: "linkedin growth", vol: 70, trend: "+18%", diff: "med" },
+      { rank: 5, term: "arm workout home", vol: 68, trend: "+41%", diff: "easy" },
+    ],
+  });
 });
 
-router.post("/hashtags", async (req, res) => {
+router.post("/hashtags", async (req: Request, res: Response): Promise<void> => {
   try {
     const { topic } = req.body;
-    if (!topic) return res.status(400).json({ error: "topic required" });
+    if (!topic) {
+      res.status(400).json({ error: "topic required" });
+      return;
+    }
 
-    if (!process.env.NVIDIA_API_KEY && !process.env.OPENAI_API_KEY) {
-      const fallbackHashtags = [
-        `#${topic.toLowerCase().replace(/\s+/g, "")}`,
-        `#${topic.toLowerCase().replace(/\s+/g, "")}tips`,
-        `#socialmedia`,
-        `#contentcreator`,
-        `#instagram`,
-        `#viral`,
-        `#trending`,
-        `#creatoreconomy`,
-        `#${topic.toLowerCase().split(" ")[0]}`,
-        `#digitalmarketing`,
-      ];
-      return res.json({ hashtags: fallbackHashtags });
+    if (!hasAiKey()) {
+      res.json({
+        hashtags: [
+          `#${topic.toLowerCase().replace(/\s+/g, "")}`,
+          `#${topic.toLowerCase().replace(/\s+/g, "")}tips`,
+          "#socialmedia",
+          "#contentcreator",
+          "#instagram",
+          "#viral",
+          "#trending",
+          "#creatoreconomy",
+          `#${topic.toLowerCase().split(" ")[0]}`,
+          "#digitalmarketing",
+        ],
+      });
+      return;
     }
 
     const completion = await openai.chat.completions.create({
-      model: process.env.NVIDIA_API_KEY ? "meta/llama-3.1-8b-instruct" : "gpt-4o-mini",
+      model: aiModel(),
       messages: [
         {
           role: "system",
@@ -66,9 +78,9 @@ router.post("/hashtags", async (req, res) => {
       temperature: 0.7,
     });
 
-    const content = completion.choices[0]?.message?.content || "[]";
-    const match = content.match(/\[.*\]/s);
-    const hashtags = match ? JSON.parse(match[0]) : [];
+    const raw = completion.choices[0]?.message?.content ?? "[]";
+    const match = raw.match(/\[.*\]/s);
+    const hashtags: string[] = match ? (JSON.parse(match[0]) as string[]) : [];
     res.json({ hashtags });
   } catch (err) {
     console.error("Hashtags error:", err);
@@ -76,27 +88,30 @@ router.post("/hashtags", async (req, res) => {
   }
 });
 
-async function handleAiGenerate(
-  req: import("express").Request,
-  res: import("express").Response
-) {
+async function handleAiGenerate(req: Request, res: Response): Promise<void> {
   try {
-    const { niche, platform, style, keywords } = req.body;
+    const { niche, platform, style, keywords } = req.body as {
+      niche?: string;
+      platform?: string;
+      style?: string;
+      keywords?: string;
+    };
 
-    if (!process.env.NVIDIA_API_KEY && !process.env.OPENAI_API_KEY) {
-      return res.json({
+    if (!hasAiKey()) {
+      res.json({
         ideas: [
-          { score: 88, title: `"${niche}: The ${style} guide nobody tells you"`, hook: `Lead with data or transformation. Use numbers in the first 3 words.` },
-          { score: 82, title: `"Why most ${niche} content fails in 2026"`, hook: `Controversy + specificity = depth score gold.` },
-          { score: 78, title: `"${style} ${niche} breakdown — algorithm approved"`, hook: `Platform-specific format signals. Cite the source.` },
-          { score: 74, title: `"5 ${niche} mistakes killing your ${platform} reach"`, hook: `Fear + utility drives DM shares.` },
-          { score: 70, title: `"Hot take: ${niche} creators are doing this wrong"`, hook: `Personal transformation + data = DM-worthy content.` },
-        ]
+          { score: 88, title: `"${niche}: The ${style} guide nobody tells you"`, hook: "Lead with data or transformation. Use numbers in the first 3 words." },
+          { score: 82, title: `"Why most ${niche} content fails in 2026"`, hook: "Controversy + specificity = depth score gold." },
+          { score: 78, title: `"${style} ${niche} breakdown — algorithm approved"`, hook: "Platform-specific format signals. Cite the source." },
+          { score: 74, title: `"5 ${niche} mistakes killing your ${platform} reach"`, hook: "Fear + utility drives DM shares." },
+          { score: 70, title: `"Hot take: ${niche} creators are doing this wrong"`, hook: "Personal transformation + data = DM-worthy content." },
+        ],
       });
+      return;
     }
 
     const completion = await openai.chat.completions.create({
-      model: process.env.NVIDIA_API_KEY ? "meta/llama-3.1-8b-instruct" : "gpt-4o-mini",
+      model: aiModel(),
       messages: [
         {
           role: "system",
@@ -110,8 +125,8 @@ async function handleAiGenerate(
       temperature: 0.8,
     });
 
-    const content = completion.choices[0]?.message?.content || "[]";
-    const match = content.match(/\[.*\]/s);
+    const raw = completion.choices[0]?.message?.content ?? "[]";
+    const match = raw.match(/\[.*\]/s);
     const ideas = match ? JSON.parse(match[0]) : [];
     res.json({ ideas });
   } catch (err) {
@@ -123,25 +138,31 @@ async function handleAiGenerate(
 router.post("/ai/generate", handleAiGenerate);
 router.post("/ai-ideas", handleAiGenerate);
 
-router.post("/ai/rewrite", async (req, res) => {
+router.post("/ai/rewrite", async (req: Request, res: Response): Promise<void> => {
   try {
-    const { caption, platform, score } = req.body;
-    if (!caption) return res.status(400).json({ error: "caption required" });
+    const { caption, platform, score } = req.body as {
+      caption?: string;
+      platform?: string;
+      score?: number;
+    };
 
-    if (!process.env.NVIDIA_API_KEY && !process.env.OPENAI_API_KEY) {
-      const improved = caption + "\n\n[AI Rewrite not configured — add NVIDIA_API_KEY or OPENAI_API_KEY to enable this feature]";
-      res.setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.setHeader("Transfer-Encoding", "chunked");
-      return res.end(improved);
+    if (!caption) {
+      res.status(400).json({ error: "caption required" });
+      return;
     }
 
-    const model = process.env.NVIDIA_API_KEY ? "meta/llama-3.1-8b-instruct" : "gpt-4o-mini";
+    if (!hasAiKey()) {
+      const improved = caption + "\n\n[AI Rewrite not configured — add NVIDIA_API_KEY or OPENAI_API_KEY to enable this feature]";
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.end(improved);
+      return;
+    }
 
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Transfer-Encoding", "chunked");
 
     const stream = await openai.chat.completions.create({
-      model,
+      model: aiModel(),
       stream: true,
       messages: [
         {
@@ -154,7 +175,7 @@ router.post("/ai/rewrite", async (req, res) => {
     });
 
     for await (const chunk of stream) {
-      const text = chunk.choices[0]?.delta?.content || "";
+      const text = chunk.choices[0]?.delta?.content ?? "";
       if (text) res.write(text);
     }
 
