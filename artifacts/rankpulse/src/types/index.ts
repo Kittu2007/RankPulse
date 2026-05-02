@@ -1,5 +1,3 @@
-import { Database } from "@/lib/supabase/database.types";
-
 export type SocialPlatform = "instagram" | "linkedin" | "x";
 
 export interface AnalysisParams {
@@ -26,11 +24,3 @@ export interface SeoReport {
   factors: SeoFactor[];
   fixGuide: Record<string, string>;
 }
-
-export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type Account = Database['public']['Tables']['accounts']['Row'];
-export type Analysis = Database['public']['Tables']['analyses']['Row'];
-export type Keyword = Database['public']['Tables']['keywords']['Row'];
-export type Competitor = Database['public']['Tables']['competitors']['Row'];
-export type Plan = Database['public']['Tables']['plans']['Row'];
-export type Post = Database['public']['Tables']['posts']['Row'];
