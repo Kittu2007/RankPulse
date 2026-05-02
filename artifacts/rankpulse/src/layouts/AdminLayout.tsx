@@ -1,16 +1,15 @@
-"use client";
-
 import { Link, useLocation } from "wouter";
+import { BarChart2, Users, Settings, Activity, Flag, ArrowLeft } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [pathname] = useLocation();
 
   const navItems = [
-    { icon: '📊', label: 'Overview', href: '/admin' },
-    { icon: '👥', label: 'User Management', href: '/admin/users' },
-    { icon: '⚙️', label: 'SEO Engine Config', href: '/admin/seo-config' },
-    { icon: '🔌', label: 'API Health', href: '/admin/api-health' },
-    { icon: '🚩', label: 'Feature Flags', href: '/admin/flags' },
+    { icon: BarChart2, label: "Overview", href: "/admin" },
+    { icon: Users, label: "User Management", href: "/admin/users" },
+    { icon: Settings, label: "SEO Engine Config", href: "/admin/seo-config" },
+    { icon: Activity, label: "API Health", href: "/admin/api-health" },
+    { icon: Flag, label: "Feature Flags", href: "/admin/flags" },
   ];
 
   return (
@@ -20,16 +19,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="text-[10px] font-bold uppercase tracking-[2px] text-white">ADMIN PANEL</div>
         </div>
         {navItems.map((item, i) => {
+          const Icon = item.icon;
           const isActive = pathname === item.href;
           return (
             <Link
               key={i}
               href={item.href}
               className={`sidebar-item flex items-center gap-3 p-[10px_16px] text-sm font-bold border-b border-[#eaeaea] last:border-b-0 hover:bg-[#fafafa] transition-colors ${
-                isActive ? 'bg-[var(--black)] text-white hover:bg-[var(--black)]' : 'text-[var(--black)]'
+                isActive ? "bg-[var(--black)] text-white hover:bg-[var(--black)]" : "text-[var(--black)]"
               }`}
             >
-              <span className="text-[13px] w-5 text-center">{item.icon}</span>
+              <Icon className="h-4 w-4 shrink-0" />
               <span>{item.label}</span>
             </Link>
           );
@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           href="/dashboard"
           className="sidebar-item flex items-center gap-3 p-[16px] text-sm font-bold border-t-2 border-[var(--black)] bg-[#f8f8f8] hover:bg-[#eaeaea] transition-colors mt-auto absolute bottom-0 w-full"
         >
-          <span className="text-[13px] w-5 text-center">←</span>
+          <ArrowLeft className="h-4 w-4 shrink-0" />
           <span>Back to App</span>
         </Link>
       </div>

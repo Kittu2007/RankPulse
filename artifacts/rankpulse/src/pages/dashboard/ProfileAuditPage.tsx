@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
 export default function ProfileAuditPage() {
   const [activePlatform, setActivePlatform] = useState('Instagram');
@@ -29,7 +30,7 @@ export default function ProfileAuditPage() {
 
   const statusColor = { ok: 'text-[#16a34a]', warn: 'text-[#d97706]', err: 'text-[var(--red)]' };
   const statusBg = { ok: 'bg-[#ebfbf0] border-[#22c55e] text-[#166534]', warn: 'bg-[#fffbeb] border-[#f59e0b] text-[#92400e]', err: 'bg-[#fef2f2] border-[#ef4444] text-[#991b1b]' };
-  const statusIcon = { ok: '✓', warn: '⚠', err: '✗' };
+  const StatusIcon = ({ s }: { s: string }) => s === 'ok' ? <CheckCircle2 className="h-3 w-3 inline mr-1" /> : s === 'warn' ? <AlertTriangle className="h-3 w-3 inline mr-1" /> : <XCircle className="h-3 w-3 inline mr-1" />;
 
   const allItems = sections.flatMap(s => s.items);
   const okCount = allItems.filter(i => i.status === 'ok').length;
@@ -57,8 +58,8 @@ export default function ProfileAuditPage() {
               </div>
               {sec.items.map((item, ii) => (
                 <div key={ii} className="flex items-start gap-4 p-[14px_24px] border-b border-b-[#eaeaea]">
-                  <span className={`text-[11px] font-bold px-2 py-0.5 border-2 shrink-0 mt-0.5 ${statusBg[item.status as keyof typeof statusBg]}`}>
-                    {statusIcon[item.status as keyof typeof statusIcon]} {item.status.toUpperCase()}
+                  <span className={`text-[11px] font-bold px-2 py-0.5 border-2 shrink-0 mt-0.5 flex items-center gap-1 ${statusBg[item.status as keyof typeof statusBg]}`}>
+                    <StatusIcon s={item.status} />{item.status.toUpperCase()}
                   </span>
                   <div>
                     <div className="text-sm font-bold mb-0.5">{item.field}</div>

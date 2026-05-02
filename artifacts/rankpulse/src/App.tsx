@@ -12,6 +12,7 @@ import TermsPage from "@/pages/public/TermsPage";
 // Auth pages
 import LoginPage from "@/pages/auth/LoginPage";
 import SignupPage from "@/pages/auth/SignupPage";
+import AuthCallback from "@/pages/auth/AuthCallback";
 
 // Dashboard layout & pages
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -57,6 +58,7 @@ function Router() {
       {/* Auth routes */}
       <Route path="/login" component={LoginPage} />
       <Route path="/signup" component={SignupPage} />
+      <Route path="/auth/callback" component={AuthCallback} />
 
       {/* Dashboard routes */}
       <Route path="/dashboard">

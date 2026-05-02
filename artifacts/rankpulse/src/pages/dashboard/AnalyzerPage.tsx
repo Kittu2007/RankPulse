@@ -5,6 +5,7 @@ import { analyzeLinkedIn } from "@/lib/seo/linkedin";
 import { analyzeX } from "@/lib/seo/x";
 import type { SEOAnalysisResult } from "@/lib/seo/types";
 import { createClient } from "@/utils/supabase/client";
+import { Check, AlertTriangle, X as XIcon } from "lucide-react";
 
 type Platform = 'instagram' | 'linkedin' | 'x';
 
@@ -125,7 +126,8 @@ export default function AnalyzerPage() {
                   flag.type === 'warn' ? 'bg-[#fffbeb] text-[#92400e] border-[#f59e0b]' :
                   'bg-[#fef2f2] text-[#991b1b] border-[#ef4444]'
                 }`}>
-                  {flag.type === 'ok' ? '✓' : flag.type === 'warn' ? '⚠' : '✗'} {flag.message}
+                  {flag.type === 'ok' ? <Check className="h-3 w-3" /> : flag.type === 'warn' ? <AlertTriangle className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
+                  {flag.message}
                 </span>
               ))}
             </div>
@@ -174,7 +176,9 @@ export default function AnalyzerPage() {
               <div className="flex flex-col gap-3">
                 {analysis.improvements.map((fix, i) => (
                   <div key={i} className="flex gap-3 items-start">
-                    <span className={`font-bold text-xs mt-0.5 ${fix.icon === '⚠' ? 'text-[#f59e0b]' : 'text-[var(--red)]'}`}>{fix.icon}</span>
+                    <span className={`mt-0.5 shrink-0 ${fix.icon === '⚠' ? 'text-[#f59e0b]' : 'text-[var(--red)]'}`}>
+                      {fix.icon === '⚠' ? <AlertTriangle className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
+                    </span>
                     <div className="flex-1">
                       <div className="text-xs text-[var(--bg)] font-bold mb-0.5">{fix.text}</div>
                       <div className="text-[10px] text-[#4ade80] font-bold tracking-wide">{fix.impact}</div>
