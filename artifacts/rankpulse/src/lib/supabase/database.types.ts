@@ -1,0 +1,547 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  public: {
+    Tables: {
+      accounts: {
+        Row: {
+          access_token_enc: string | null
+          created_at: string
+          follower_count: number | null
+          handle: string
+          id: string
+          is_active: boolean
+          last_synced_at: string | null
+          platform: string
+          platform_user_id: string | null
+          refresh_token_enc: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token_enc?: string | null
+          created_at?: string
+          follower_count?: number | null
+          handle: string
+          id?: string
+          is_active?: boolean
+          last_synced_at?: string | null
+          platform: string
+          platform_user_id?: string | null
+          refresh_token_enc?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token_enc?: string | null
+          created_at?: string
+          follower_count?: number | null
+          handle?: string
+          id?: string
+          is_active?: boolean
+          last_synced_at?: string | null
+          platform?: string
+          platform_user_id?: string | null
+          refresh_token_enc?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analyses: {
+        Row: {
+          cached_until: string | null
+          content_text: string
+          content_type: string | null
+          created_at: string
+          flags: Json | null
+          hashtags: string[] | null
+          id: string
+          keyword_density: number | null
+          overall_score: number | null
+          parameter_scores: Json | null
+          penalties: Json | null
+          platform: string
+          readability_score: number | null
+          suggestions: Json | null
+          user_id: string
+        }
+        Insert: {
+          cached_until?: string | null
+          content_text: string
+          content_type?: string | null
+          created_at?: string
+          flags?: Json | null
+          hashtags?: string[] | null
+          id?: string
+          keyword_density?: number | null
+          overall_score?: number | null
+          parameter_scores?: Json | null
+          penalties?: Json | null
+          platform: string
+          readability_score?: number | null
+          suggestions?: Json | null
+          user_id: string
+        }
+        Update: {
+          cached_until?: string | null
+          content_text?: string
+          content_type?: string | null
+          created_at?: string
+          flags?: Json | null
+          hashtags?: string[] | null
+          id?: string
+          keyword_density?: number | null
+          overall_score?: number | null
+          parameter_scores?: Json | null
+          penalties?: Json | null
+          platform?: string
+          readability_score?: number | null
+          suggestions?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analyses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitors: {
+        Row: {
+          avatar_url: string | null
+          avg_score: number | null
+          created_at: string
+          display_name: string | null
+          engagement_rate: number | null
+          follower_count: number | null
+          handle: string
+          id: string
+          last_synced_at: string | null
+          platform: string
+          posting_frequency: number | null
+          top_keywords: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          avg_score?: number | null
+          created_at?: string
+          display_name?: string | null
+          engagement_rate?: number | null
+          follower_count?: number | null
+          handle: string
+          id?: string
+          last_synced_at?: string | null
+          platform: string
+          posting_frequency?: number | null
+          top_keywords?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          avg_score?: number | null
+          created_at?: string
+          display_name?: string | null
+          engagement_rate?: number | null
+          follower_count?: number | null
+          handle?: string
+          id?: string
+          last_synced_at?: string | null
+          platform?: string
+          posting_frequency?: number | null
+          top_keywords?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      keywords: {
+        Row: {
+          competition_score: number | null
+          created_at: string
+          difficulty: string | null
+          id: string
+          is_tracked: boolean
+          last_checked_at: string | null
+          platform: string
+          term: string
+          trend_direction: string | null
+          trend_velocity: number | null
+          updated_at: string
+          user_id: string
+          volume_proxy: number | null
+        }
+        Insert: {
+          competition_score?: number | null
+          created_at?: string
+          difficulty?: string | null
+          id?: string
+          is_tracked?: boolean
+          last_checked_at?: string | null
+          platform: string
+          term: string
+          trend_direction?: string | null
+          trend_velocity?: number | null
+          updated_at?: string
+          user_id: string
+          volume_proxy?: number | null
+        }
+        Update: {
+          competition_score?: number | null
+          created_at?: string
+          difficulty?: string | null
+          id?: string
+          is_tracked?: boolean
+          last_checked_at?: string | null
+          platform?: string
+          term?: string
+          trend_direction?: string | null
+          trend_velocity?: number | null
+          updated_at?: string
+          user_id?: string
+          volume_proxy?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "keywords_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          created_at: string
+          currency: string
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean
+          limits: Json
+          name: string
+          price_annual: number
+          price_monthly: number
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          limits?: Json
+          name: string
+          price_annual?: number
+          price_monthly?: number
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          limits?: Json
+          name?: string
+          price_annual?: number
+          price_monthly?: number
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          account_id: string | null
+          analysis_id: string | null
+          content_text: string
+          created_at: string
+          engagement_data: Json | null
+          hashtags: string[] | null
+          id: string
+          media_urls: string[] | null
+          platform: string
+          platform_post_id: string | null
+          published_at: string | null
+          scheduled_at: string | null
+          seo_score: number | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_id?: string | null
+          analysis_id?: string | null
+          content_text: string
+          created_at?: string
+          engagement_data?: Json | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          platform: string
+          platform_post_id?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          seo_score?: number | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string | null
+          analysis_id?: string | null
+          content_text?: string
+          created_at?: string
+          engagement_data?: Json | null
+          hashtags?: string[] | null
+          id?: string
+          media_urls?: string[] | null
+          platform?: string
+          platform_post_id?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          seo_score?: number | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "analyses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          onboarding_complete: boolean
+          primary_platform: string | null
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          onboarding_complete?: boolean
+          primary_platform?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          onboarding_complete?: boolean
+          primary_platform?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const

@@ -1,0 +1,235 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --font-sans: var(--app-font-sans);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+
+  --app-font-sans: 'Inter', sans-serif;
+
+  /* RankPulse brand tokens */
+  --black: #111111;
+  --red: #e63946;
+  --bg: #f5f2e8;
+  --ig: #e1306c;
+  --li: #0a66c2;
+  --font-d: 'Inter', sans-serif;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--app-font-sans);
+  }
+}
+
+/* ── RankPulse Typography ── */
+.d1 { font-family: var(--font-d); font-size: 80px; font-weight: 900; line-height: 0.88; letter-spacing: -4px; text-transform: uppercase; }
+.d2 { font-family: var(--font-d); font-size: 64px; font-weight: 900; line-height: 0.9; letter-spacing: -3px; text-transform: uppercase; }
+.d3 { font-family: var(--font-d); font-size: 48px; font-weight: 900; line-height: 0.92; letter-spacing: -2px; text-transform: uppercase; }
+.d4 { font-family: var(--font-d); font-size: 36px; font-weight: 900; line-height: 0.95; letter-spacing: -1.5px; text-transform: uppercase; }
+.h3 { font-size: 18px; font-weight: 700; }
+.body-text { font-size: 15px; line-height: 1.6; }
+.body-sm { font-size: 13px; line-height: 1.5; }
+.label-sm { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+
+/* inverted / accent text highlights */
+.inv {
+  display: inline-block;
+  background: var(--black);
+  color: var(--bg);
+  padding: 0 6px;
+}
+.acc {
+  color: var(--red);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 2px solid var(--black);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  text-decoration: none;
+}
+.btn-red { background: var(--red); color: #fff; border-color: var(--red); }
+.btn-red:hover { background: #c62b36; border-color: #c62b36; }
+.btn-outline { background: transparent; color: var(--black); border-color: var(--black); }
+.btn-outline:hover { background: #f0f0f0; }
+.btn-black { background: var(--black); color: var(--bg); border-color: var(--black); }
+.btn-black:hover { background: #333; }
+.btn-lg { padding: 13px 28px; font-size: 12px; }
+.btn-sm { padding: 7px 14px; font-size: 10px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Platform Tags ── */
+.platform-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+}
+.tag-ig { background: #fdf4ff; border-color: #d946ef; color: #a21caf; }
+.tag-li { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
+.tag-x { background: #f3f4f6; border-color: #111; color: #000; }
+
+/* ── Metric Strip ── */
+.metric-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 2px solid var(--black); }
+.ms-cell { padding: 20px 24px; border-right: 2px solid var(--black); display: flex; flex-direction: column; }
+.ms-cell:last-child { border-right: 0; }
+.ms-num { font-family: var(--font-d); font-size: 48px; letter-spacing: -2px; line-height: 1; font-weight: 900; }
+.ms-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #555; margin-top: 4px; }
+.ms-delta { font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
+.ms-delta.up { color: #16a34a; }
+.ms-delta.flat { color: #888; }
+.ms-delta.down { color: var(--red); }
+.c-white { color: var(--black); }
+.c-red { color: var(--red); }
+.c-green { color: #16a34a; }
+.c-amber { color: #d97706; }
+
+/* ── Page Transition ── */
+.page-transition { animation: fadeIn 0.15s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ── Input ── */
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--black);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  border-radius: 0;
+}
+.input:focus { border-color: var(--red); }
+.rp-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--black);
+  background: var(--bg);
+  font-size: 13px;
+  outline: none;
+}
+.rp-input:focus { border-color: var(--red); }
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--black);
+  background: var(--bg);
+  font-size: 13px;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+}
+.textarea:focus { border-color: var(--red); }
+
+/* ── Cards ── */
+.card {
+  background: #fff;
+  border: 2px solid var(--black);
+  padding: 20px 24px;
+  box-shadow: 4px 4px 0 var(--black);
+}
+.sh-accent { width: 4px; height: 20px; background: var(--red); }
+.sh-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── Page header ── */
+.page-header { padding: 24px 32px; border-bottom: 2px solid var(--black); }
+.page-kicker { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+.section-wrap { padding: 24px 32px; }
+
+/* ── Auth Layout ── */
+.auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+.auth-left { background: var(--black); padding: 48px; display: flex; flex-direction: column; justify-content: space-between; }
+.auth-right { background: var(--bg); padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+@media (max-width: 768px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-left { display: none; }
+}
+
+/* ── Sidebar ── */
+.sidebar-item { transition: background 0.1s; }

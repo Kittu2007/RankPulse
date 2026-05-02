@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "RankPulse"
+version = "1.0.0"
+id = "artifacts/rankpulse"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22858
+
+[services.development]
+run = "pnpm --filter @workspace/rankpulse run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/rankpulse", "run", "build" ]
+publicDir = "artifacts/rankpulse/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22858"
+BASE_PATH = "/"
