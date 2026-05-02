@@ -76,7 +76,10 @@ router.post("/hashtags", async (req, res) => {
   }
 });
 
-router.post("/ai/generate", async (req, res) => {
+async function handleAiGenerate(
+  req: import("express").Request,
+  res: import("express").Response
+) {
   try {
     const { niche, platform, style, keywords } = req.body;
 
@@ -115,7 +118,10 @@ router.post("/ai/generate", async (req, res) => {
     console.error("AI Generate error:", err);
     res.status(500).json({ error: "Failed to generate ideas" });
   }
-});
+}
+
+router.post("/ai/generate", handleAiGenerate);
+router.post("/ai-ideas", handleAiGenerate);
 
 router.post("/ai/rewrite", async (req, res) => {
   try {
@@ -157,10 +163,6 @@ router.post("/ai/rewrite", async (req, res) => {
     console.error("AI Rewrite error:", err);
     res.status(500).json({ error: "Rewrite failed" });
   }
-});
-
-router.post("/ai-ideas", async (req, res) => {
-  return router.handle({ ...req, url: "/ai/generate" } as never, res, () => {});
 });
 
 export default router;
