@@ -45,52 +45,62 @@ function TopNav() {
 function Footer() {
   return (
     <footer className="bg-[var(--black)] border-t-2 border-[var(--black)] px-5 sm:px-10 pt-10 pb-6">
-      <div className="grid gap-8 mb-10 grid-cols-2 sm:grid-cols-4">
-        <div className="col-span-2 sm:col-span-1">
-          <div className="text-[28px] tracking-[2px] text-[var(--bg)] mb-2.5" style={{ fontFamily: "var(--font-d)" }}>
-            RANK<span style={{ color: 'var(--red)' }}>PULSE</span>
-          </div>
-          <div className="text-xs text-[#555] leading-[1.6] max-w-[240px]">
-            Algorithm-native SEO intelligence for Instagram, LinkedIn, and X.
-            Built on verified 2026 ranking signals — free forever.
-          </div>
-          <div className="mt-4 flex gap-2 flex-wrap">
-            <span className="platform-tag tag-ig">Instagram</span>
-            <span className="platform-tag tag-li">LinkedIn</span>
-            <span className="platform-tag tag-x">X</span>
-          </div>
+      {/* Brand block — full width on mobile */}
+      <div className="mb-8 pb-8 border-b border-[#1f1f1f]">
+        <div className="text-[26px] tracking-[2px] text-[var(--bg)] mb-2" style={{ fontFamily: "var(--font-d)" }}>
+          RANK<span style={{ color: 'var(--red)' }}>PULSE</span>
         </div>
+        <div className="text-[13px] text-[#777] leading-[1.7] max-w-[320px]">
+          Algorithm-native SEO intelligence for Instagram, LinkedIn, and X.
+          Built on verified 2026 ranking signals — free forever.
+        </div>
+        <div className="mt-4 flex gap-2 flex-wrap">
+          <span className="platform-tag tag-ig">Instagram</span>
+          <span className="platform-tag tag-li">LinkedIn</span>
+          <span className="platform-tag tag-x">X</span>
+        </div>
+      </div>
+
+      {/* Link columns — 2-col on mobile, 3-col on sm+ */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 mb-10">
         <div>
-          <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#888] mb-3.5">Product</div>
+          <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#555] mb-4">Product</div>
           {[
-            { label: "Features", href: "/features" },
+            { label: "Features", href: "/#features" },
             { label: "Content Analyser", href: "/dashboard/analyzer" },
             { label: "Keyword Research", href: "/dashboard/keywords" },
             { label: "Hashtag Intelligence", href: "/dashboard/hashtags" },
             { label: "Competitor Tracker", href: "/dashboard/competitors" },
           ].map((link) => (
-            <Link key={link.href} href={link.href} className="block text-xs text-[#666] mb-2 hover:text-[var(--bg)] transition-colors">
+            <Link key={link.href} href={link.href} className="block text-[13px] text-[#888] mb-2.5 hover:text-[var(--bg)] transition-colors duration-150">
               {link.label}
             </Link>
           ))}
         </div>
         <div>
-          <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#888] mb-3.5">Platform</div>
-          {["Instagram SEO Guide", "LinkedIn SEO Guide", "X / Twitter SEO Guide", "Algorithm Updates", "2026 Ranking Signals"].map((label) => (
-            <span key={label} className="block text-xs text-[#666] mb-2 cursor-pointer hover:text-[var(--bg)] transition-colors">{label}</span>
+          <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#555] mb-4">Platform</div>
+          {["Instagram SEO", "LinkedIn SEO", "X / Twitter SEO", "Algorithm Updates", "2026 Signals"].map((label) => (
+            <span key={label} className="block text-[13px] text-[#888] mb-2.5 cursor-pointer hover:text-[var(--bg)] transition-colors duration-150">{label}</span>
           ))}
         </div>
-        <div>
-          <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#888] mb-3.5">Company</div>
+        <div className="col-span-2 sm:col-span-1">
+          <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#555] mb-4">Company</div>
           {[{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }].map((link) => (
-            <Link key={link.label} href={link.href} className="block text-xs text-[#666] mb-2 hover:text-[var(--bg)] transition-colors">
+            <Link key={link.label} href={link.href} className="block text-[13px] text-[#888] mb-2.5 hover:text-[var(--bg)] transition-colors duration-150">
               {link.label}
             </Link>
           ))}
+          {/* CTA in footer */}
+          <div className="mt-6 pt-6 border-t border-[#1f1f1f] sm:border-0 sm:pt-0 sm:mt-4">
+            <Link href="/signup" className="btn btn-red text-xs px-5 py-2.5 w-full sm:w-auto justify-center">
+              Get Started Free
+            </Link>
+          </div>
         </div>
       </div>
-      <div className="border-t border-[#222] pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <div className="text-[11px] text-[#444] tracking-[0.5px]">© 2026 RankPulse. Built on open infrastructure.</div>
+
+      <div className="border-t border-[#1f1f1f] pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="text-[11px] text-[#555] tracking-[0.5px]">© 2026 RankPulse. Built on open infrastructure.</div>
         <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#4ade80] tracking-[1.5px] uppercase">
           <div className="w-[7px] h-[7px] rounded-full bg-[#4ade80]" />
           All Systems Live

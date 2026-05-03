@@ -87,74 +87,95 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <div className="flex flex-col lg:grid border-b-2 border-[var(--black)]" style={{ gridTemplateColumns: "1fr 340px", minHeight: "460px" }}>
-        <div className="p-8 sm:p-12 sm:px-10 border-b-2 lg:border-b-0 lg:border-r-2 border-[var(--black)]">
+        <div className="p-5 sm:p-10 border-b-2 lg:border-b-0 lg:border-r-2 border-[var(--black)]">
 
-          <div className="flex items-center gap-2.5 mb-6 hero-badge">
-            <div className="w-6 h-[3px] bg-[var(--red)]" />
+          <div className="flex items-center gap-2.5 mb-5 hero-badge">
+            <div className="w-5 h-[3px] bg-[var(--red)]" />
             <span className="label-sm text-[var(--red)]">Social Media SEO Intelligence — 2026</span>
           </div>
 
-          <div className="d1 mb-5 hero-headline">
+          <div className="d1 mb-4 hero-headline">
             SEO THAT<br />
             <span className="inv">ACTUALLY</span><br />
             <span className="acc">WORKS.</span>
           </div>
 
-          <p className="body-text mb-5 max-w-[480px] text-[#444] hero-sub">
+          <p className="body-text mb-5 max-w-[480px] text-[#444] hero-sub text-[14px] sm:text-[15px]">
             Algorithm-native SEO scoring for Instagram, LinkedIn &amp; X. Built on verified 2026
             ranking signals — watch time, DM sends, Depth Score, TweepCred. Not opinions. The real algorithm.
           </p>
 
-          <div className="flex gap-0 border-2 border-[var(--black)] w-fit mb-7 flex-wrap hero-platforms">
+          <div className="flex gap-0 border-2 border-[var(--black)] w-fit mb-6 hero-platforms">
             {[
-              { label: "INSTAGRAM", color: "#ff8fab" },
+              { label: "IG", color: "#ff8fab" },
               { label: "LINKEDIN", color: "#7eb8f7" },
-              { label: "X / TWITTER", color: "#aaa", bg: "#222" },
+              { label: "X / TW", color: "#aaa", bg: "#222" },
             ].map(({ label, color, bg }) => (
-              <span key={label} className="platform-tag border-none border-l border-l-[#333]" style={{ background: bg || "var(--black)", color }}>
+              <span key={label} className="platform-tag border-none border-l border-l-[#333]" style={{ background: bg || "var(--black)", color, padding: "5px 10px" }}>
                 {label}
               </span>
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-0 hero-cta">
-            <Link href="/signup" className="btn btn-red btn-lg btn-arrow group">
+          {/* CTA buttons — stacked full-width on mobile, inline on sm+ */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 hero-cta">
+            <Link href="/signup" className="btn btn-red btn-lg group w-full sm:w-auto justify-center">
               Analyse My Content
               <ArrowRight className="h-3.5 w-3.5 ml-2 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
             <button
               onClick={scrollToFeatures}
-              className="btn btn-outline btn-lg"
-              style={{ borderLeft: "none" }}
+              className="btn btn-outline btn-lg w-full sm:w-auto justify-center sm:border-l-0"
             >
               See How It Works
             </button>
           </div>
 
-          <div className="mt-7 flex flex-wrap gap-6 hero-trust">
+          {/* Trust stats — 3-col grid so they never wrap weirdly */}
+          <div className="mt-6 grid grid-cols-3 gap-3 sm:flex sm:gap-6 hero-trust">
             {[
               { label: "FREE", sub: "No credit card ever", color: "var(--red)" },
               { label: "ACCURATE", sub: "2026 algo signals", color: "var(--black)" },
               { label: "FAST", sub: "Results in seconds", color: "var(--black)" },
             ].map(({ label, sub, color }) => (
               <div key={label} className="trust-item">
-                <span className="label-sm" style={{ color }}>{label}</span>
+                <span className="label-sm text-[10px]" style={{ color }}>{label}</span>
                 <br />
-                <span className="body-sm text-[#666]">{sub}</span>
+                <span className="text-[11px] sm:text-[13px] text-[#666] leading-snug">{sub}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Score Panel */}
+        {/* Score Panel — compact row on mobile, full sidebar on lg */}
         <div className="flex flex-col bg-[var(--black)] hero-panel">
-          <div className="p-6 border-b-2 border-[#222]">
-            <div className="label-sm text-[#555] mb-1">Overall SEO Health</div>
-            <HeroScore />
-            <div className="label-sm text-[#555]">/ 100 — GOOD · Updated just now</div>
+          {/* Mobile: horizontal score strip */}
+          <div className="lg:hidden flex border-b-2 border-[#222]">
+            <div className="flex-1 p-4 border-r border-[#222]">
+              <div className="label-sm text-[#555] mb-1">SEO Health</div>
+              <HeroScore />
+              <div className="label-sm text-[#555] mt-0.5">/ 100 — GOOD</div>
+            </div>
+            <div className="grid grid-cols-2 flex-1">
+              {[
+                { val: "24K", label: "Reach", color: "var(--bg)" },
+                { val: "+18%", label: "Growth", color: "#4ade80" },
+              ].map(({ val, label, color }, i) => (
+                <div key={label} className={`p-3 ${i === 0 ? "border-r border-[#222]" : ""}`}>
+                  <div style={{ fontFamily: "var(--font-d)", fontSize: "22px", color }}>{val}</div>
+                  <div className="label-sm text-[#555]">{label}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 border-b-2 border-[#222]">
+          {/* Platform scores — hidden on mobile */}
+          <div className="hidden lg:grid grid-cols-3 border-b-2 border-[#222]">
+            <div className="p-6 border-b-2 border-[#222] col-span-3">
+              <div className="label-sm text-[#555] mb-1">Overall SEO Health</div>
+              <HeroScore />
+              <div className="label-sm text-[#555]">/ 100 — GOOD · Updated just now</div>
+            </div>
             {[
               { label: "INSTAGRAM", score: "82", color: "#ff8fab" },
               { label: "LINKEDIN", score: "74", color: "#7eb8f7" },
@@ -167,7 +188,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 border-b-2 border-[#222] flex-1">
+          <div className="hidden lg:grid grid-cols-2 border-b-2 border-[#222] flex-1">
             {[
               { val: "24K", label: "Est Reach", color: "var(--bg)" },
               { val: "3", label: "Penalties", color: "var(--red)" },
