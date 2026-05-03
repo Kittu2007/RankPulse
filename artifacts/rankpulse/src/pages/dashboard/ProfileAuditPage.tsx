@@ -28,7 +28,6 @@ export default function ProfileAuditPage() {
     ]},
   ];
 
-  const statusColor = { ok: 'text-[#16a34a]', warn: 'text-[#d97706]', err: 'text-[var(--red)]' };
   const statusBg = { ok: 'bg-[#ebfbf0] border-[#22c55e] text-[#166534]', warn: 'bg-[#fffbeb] border-[#f59e0b] text-[#92400e]', err: 'bg-[#fef2f2] border-[#ef4444] text-[#991b1b]' };
   const StatusIcon = ({ s }: { s: string }) => s === 'ok' ? <CheckCircle2 className="h-3 w-3 inline mr-1" /> : s === 'warn' ? <AlertTriangle className="h-3 w-3 inline mr-1" /> : <XCircle className="h-3 w-3 inline mr-1" />;
 
@@ -38,26 +37,32 @@ export default function ProfileAuditPage() {
 
   return (
     <div className="page-transition min-h-screen flex flex-col bg-[var(--bg)]">
-      <div className="page-header flex items-center justify-between">
-        <div><div className="page-kicker">Is your profile working for you?</div><div className="d4">Profile SEO Auditor</div></div>
-        <div className="flex border-2 border-[var(--black)] bg-white">
+      {/* Page header — stacks on mobile */}
+      <div className="page-header flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div>
+          <div className="page-kicker">Is your profile working for you?</div>
+          <div className="d4">Profile SEO Auditor</div>
+        </div>
+        {/* Platform tabs — wrap on very small screens */}
+        <div className="flex flex-wrap border-2 border-[var(--black)] bg-white self-start sm:self-auto">
           {platforms.map((p, i) => (
             <button key={i} onClick={() => setActivePlatform(p)}
-              className={`px-4 py-2 text-xs font-bold transition-colors border-r-2 border-[var(--black)] last:border-r-0 ${activePlatform === p ? 'bg-[var(--black)] text-white' : 'bg-transparent text-[var(--black)] hover:bg-[#fafafa]'}`}>{p}</button>
+              className={`px-3 sm:px-4 py-2 text-xs font-bold transition-colors border-r-2 border-[var(--black)] last:border-r-0 ${activePlatform === p ? 'bg-[var(--black)] text-white' : 'bg-transparent text-[var(--black)] hover:bg-[#fafafa]'}`}>{p}</button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_280px] max-[900px]:grid-cols-1 flex-1">
-        <div className="border-r-2 border-r-[var(--black)] bg-white">
+      {/* Main grid — stacks on mobile */}
+      <div className="flex flex-col md:grid md:grid-cols-[1fr_280px] flex-1">
+        <div className="border-b-2 md:border-b-0 md:border-r-2 border-[var(--black)] bg-white">
           {sections.map((sec, si) => (
             <div key={si}>
-              <div className="p-[14px_24px] border-b-2 border-b-[var(--black)] bg-[var(--black)] flex items-center justify-between">
+              <div className="p-3 sm:p-[14px_24px] border-b-2 border-b-[var(--black)] bg-[var(--black)] flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-[2px] text-white">{sec.section}</span>
                 <span className="text-[10px] font-bold text-[#888]">{sec.items.filter(i => i.status === 'ok').length}/{sec.items.length} passed</span>
               </div>
               {sec.items.map((item, ii) => (
-                <div key={ii} className="flex items-start gap-4 p-[14px_24px] border-b border-b-[#eaeaea]">
+                <div key={ii} className="flex items-start gap-3 sm:gap-4 p-3 sm:p-[14px_24px] border-b border-b-[#eaeaea]">
                   <span className={`text-[11px] font-bold px-2 py-0.5 border-2 shrink-0 mt-0.5 flex items-center gap-1 ${statusBg[item.status as keyof typeof statusBg]}`}>
                     <StatusIcon s={item.status} />{item.status.toUpperCase()}
                   </span>
@@ -71,13 +76,14 @@ export default function ProfileAuditPage() {
           ))}
         </div>
 
+        {/* Score sidebar */}
         <div className="bg-[var(--black)] flex flex-col">
-          <div className="p-6 text-center border-b border-b-[#222]">
+          <div className="p-5 sm:p-6 text-center border-b border-b-[#222]">
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-2">Profile Score</div>
-            <div className="text-[80px] leading-none text-[var(--red)]" style={{ fontFamily: 'var(--font-d)' }}>{overallScore}</div>
+            <div className="text-[70px] sm:text-[80px] leading-none text-[var(--red)]" style={{ fontFamily: 'var(--font-d)' }}>{overallScore}</div>
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mt-2">/ 100 — {overallScore >= 70 ? 'GOOD' : overallScore >= 50 ? 'AVERAGE' : 'NEEDS WORK'}</div>
           </div>
-          <div className="p-5">
+          <div className="p-4 sm:p-5">
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-3">Quick Stats</div>
             {[
               { l: 'Passed Checks', v: `${okCount}/${allItems.length}`, c: 'text-[#4ade80]' },
@@ -90,7 +96,7 @@ export default function ProfileAuditPage() {
               </div>
             ))}
           </div>
-          <div className="p-5 mt-auto pb-8">
+          <div className="p-4 sm:p-5 mt-auto pb-6 sm:pb-8">
             <button className="w-full btn btn-red justify-center py-3 text-sm font-bold">Fix Issues Now →</button>
           </div>
         </div>

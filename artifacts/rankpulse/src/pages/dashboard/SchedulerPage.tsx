@@ -29,39 +29,49 @@ export default function SchedulerPage() {
 
   return (
     <div className="page-transition min-h-screen flex flex-col bg-[var(--bg)]">
-      <div className="page-header flex items-center justify-between">
-        <div><div className="page-kicker">Plan with SEO built in</div><div className="d4">Post Scheduler</div></div>
-        <button className="btn btn-red px-6 font-bold text-sm">+ Schedule Post</button>
+      <div className="page-header flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div>
+          <div className="page-kicker">Plan with SEO built in</div>
+          <div className="d4">Post Scheduler</div>
+        </div>
+        <button className="btn btn-red px-6 font-bold text-sm self-start sm:self-auto">+ Schedule Post</button>
       </div>
 
-      <div className="grid grid-cols-[1fr_280px] max-[900px]:grid-cols-1 flex-1">
-        <div className="border-r-2 border-r-[var(--black)] p-[24px]">
-          {/* Calendar Header */}
-          <div className="grid grid-cols-7 border-2 border-[var(--black)] mb-0">
-            {days.map(d => (
-              <div key={d} className="p-2 text-center text-[10px] font-bold uppercase tracking-[2px] bg-[var(--black)] text-white border-r border-r-[#333] last:border-r-0">{d}</div>
-            ))}
-          </div>
-          {/* Calendar Grid */}
-          <div className="grid grid-cols-7 border-2 border-t-0 border-[var(--black)] mb-6">
-            {Array.from({ length: 28 }, (_, i) => i + 1).map(day => {
-              const post = posts[day];
-              return (
-                <div key={day} className="min-h-[80px] p-2 border-r border-b border-[#eaeaea] last-of-type:border-r-0 hover:bg-[#f8f8f8] transition-colors">
-                  <div className="text-[11px] font-bold text-[#888] mb-1">{day}</div>
-                  {post && (
-                    <div className={`text-[8px] font-bold uppercase px-1.5 py-1 border ${getPlatColor(post.type)} leading-tight`}>
-                      {post.text}
+      {/* Main grid — stacks on mobile */}
+      <div className="flex flex-col md:grid md:grid-cols-[1fr_280px] flex-1">
+        <div className="border-b-2 md:border-b-0 md:border-r-2 border-[var(--black)] p-4 sm:p-6">
+          {/* Calendar — horizontal scroll on small screens */}
+          <div className="overflow-x-auto mb-6">
+            <div className="min-w-[420px]">
+              <div className="grid grid-cols-7 border-2 border-[var(--black)]">
+                {days.map(d => (
+                  <div key={d} className="p-2 text-center text-[10px] font-bold uppercase tracking-[2px] bg-[var(--black)] text-white border-r border-r-[#333] last:border-r-0">{d}</div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 border-2 border-t-0 border-[var(--black)]">
+                {Array.from({ length: 28 }, (_, i) => i + 1).map(day => {
+                  const post = posts[day];
+                  return (
+                    <div key={day} className="min-h-[64px] sm:min-h-[80px] p-1.5 sm:p-2 border-r border-b border-[#eaeaea] last-of-type:border-r-0 hover:bg-[#f8f8f8] transition-colors">
+                      <div className="text-[11px] font-bold text-[#888] mb-1">{day}</div>
+                      {post && (
+                        <div className={`text-[7px] sm:text-[8px] font-bold uppercase px-1 sm:px-1.5 py-1 border ${getPlatColor(post.type)} leading-tight`}>
+                          {post.text}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          {/* Optimal Times */}
-          <div className="flex items-center gap-3 mb-4"><div className="w-6 h-[3px] bg-[var(--red)]" /><span className="text-sm font-bold uppercase tracking-[2px]">Optimal Posting Times</span></div>
-          <div className="grid grid-cols-3 gap-4">
+          {/* Optimal Times — responsive grid */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-6 h-[3px] bg-[var(--red)]" />
+            <span className="text-sm font-bold uppercase tracking-[2px]">Optimal Posting Times</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {optimalTimes.map((t, i) => (
               <div key={i} className="border-2 border-[var(--black)] bg-white p-4">
                 <div className="text-[11px] font-bold uppercase tracking-[2px] text-[#888] mb-2">{t.plat}</div>
@@ -74,7 +84,8 @@ export default function SchedulerPage() {
           </div>
         </div>
 
-        <div className="bg-[#fafafa] p-[24px]">
+        {/* Queue sidebar */}
+        <div className="bg-[#fafafa] p-4 sm:p-6">
           <div className="label-sm text-[var(--red)] mb-4">Upcoming Queue</div>
           <div className="flex flex-col gap-3">
             {upcomingQueue.map((q, i) => (

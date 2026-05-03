@@ -77,43 +77,48 @@ export default function AnalyzerPage() {
 
   return (
     <div className="page-transition min-h-screen flex flex-col bg-[var(--bg)]">
-      <div className="page-header flex items-center justify-between">
+      {/* Page header — stacks on mobile */}
+      <div className="page-header flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <div>
           <div className="page-kicker">Real-time SEO scoring</div>
           <div className="d4">Content Analyser</div>
         </div>
-        <div className="flex gap-0 border-2 items-stretch h-[42px] border-[var(--black)]">
+        {/* Platform tabs — scroll on very small screens */}
+        <div className="flex gap-0 border-2 border-[var(--black)] overflow-x-auto shrink-0 self-start sm:self-auto">
           {(['instagram', 'linkedin', 'x'] as const).map(p => (
             <button key={p}
-              className={`btn ${platform === p ? 'bg-[var(--black)] text-white' : 'bg-white hover:bg-[#f0f0f0]'} rounded-none border-0 border-r-2 last:border-r-0 border-r-[var(--black)] px-6 relative h-full flex items-center`}
+              className={`btn ${platform === p ? 'bg-[var(--black)] text-white' : 'bg-white hover:bg-[#f0f0f0]'} rounded-none border-0 border-r-2 last:border-r-0 border-r-[var(--black)] px-4 sm:px-6 h-[42px] flex items-center shrink-0`}
               onClick={() => setPlatform(p)}
             >
-              <span className="font-bold text-sm tracking-wide">{p === 'instagram' ? 'Instagram' : p === 'linkedin' ? 'LinkedIn' : 'X / Twitter'}</span>
+              <span className="font-bold text-xs sm:text-sm tracking-wide whitespace-nowrap">
+                {p === 'instagram' ? 'Instagram' : p === 'linkedin' ? 'LinkedIn' : 'X / Twitter'}
+              </span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_320px] max-[900px]:grid-cols-1 flex-1 relative">
-        <div className="border-r-2 border-r-[var(--black)] flex flex-col">
-          <div className="p-5 border-b-2 border-b-[var(--black)] bg-white">
+      {/* Main grid — single col on mobile, side-by-side on md+ */}
+      <div className="flex flex-col md:grid md:grid-cols-[1fr_300px] lg:grid-cols-[1fr_320px] flex-1 relative">
+        <div className="border-b-2 md:border-b-0 md:border-r-2 border-[var(--black)] flex flex-col">
+          <div className="p-4 sm:p-5 border-b-2 border-b-[var(--black)] bg-white">
             <div className="label-sm mb-2">Paste Caption or Post Text</div>
             <textarea
-              className="textarea w-full min-h-[140px] p-4 border-2 border-[var(--black)] bg-[var(--bg)] resize-none outline-none focus:border-[var(--red)] text-sm mb-3"
+              className="textarea w-full min-h-[120px] sm:min-h-[140px] p-3 sm:p-4 border-2 border-[var(--black)] bg-[var(--bg)] resize-none outline-none focus:border-[var(--red)] text-sm mb-3"
               rows={5}
               placeholder="Paste your Instagram caption, LinkedIn post, or tweet here..."
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
-            <div className="flex gap-2 items-center">
-              <button className="btn btn-red px-5 py-2 font-bold text-sm" onClick={handleAnalyze} disabled={isSaving}>
-                {isSaving ? "Analysing..." : "Analyse Now →"}
+            <div className="flex flex-wrap gap-2 items-center">
+              <button className="btn btn-red px-4 py-2 font-bold text-sm" onClick={handleAnalyze} disabled={isSaving}>
+                {isSaving ? "Analysing..." : "Analyse →"}
               </button>
-              <button className="btn btn-outline px-5 py-2 font-bold text-sm" onClick={handleRewrite} disabled={isRewriting || !text.trim()}>
+              <button className="btn btn-outline px-4 py-2 font-bold text-sm" onClick={handleRewrite} disabled={isRewriting || !text.trim()}>
                 {isRewriting ? "Rewriting..." : "AI Rewrite"}
               </button>
-              <button className="btn btn-outline px-5 py-2 font-bold text-sm" onClick={() => setText('')}>Clear</button>
-              <span className="body-sm ml-auto text-xs text-[#888] font-bold">{text.length} characters</span>
+              <button className="btn btn-outline px-4 py-2 font-bold text-sm" onClick={() => setText('')}>Clear</button>
+              <span className="body-sm ml-auto text-xs text-[#888] font-bold">{text.length} chars</span>
             </div>
           </div>
 
@@ -121,7 +126,7 @@ export default function AnalyzerPage() {
             <div className="label-sm mb-3">Detected Issues &amp; Signals</div>
             <div className="flex flex-wrap gap-2">
               {analysis.penalties.map((flag, i) => (
-                <span key={i} className={`px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide border-2 flex items-center gap-1.5 ${
+                <span key={i} className={`px-2 py-1 text-[11px] font-bold uppercase tracking-wide border-2 flex items-center gap-1.5 ${
                   flag.type === 'ok' ? 'bg-[#ebfbf0] text-[#166534] border-[#22c55e]' :
                   flag.type === 'warn' ? 'bg-[#fffbeb] text-[#92400e] border-[#f59e0b]' :
                   'bg-[#fef2f2] text-[#991b1b] border-[#ef4444]'
@@ -134,25 +139,27 @@ export default function AnalyzerPage() {
           </div>
 
           <div className="flex-1 bg-white">
-            <div className="p-5 border-b-2 border-b-[var(--black)] bg-[#f8f8f8]">
+            <div className="p-4 sm:p-5 border-b-2 border-b-[var(--black)] bg-[#f8f8f8]">
               <div className="flex items-center gap-3">
                 <div className="w-6 h-[3px] bg-[var(--red)]" />
-                <span className="text-sm font-bold uppercase tracking-[2px]">Parameter Breakdown — {platform === 'instagram' ? 'Instagram' : platform === 'linkedin' ? 'LinkedIn' : 'X / Twitter'}</span>
+                <span className="text-sm font-bold uppercase tracking-[2px]">
+                  Parameter Breakdown — {platform === 'instagram' ? 'Instagram' : platform === 'linkedin' ? 'LinkedIn' : 'X / Twitter'}
+                </span>
               </div>
             </div>
             <div>
               {analysis.parameters.map((p, i) => (
-                <div key={i} className="p-4 border-b border-b-[#eaeaea] flex items-start gap-4">
-                  <div className="min-w-[40px] pt-1">
+                <div key={i} className="p-4 border-b border-b-[#eaeaea] flex items-start gap-3 sm:gap-4">
+                  <div className="min-w-[36px] pt-1 shrink-0">
                     <span className="px-1.5 py-0.5 bg-[var(--black)] text-white text-[9px] font-bold tracking-wider">{p.weight}%</span>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
-                      <span className="text-sm font-bold min-w-[180px]">{p.name}</span>
+                      <span className="text-sm font-bold sm:min-w-[180px]">{p.name}</span>
                       <div className="flex-1 h-[4px] bg-[#e8e4d0] relative w-full">
                         <div className={`absolute left-0 top-0 bottom-0 ${p.color === 'hi' ? 'bg-[#22c55e]' : p.color === 'md' ? 'bg-[#f59e0b]' : 'bg-[var(--red)]'}`} style={{ width: p.score + '%' }} />
                       </div>
-                      <span className={`text-xs font-bold w-12 text-right ${p.color === 'hi' ? 'text-[#16a34a]' : p.color === 'md' ? 'text-[#d97706]' : 'text-[var(--red)]'}`}>{p.score}%</span>
+                      <span className={`text-xs font-bold sm:w-12 sm:text-right ${p.color === 'hi' ? 'text-[#16a34a]' : p.color === 'md' ? 'text-[#d97706]' : 'text-[var(--red)]'}`}>{p.score}%</span>
                     </div>
                     <div className="text-xs text-[#555] leading-relaxed">{p.note}</div>
                   </div>
@@ -162,16 +169,16 @@ export default function AnalyzerPage() {
           </div>
         </div>
 
-        {/* Score Panel */}
-        <div className="bg-[var(--black)] flex flex-col min-h-full">
-          <div className="p-6 border-b border-b-[#222] text-center">
+        {/* Score Panel — full width on mobile, fixed sidebar on md+ */}
+        <div className="bg-[var(--black)] flex flex-col">
+          <div className="p-5 sm:p-6 border-b border-b-[#222] text-center">
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-2">Content SEO Score</div>
-            <div className="text-[110px] leading-[0.85] text-[var(--red)] tracking-[-4px]" style={{ fontFamily: 'var(--font-d)' }}>{analysis.overallScore}</div>
+            <div className="text-[80px] sm:text-[110px] leading-[0.85] text-[var(--red)] tracking-[-4px]" style={{ fontFamily: 'var(--font-d)' }}>{analysis.overallScore}</div>
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mt-3">/ 100 — {analysis.overallScore >= 80 ? 'EXCELLENT' : analysis.overallScore >= 60 ? 'NEEDS WORK' : 'POOR'}</div>
           </div>
 
           {analysis.improvements.length > 0 && (
-            <div className="p-5 border-b border-b-[#222]">
+            <div className="p-4 sm:p-5 border-b border-b-[#222]">
               <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-4">Top Fixes</div>
               <div className="flex flex-col gap-3">
                 {analysis.improvements.map((fix, i) => (
@@ -189,7 +196,7 @@ export default function AnalyzerPage() {
             </div>
           )}
 
-          <div className="p-5 border-b border-b-[#222]">
+          <div className="p-4 sm:p-5 border-b border-b-[#222]">
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-4">Predicted Performance</div>
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center pb-2 border-b border-b-[#1a1a1a]">
@@ -207,7 +214,7 @@ export default function AnalyzerPage() {
             </div>
           </div>
 
-          <div className="p-5 mt-auto pb-8">
+          <div className="p-4 sm:p-5 mt-auto pb-6 sm:pb-8">
             <button className="w-full btn btn-red mb-3 justify-center py-3 text-sm font-bold" onClick={handleRewrite} disabled={isRewriting || !text.trim()}>
               {isRewriting ? "Rewriting..." : "AI Rewrite for Max Score"}
             </button>

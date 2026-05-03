@@ -45,24 +45,29 @@ export default function AiStudioPage() {
 
   return (
     <div className="page-transition min-h-screen flex flex-col bg-[var(--bg)]">
-      <div className="page-header flex items-center justify-between flex-wrap gap-4">
-        <div><div className="page-kicker">Pre-scored content ideas, daily</div><div className="d4">AI Content Studio</div></div>
-        <div className="flex gap-2 items-center">
+      <div className="page-header flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div>
+          <div className="page-kicker">Pre-scored content ideas, daily</div>
+          <div className="d4">AI Content Studio</div>
+        </div>
+        <div className="flex flex-wrap gap-2 items-center">
           <button className="btn btn-outline btn-sm font-bold text-xs uppercase bg-white">Regenerate Ideas</button>
           <button className="btn btn-red btn-sm font-bold text-xs uppercase px-6">+ Create Brief</button>
         </div>
       </div>
 
-      <div className="flex flex-1 max-md:flex-col">
-        <div className="flex-1 flex flex-col border-r-2 border-[var(--black)] max-md:border-r-0 max-md:border-b-2 bg-[#f9f9f9]">
-          <div className="p-[14px_20px] border-b-2 border-[var(--black)] flex items-center justify-between bg-[var(--black)]">
+      {/* Main layout — stacks on mobile, side-by-side on md+ */}
+      <div className="flex flex-col-reverse md:flex-row flex-1">
+        {/* Ideas list */}
+        <div className="flex-1 flex flex-col border-t-2 md:border-t-0 md:border-r-2 border-[var(--black)] bg-[#f9f9f9]">
+          <div className="p-3 sm:p-[14px_20px] border-b-2 border-[var(--black)] flex items-center justify-between bg-[var(--black)]">
             <span className="text-[11px] font-bold uppercase tracking-[2px] text-[#aaa]">Generated Content Ideas</span>
             <span className="text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 border border-[#4ade80] text-[#4ade80]">{ideas.length} / 5 Generated</span>
           </div>
-          <div className="p-6 flex flex-col gap-6 w-full max-w-[800px] mx-auto">
+          <div className="p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 w-full max-w-[800px] mx-auto">
             {ideas.map((idea, i) => (
-              <div key={i} className="border-2 border-[var(--black)] shadow-[4px_4px_0px_var(--black)] bg-white p-5 flex flex-col">
-                <div className="flex flex-col md:flex-row gap-4 justify-between border-b border-[#eaeaea] pb-5 mb-5">
+              <div key={i} className="border-2 border-[var(--black)] shadow-[4px_4px_0px_var(--black)] bg-white p-4 sm:p-5 flex flex-col">
+                <div className="flex flex-col sm:flex-row gap-4 justify-between border-b border-[#eaeaea] pb-4 mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-3 items-center flex-wrap">
                       {idea.tags.map((t, idx) => (
@@ -70,15 +75,15 @@ export default function AiStudioPage() {
                       ))}
                       <span className="text-[9px] font-bold uppercase tracking-wider px-[6px] py-[1px] border border-[#ccc] text-[#888] bg-[#f0f0f0]">{idea.format}</span>
                     </div>
-                    <div className="text-[16px] font-bold text-[var(--black)] mb-2 leading-snug">{idea.title}</div>
+                    <div className="text-[15px] sm:text-[16px] font-bold text-[var(--black)] mb-2 leading-snug">{idea.title}</div>
                     <div className="text-[12px] text-[#555] italic">{idea.hook}</div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-[48px] text-[var(--red)] font-black leading-none" style={{ fontFamily: 'var(--font-d)' }}>{idea.score}</div>
+                  <div className="sm:text-right shrink-0 flex sm:flex-col items-center sm:items-end gap-2">
+                    <div className="text-[42px] sm:text-[48px] text-[var(--red)] font-black leading-none" style={{ fontFamily: 'var(--font-d)' }}>{idea.score}</div>
                     <div className="text-[10px] text-[#888] font-bold uppercase tracking-[1px]">SEO Score</div>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button className="btn btn-red btn-sm px-5 text-xs">Use This Idea →</button>
                   <button className="btn btn-outline btn-sm px-5 text-xs">Save</button>
                 </div>
@@ -87,12 +92,12 @@ export default function AiStudioPage() {
           </div>
         </div>
 
-        {/* Brief Generator */}
-        <div className="w-[280px] max-md:w-full shrink-0 bg-white border-l-2 border-[var(--black)] max-md:border-l-0 max-md:border-t-2 flex flex-col">
-          <div className="p-[14px_20px] border-b-2 border-[var(--black)] bg-[#fafafa]">
+        {/* Brief Generator — full width on mobile, sidebar on md+ */}
+        <div className="w-full md:w-[280px] shrink-0 bg-white border-b-2 md:border-b-0 md:border-l-0 border-[var(--black)] flex flex-col">
+          <div className="p-3 sm:p-[14px_20px] border-b-2 border-[var(--black)] bg-[#fafafa]">
             <span className="text-[11px] font-bold uppercase tracking-[2px] text-[var(--black)]">Content Brief</span>
           </div>
-          <div className="p-5 flex flex-col gap-5 flex-1">
+          <div className="p-4 sm:p-5 flex flex-col gap-4 sm:gap-5 sm:flex-1">
             <div>
               <label className="label-sm mb-2 block">Your Niche</label>
               <input className="input text-xs" value={niche} onChange={(e) => setNiche(e.target.value)} />

@@ -24,25 +24,33 @@ export default function KeywordsPage() {
 
   return (
     <div className="page-transition min-h-screen flex flex-col bg-[var(--bg)]">
-      <div className="page-header flex items-center justify-between">
-        <div><div className="page-kicker">Discover what ranks</div><div className="d4">Keyword Research</div></div>
-        <div className="flex gap-2 h-[42px]">
-          <input className="input" placeholder="Search keywords..." style={{ width: '240px' }} />
-          <button className="btn btn-red px-6 font-bold text-sm">Search</button>
+      {/* Page header — stacks on small screens */}
+      <div className="page-header flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <div>
+          <div className="page-kicker">Discover what ranks</div>
+          <div className="d4">Keyword Research</div>
+        </div>
+        <div className="flex gap-2 h-[42px] w-full sm:w-auto">
+          <input className="input flex-1 sm:w-[200px] sm:flex-none" placeholder="Search keywords..." />
+          <button className="btn btn-red px-4 sm:px-6 font-bold text-sm shrink-0">Search</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_280px] max-[900px]:grid-cols-1 flex-1 relative">
-        <div className="border-r-2 border-r-[var(--black)] flex flex-col">
-          <div className="p-[12px_16px] border-b-2 border-b-[var(--black)] flex gap-2 items-center">
+      {/* Main grid — stacks on mobile */}
+      <div className="flex flex-col md:grid md:grid-cols-[1fr_280px] flex-1 relative">
+        <div className="border-b-2 md:border-b-0 md:border-r-2 border-[var(--black)] flex flex-col">
+          {/* Filter bar — wraps on mobile */}
+          <div className="p-3 border-b-2 border-b-[var(--black)] flex flex-wrap gap-2 items-center">
             <span className="label-sm text-[#888]">Filter:</span>
             {filters.map((f) => (
               <button key={f} onClick={() => setActiveFilter(f)}
                 className={`btn btn-sm ${activeFilter === f ? 'bg-[var(--black)] text-white' : 'btn-outline'} text-xs font-bold px-3 py-1.5`}>{f}</button>
             ))}
-            <span className="ml-auto body-sm text-[#888] text-xs font-bold">Showing {keywords.length} of 2,847 keywords</span>
+            <span className="body-sm text-[#888] text-xs font-bold sm:ml-auto">Showing {keywords.length} of 2,847</span>
           </div>
-          <div className="flex items-center gap-3 p-[10px_16px] border-b-2 border-b-[var(--black)] bg-[var(--black)] text-white">
+
+          {/* Table header */}
+          <div className="hidden sm:flex items-center gap-3 p-[10px_16px] border-b-2 border-b-[var(--black)] bg-[var(--black)] text-white">
             <div className="min-w-[28px] text-[10px] font-bold tracking-[2px] uppercase">#</div>
             <div className="flex-1 text-[10px] font-bold tracking-[2px] uppercase">Keyword</div>
             <div className="w-[100px] text-[10px] font-bold tracking-[2px] uppercase">Volume</div>
@@ -50,7 +58,9 @@ export default function KeywordsPage() {
             <div className="w-[60px] text-[10px] font-bold tracking-[2px] uppercase">Diff.</div>
             <div className="w-[80px] text-[10px] font-bold tracking-[2px] uppercase">Platforms</div>
           </div>
-          <div className="flex flex-col bg-white flex-1">
+
+          {/* Desktop rows */}
+          <div className="hidden sm:flex flex-col bg-white flex-1">
             {keywords.map(k => (
               <div key={k.rank} className="flex items-center gap-3 p-[10px_16px] border-b border-b-[#eaeaea] hover:bg-[#f8f8f8] transition-colors">
                 <div className="min-w-[28px] text-[18px] font-bold" style={{ fontFamily: 'var(--font-d)' }}>{String(k.rank).padStart(2,'0')}</div>
@@ -67,7 +77,7 @@ export default function KeywordsPage() {
                 <div className="w-[60px]">
                   <span className={`text-[10px] font-bold uppercase tracking-[1px] px-1.5 py-0.5 border-2 ${k.diff === 'hard' ? 'text-[#ef4444] border-[#ef4444]' : k.diff === 'med' ? 'text-[#f59e0b] border-[#f59e0b]' : 'text-[#22c55e] border-[#22c55e]'}`}>{k.diff}</span>
                 </div>
-                <div className="w-[80px] flex gap-1">
+                <div className="w-[80px] flex gap-1 flex-wrap">
                   {k.plats.map(p => (
                     <span key={p} className={`text-[8px] font-bold uppercase tracking-wider px-[4px] py-[1px] border text-white ${p === 'ig' ? 'bg-[#d946ef] border-[#a21caf]' : p === 'li' ? 'bg-[#3b82f6] border-[#1d4ed8]' : 'bg-[#111] border-[#000]'}`}>{p}</span>
                   ))}
@@ -75,8 +85,38 @@ export default function KeywordsPage() {
               </div>
             ))}
           </div>
+
+          {/* Mobile card list */}
+          <div className="sm:hidden flex flex-col bg-white flex-1">
+            {keywords.map(k => (
+              <div key={k.rank} className="p-4 border-b border-b-[#eaeaea]">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <span className="text-xs text-[#888] font-bold mr-2">{String(k.rank).padStart(2,'0')}</span>
+                    <span className="text-sm font-bold">{k.term}</span>
+                  </div>
+                  <span className={`text-[11px] font-bold px-1.5 py-0.5 border ${k.trend.startsWith('+') ? 'bg-[#ebfbf0] text-[#166534] border-[#22c55e]' : k.trend === 'stable' ? 'bg-[#f0f0f0] text-[#555] border-[#ccc]' : 'bg-[#fef2f2] text-[#991b1b] border-[#ef4444]'}`}>{k.trend}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <div className="flex-1 h-[5px] border border-[var(--black)] bg-[var(--bg)] relative">
+                      <div className="absolute left-0 top-0 bottom-0 bg-[var(--red)]" style={{ width: k.vol + '%' }}></div>
+                    </div>
+                    <span className="text-[10px] font-bold shrink-0">{k.vol}/100</span>
+                  </div>
+                  <span className={`text-[10px] font-bold uppercase tracking-[1px] px-1.5 py-0.5 border-2 ${k.diff === 'hard' ? 'text-[#ef4444] border-[#ef4444]' : k.diff === 'med' ? 'text-[#f59e0b] border-[#f59e0b]' : 'text-[#22c55e] border-[#22c55e]'}`}>{k.diff}</span>
+                  <div className="flex gap-1">
+                    {k.plats.map(p => (
+                      <span key={p} className={`text-[8px] font-bold uppercase tracking-wider px-[4px] py-[1px] border text-white ${p === 'ig' ? 'bg-[#d946ef] border-[#a21caf]' : p === 'li' ? 'bg-[#3b82f6] border-[#1d4ed8]' : 'bg-[#111] border-[#000]'}`}>{p}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
+        {/* Sidebar */}
         <div className="bg-[#fafafa]">
           <div className="p-4 border-b-2 border-b-[var(--black)]">
             <div className="label-sm text-[var(--red)] mb-3">Trending Now</div>
