@@ -10,8 +10,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Prevent duplicate initialization in HMR
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+// Prevent crash if env vars are missing (useful for first-time deploy)
+const hasConfig = !!firebaseConfig.apiKey;
+
+const app = hasConfig 
+  ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApp())
+  : null;
+
+const auth = app ? getAuth(app) : null;
 
 export { app, auth };
