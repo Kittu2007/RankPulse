@@ -72,8 +72,10 @@ export default function CompetitorsPage() {
         } else {
           throw new Error("Could not parse AI response");
         }
-      } catch {
+      } catch (err: any) {
+        console.error("AI Analysis Error:", err);
         analysis = { handle, name: newName, ig: Math.floor(Math.random()*25)+65, li: newPlatform === 'linkedin' ? Math.floor(Math.random()*25)+60 : 0, x: newPlatform === 'x' ? Math.floor(Math.random()*20)+65 : Math.floor(Math.random()*15)+60, posts: Math.floor(Math.random()*30)+15, eng: `${(Math.random()*3+1.5).toFixed(1)}%`, gap: [`${newName.toLowerCase().split(' ')[0]} tips`, `${newPlatform} growth`] };
+        toast.info(`Using fallback analysis due to API error: ${err.message}`);
       }
     } else {
       analysis = { handle, name: newName, ig: Math.floor(Math.random()*25)+65, li: newPlatform === 'linkedin' ? Math.floor(Math.random()*25)+60 : 0, x: newPlatform === 'x' ? Math.floor(Math.random()*20)+65 : Math.floor(Math.random()*15)+60, posts: Math.floor(Math.random()*30)+15, eng: `${(Math.random()*3+1.5).toFixed(1)}%`, gap: [`${newName.toLowerCase().split(' ')[0]} tips`, `${newPlatform} growth`] };

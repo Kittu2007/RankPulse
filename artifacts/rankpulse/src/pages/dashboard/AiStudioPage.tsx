@@ -61,9 +61,9 @@ export default function AiStudioPage() {
         setIdeas(parsed.map((i: any) => ({ ...i, tags: [platCode], format: style })));
         toast.success("Ideas generated!");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error("Failed to generate ideas.");
+      toast.error(`Failed to generate ideas: ${err.message}`);
     }
     setIsGenerating(false);
   };

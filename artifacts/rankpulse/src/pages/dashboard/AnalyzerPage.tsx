@@ -62,10 +62,10 @@ export default function AnalyzerPage() {
           setText(newText);
         }
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setText(originalText);
-      alert("AI Rewrite failed. Please try again later.");
+      alert(`AI Rewrite failed: ${err.message}`);
     }
     setIsRewriting(false);
   };
