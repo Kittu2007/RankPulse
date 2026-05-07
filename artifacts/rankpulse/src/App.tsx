@@ -1,5 +1,6 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "sonner";
+import { AuthProvider, ProtectedRoute } from "@/lib/AuthContext";
 
 // Public layout & pages
 import PublicLayout from "@/layouts/PublicLayout";
@@ -12,7 +13,6 @@ import TermsPage from "@/pages/public/TermsPage";
 // Auth pages
 import LoginPage from "@/pages/auth/LoginPage";
 import SignupPage from "@/pages/auth/SignupPage";
-import AuthCallback from "@/pages/auth/AuthCallback";
 
 // Dashboard layout & pages
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -58,55 +58,54 @@ function Router() {
       {/* Auth routes */}
       <Route path="/login" component={LoginPage} />
       <Route path="/signup" component={SignupPage} />
-      <Route path="/auth/callback" component={AuthCallback} />
 
-      {/* Dashboard routes */}
+      {/* Dashboard routes — all protected */}
       <Route path="/dashboard">
-        <DashboardLayout><DashboardHome /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><DashboardHome /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/analyzer">
-        <DashboardLayout><AnalyzerPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><AnalyzerPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/ai-studio">
-        <DashboardLayout><AiStudioPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><AiStudioPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/scheduler">
-        <DashboardLayout><SchedulerPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><SchedulerPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/analytics">
-        <DashboardLayout><AnalyticsPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><AnalyticsPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/keywords">
-        <DashboardLayout><KeywordsPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><KeywordsPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/hashtags">
-        <DashboardLayout><HashtagsPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><HashtagsPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/competitors">
-        <DashboardLayout><CompetitorsPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><CompetitorsPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/profile-audit">
-        <DashboardLayout><ProfileAuditPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><ProfileAuditPage /></DashboardLayout></ProtectedRoute>
       </Route>
       <Route path="/dashboard/settings">
-        <DashboardLayout><SettingsPage /></DashboardLayout>
+        <ProtectedRoute><DashboardLayout><SettingsPage /></DashboardLayout></ProtectedRoute>
       </Route>
 
-      {/* Admin routes */}
+      {/* Admin routes — protected */}
       <Route path="/admin">
-        <AdminLayout><AdminOverviewPage /></AdminLayout>
+        <ProtectedRoute><AdminLayout><AdminOverviewPage /></AdminLayout></ProtectedRoute>
       </Route>
       <Route path="/admin/users">
-        <AdminLayout><AdminUsersPage /></AdminLayout>
+        <ProtectedRoute><AdminLayout><AdminUsersPage /></AdminLayout></ProtectedRoute>
       </Route>
       <Route path="/admin/api-health">
-        <AdminLayout><AdminApiHealthPage /></AdminLayout>
+        <ProtectedRoute><AdminLayout><AdminApiHealthPage /></AdminLayout></ProtectedRoute>
       </Route>
       <Route path="/admin/flags">
-        <AdminLayout><AdminFlagsPage /></AdminLayout>
+        <ProtectedRoute><AdminLayout><AdminFlagsPage /></AdminLayout></ProtectedRoute>
       </Route>
       <Route path="/admin/seo-config">
-        <AdminLayout><AdminSeoConfigPage /></AdminLayout>
+        <ProtectedRoute><AdminLayout><AdminSeoConfigPage /></AdminLayout></ProtectedRoute>
       </Route>
 
       {/* 404 */}
@@ -122,11 +121,14 @@ function Router() {
 }
 
 function App() {
+  const base = (import.meta.env.BASE_URL || "").replace(/\/$/, "");
   return (
-    <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-      <Router />
-      <Toaster />
-    </WouterRouter>
+    <AuthProvider>
+      <WouterRouter base={base || undefined}>
+        <Router />
+        <Toaster />
+      </WouterRouter>
+    </AuthProvider>
   );
 }
 

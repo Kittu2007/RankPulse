@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { aiComplete, hasAiKey } from "@/lib/nvidia";
 
 export default function HashtagsPage() {
   const [topic, setTopic] = useState("");
@@ -10,15 +11,42 @@ export default function HashtagsPage() {
     if (!topic) { toast.error("Please enter a topic."); return; }
     setLoading(true);
     setHashtags([]);
+
+    if (!hasAiKey()) {
+      // Fallback — generate template hashtags without AI
+      const base = topic.toLowerCase().replace(/\s+/g, "");
+      setHashtags([
+        `#${base}`,
+        `#${base}tips`,
+        "#socialmedia",
+        "#contentcreator",
+        "#instagram",
+        "#viral",
+        "#trending",
+        "#creatoreconomy",
+        `#${topic.toLowerCase().split(" ")[0]}`,
+        "#digitalmarketing",
+      ]);
+      toast.success("Hashtags generated (template mode — add NVIDIA API key for AI-powered results)");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch("/api/hashtags", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic }),
-      });
-      if (!response.ok) throw new Error("Failed to generate hashtags.");
-      const data = await response.json();
-      setHashtags(data.hashtags);
+      const raw = await aiComplete([
+        {
+          role: "system",
+          content: "You are a social media hashtag expert. Generate relevant, high-performing hashtags. Return ONLY a JSON array of hashtag strings, each starting with #. No other text.",
+        },
+        {
+          role: "user",
+          content: `Generate 10 relevant hashtags for the topic: "${topic}". Return only a JSON array like ["#hashtag1", "#hashtag2", ...].`,
+        },
+      ]);
+
+      const match = raw.match(/\[.*\]/s);
+      const parsed: string[] = match ? (JSON.parse(match[0]) as string[]) : [];
+      setHashtags(parsed);
       toast.success("Hashtags generated successfully!");
     } catch (error) {
       console.error(error);

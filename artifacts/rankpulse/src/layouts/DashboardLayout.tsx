@@ -3,8 +3,10 @@ import {
   Bell, Home, Search, Calendar, BarChart2, Bot, Hash,
   Users, Shield, Key, CircleUser, Menu, X, TrendingUp, Settings
 } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
-import { useState, useEffect } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/lib/AuthContext";
+import { useState } from "react";
 
 const navItems = [
   { href: "/dashboard", icon: Home, label: "Dashboard" },
@@ -85,20 +87,17 @@ function Sidebar({ onClose }: { onClose?: () => void }) {
 }
 
 function Header({ onMenuClick }: { onMenuClick: () => void }) {
-  const supabase = createClient();
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUserEmail(data.user?.email ?? null);
-    });
-  }, []);
-
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
+    await signOut(auth);
+    navigate("/login", { replace: true });
   };
+
+  const displayEmail = user?.email ?? null;
+  const displayName = user?.displayName ?? displayEmail ?? "My Account";
 
   return (
     <header className="flex h-14 items-center gap-3 border-b-2 border-[var(--black)] bg-white px-4 lg:h-[60px]">
@@ -135,7 +134,7 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
             <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
             <div className="absolute right-0 top-full mt-1 w-52 bg-white border-2 border-[var(--black)] shadow-[4px_4px_0_var(--black)] z-50">
               <div className="px-4 py-2.5 text-[10px] font-bold border-b border-[#eaeaea] uppercase tracking-[1px] text-[#888] truncate">
-                {userEmail || "My Account"}
+                {displayName}
               </div>
               <Link href="/dashboard/settings" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold hover:bg-[var(--bg)] transition-colors">
                 <Settings className="h-3.5 w-3.5" /> Settings

@@ -1,19 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { analyzeInstagram } from "@/lib/seo/instagram";
 import { analyzeLinkedIn } from "@/lib/seo/linkedin";
 import { analyzeX } from "@/lib/seo/x";
 import type { SEOAnalysisResult } from "@/lib/seo/types";
-import { createClient } from "@/utils/supabase/client";
+import { aiStream, hasAiKey } from "@/lib/nvidia";
+import { toast } from "sonner";
 import { Check, AlertTriangle, X as XIcon } from "lucide-react";
 
 type Platform = 'instagram' | 'linkedin' | 'x';
 
-const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
-
 export default function AnalyzerPage() {
   const [platform, setPlatform] = useState<Platform>('instagram');
   const [text, setText] = useState("Just dropped a new reel — save this for later if you want quick arm workouts at home. No equipment needed. These 5 moves hit triceps, biceps and shoulders. Try them today! Link in bio for full program.");
+
+  // Check for prefilled content from AI Studio "Use This Idea"
+  useEffect(() => {
+    const prefill = localStorage.getItem("rp_analyzer_prefill");
+    if (prefill) {
+      setText(prefill);
+      localStorage.removeItem("rp_analyzer_prefill");
+      toast.success("Idea loaded — see your score!");
+    }
+  }, []);
 
   const analysis = useMemo<SEOAnalysisResult>(() => {
     switch (platform) {
@@ -31,24 +40,28 @@ export default function AnalyzerPage() {
     setIsRewriting(true);
     const originalText = text;
     setText("");
+
+    if (!hasAiKey()) {
+      setText(originalText + "\n\n[AI Rewrite not configured — add VITE_NVIDIA_API_KEY to .env.local]");
+      setIsRewriting(false);
+      return;
+    }
+
     try {
-      const res = await fetch(`${API_BASE}/api/ai/rewrite`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caption: originalText, platform, score: analysis.overallScore })
-      });
-      if (!res.ok) throw new Error("Failed to fetch rewrite");
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder("utf-8");
-      if (reader) {
-        let newText = "";
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          newText += decoder.decode(value, { stream: true });
+      let newText = "";
+      await aiStream(
+        [
+          {
+            role: "system",
+            content: `You are a social media SEO expert. Rewrite captions to maximize the ${platform} algorithm score. Current score: ${analysis.overallScore}/100. Focus on: hook strength, keyword density, engagement triggers, platform-specific signals. Output only the rewritten caption text.`,
+          },
+          { role: "user", content: originalText },
+        ],
+        (chunk) => {
+          newText += chunk;
           setText(newText);
         }
-      }
+      );
     } catch (err) {
       console.error(err);
       setText(originalText);
@@ -57,21 +70,26 @@ export default function AnalyzerPage() {
     setIsRewriting(false);
   };
 
-  const handleAnalyze = async () => {
+  const handleSaveAnalysis = async () => {
     if (!text.trim()) return;
     setIsSaving(true);
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setIsSaving(false); return; }
-      await supabase.from('analyses').insert({
-        user_id: user.id, platform, content_text: text,
+      // Save to localStorage for now (Supabase data layer can be re-added later)
+      const saved = JSON.parse(localStorage.getItem("rp_analyses") || "[]");
+      saved.unshift({
+        id: Date.now(),
+        platform,
+        content_text: text,
         overall_score: analysis.overallScore,
-        parameter_scores: analysis.parameters as any,
-        penalties: analysis.penalties as any,
-        suggestions: analysis.improvements as any,
+        parameter_scores: analysis.parameters,
+        penalties: analysis.penalties,
+        suggestions: analysis.improvements,
+        created_at: new Date().toISOString(),
       });
-    } catch (err) { console.error(err); }
+      // Keep last 50
+      localStorage.setItem("rp_analyses", JSON.stringify(saved.slice(0, 50)));
+      toast.success(`Analysis saved — Score: ${analysis.overallScore}/100`);
+    } catch (err) { console.error(err); toast.error("Failed to save analysis."); }
     setIsSaving(false);
   };
 
@@ -111,8 +129,8 @@ export default function AnalyzerPage() {
               onChange={(e) => setText(e.target.value)}
             />
             <div className="flex flex-wrap gap-2 items-center">
-              <button className="btn btn-red px-4 py-2 font-bold text-sm" onClick={handleAnalyze} disabled={isSaving}>
-                {isSaving ? "Analysing..." : "Analyse →"}
+              <button className="btn btn-red px-4 py-2 font-bold text-sm" onClick={handleSaveAnalysis} disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Analysis →"}
               </button>
               <button className="btn btn-outline px-4 py-2 font-bold text-sm" onClick={handleRewrite} disabled={isRewriting || !text.trim()}>
                 {isRewriting ? "Rewriting..." : "AI Rewrite"}
@@ -218,7 +236,7 @@ export default function AnalyzerPage() {
             <button className="w-full btn btn-red mb-3 justify-center py-3 text-sm font-bold" onClick={handleRewrite} disabled={isRewriting || !text.trim()}>
               {isRewriting ? "Rewriting..." : "AI Rewrite for Max Score"}
             </button>
-            <button className="w-full btn border-2 border-[#333] text-white hover:bg-[#222] justify-center py-3 text-sm font-bold" onClick={handleAnalyze} disabled={isSaving}>
+            <button className="w-full btn border-2 border-[#333] text-white hover:bg-[#222] justify-center py-3 text-sm font-bold" onClick={handleSaveAnalysis} disabled={isSaving}>
               {isSaving ? "Saving..." : "Save Analysis"}
             </button>
           </div>

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { createClient } from "@/utils/supabase/client";
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/lib/AuthContext";
+import { useEffect } from "react";
 import { Check, Chrome } from "lucide-react";
 
 export default function SignupPage() {
@@ -13,43 +16,50 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    const supabase = createClient();
-    let platformValue = platform.toLowerCase();
-    if (platformValue.includes("x / twitter")) platformValue = "x";
-    if (platformValue.includes("all three")) platformValue = "all";
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { first_name: firstName, last_name: lastName, primary_platform: platformValue },
-        emailRedirectTo: `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`,
-      },
-    });
-    if (error) {
-      setError(error.message);
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      // Set display name — Firebase doesn't require email confirmation by default
+      await updateProfile(user, { displayName: `${firstName} ${lastName}` });
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      const code = err?.code ?? "";
+      if (code === "auth/email-already-in-use") {
+        setError("An account with this email already exists.");
+      } else if (code === "auth/weak-password") {
+        setError("Password must be at least 6 characters.");
+      } else if (code === "auth/invalid-email") {
+        setError("Invalid email address.");
+      } else {
+        setError(err?.message ?? "Signup failed.");
+      }
       setIsLoading(false);
-    } else {
-      navigate("/dashboard");
     }
   };
 
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     setError(null);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`,
-      },
-    });
-    if (error) {
-      setError(error.message);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      if (err?.code !== "auth/popup-closed-by-user") {
+        setError(err?.message ?? "Google sign-up failed.");
+      }
       setGoogleLoading(false);
     }
   };
@@ -105,7 +115,7 @@ export default function SignupPage() {
             className="w-full flex items-center justify-center gap-3 h-11 border-2 border-[var(--black)] bg-white font-bold text-sm hover:bg-[#f9f9f9] active:bg-[#f0f0f0] transition-colors mb-4 disabled:opacity-60"
           >
             {googleLoading ? (
-              <span className="text-xs">Redirecting...</span>
+              <span className="text-xs">Signing up...</span>
             ) : (
               <>
                 <Chrome className="h-4 w-4" />

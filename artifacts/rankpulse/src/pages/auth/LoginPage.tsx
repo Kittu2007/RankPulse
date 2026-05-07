@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { createClient } from "@/utils/supabase/client";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/lib/AuthContext";
+import { useEffect } from "react";
 import { Eye, EyeOff, Chrome } from "lucide-react";
 
 export default function LoginPage() {
@@ -11,19 +14,31 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setMessage(error.message === "Invalid login credentials"
-        ? "Incorrect email or password."
-        : error.message);
-    } else {
-      navigate("/dashboard");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      const code = err?.code ?? "";
+      if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
+        setMessage("Incorrect email or password.");
+      } else if (code === "auth/too-many-requests") {
+        setMessage("Too many attempts. Please try again later.");
+      } else {
+        setMessage(err?.message ?? "Sign-in failed.");
+      }
     }
     setLoading(false);
   };
@@ -31,15 +46,14 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     setMessage("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}auth/callback`,
-      },
-    });
-    if (error) {
-      setMessage(error.message);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      if (err?.code !== "auth/popup-closed-by-user") {
+        setMessage(err?.message ?? "Google sign-in failed.");
+      }
       setGoogleLoading(false);
     }
   };
@@ -64,7 +78,7 @@ export default function LoginPage() {
           className="w-full flex items-center justify-center gap-3 h-11 border-2 border-[var(--black)] bg-white font-bold text-sm hover:bg-[#f9f9f9] active:bg-[#f0f0f0] transition-colors mb-4 disabled:opacity-60"
         >
           {googleLoading ? (
-            <span className="text-xs">Redirecting...</span>
+            <span className="text-xs">Signing in...</span>
           ) : (
             <>
               <Chrome className="h-4 w-4" />
