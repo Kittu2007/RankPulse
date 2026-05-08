@@ -74,7 +74,8 @@ Output ONLY the rewritten text without any quotes, preambles, or explanations. M
         (chunk) => {
           newText += chunk;
           setText(newText);
-        }
+        },
+        { reasoning_effort: "high" }
       );
     } catch (err: any) {
       console.error(err);

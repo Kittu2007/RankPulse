@@ -64,7 +64,7 @@ export default function CompetitorsPage() {
         const raw = await aiComplete([
           { role: "system", content: "You are a social media competitor analysis expert. Generate realistic scores. Return ONLY a JSON object: {ig: number (0-100), li: number (0-100), x: number (0-100), posts: number, eng: string (like '3.4%'), gap: string[] (2-3 keywords they rank for)}. No other text." },
           { role: "user", content: `Analyze competitor "${newName}" (${handle}) on ${newPlatform}. Return JSON only.` },
-        ]);
+        ], { reasoning_effort: "high" });
         const match = raw.match(/\{.*\}/s);
         if (match) {
           const data = JSON.parse(match[0]);

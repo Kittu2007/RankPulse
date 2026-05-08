@@ -22,12 +22,29 @@ interface Message {
   content: string;
 }
 
+interface AIOptions {
+  reasoning_effort?: "none" | "low" | "medium" | "high";
+}
+
 /**
  * Non-streaming completion — returns the full text response.
  */
-export async function aiComplete(messages: Message[]): Promise<string> {
+export async function aiComplete(messages: Message[], options?: AIOptions): Promise<string> {
   const key = getApiKey();
   if (!key) throw new Error("NVIDIA API key not configured");
+
+  const body: any = {
+    model: MODEL,
+    messages,
+    max_tokens: 4096,
+    temperature: 0.7,
+    top_p: 1.0,
+    stream: false,
+  };
+
+  if (options?.reasoning_effort) {
+    body.reasoning_effort = options.reasoning_effort;
+  }
 
   const res = await fetch(NVIDIA_URL, {
     method: "POST",
@@ -36,14 +53,7 @@ export async function aiComplete(messages: Message[]): Promise<string> {
       "Content-Type": "application/json",
       Accept: "application/json",
     },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-      max_tokens: 4096,
-      temperature: 0.7,
-      top_p: 1.0,
-      stream: false,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -60,10 +70,24 @@ export async function aiComplete(messages: Message[]): Promise<string> {
  */
 export async function aiStream(
   messages: Message[],
-  onChunk: (text: string) => void
+  onChunk: (text: string) => void,
+  options?: AIOptions
 ): Promise<void> {
   const key = getApiKey();
   if (!key) throw new Error("NVIDIA API key not configured");
+
+  const body: any = {
+    model: MODEL,
+    messages,
+    max_tokens: 4096,
+    temperature: 0.7,
+    top_p: 1.0,
+    stream: true,
+  };
+
+  if (options?.reasoning_effort) {
+    body.reasoning_effort = options.reasoning_effort;
+  }
 
   const res = await fetch(NVIDIA_URL, {
     method: "POST",
@@ -72,14 +96,7 @@ export async function aiStream(
       "Content-Type": "application/json",
       Accept: "text/event-stream",
     },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-      max_tokens: 4096,
-      temperature: 0.7,
-      top_p: 1.0,
-      stream: true,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {

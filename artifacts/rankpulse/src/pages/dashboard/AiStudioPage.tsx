@@ -52,7 +52,7 @@ export default function AiStudioPage() {
           role: "user",
           content: `Generate 5 ${style} content ideas for niche: "${niche}" on ${platform}. Return JSON array only.`,
         },
-      ]);
+      ], { reasoning_effort: "high" });
 
       const match = raw.match(/\[.*\]/s);
       if (match) {
