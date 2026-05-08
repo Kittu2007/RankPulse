@@ -51,11 +51,11 @@ export default function AnalyzerPage() {
       let newText = "";
       let platformInstructions = "";
       if (platform === 'instagram') {
-        platformInstructions = "Include a question ('?'), 'how to', or 'wait' for a strong hook. Include 'share', 'send', or 'tag a friend' for DM shares. Write at least 130 characters. Include exactly 3 to 5 hashtags. Do NOT include any URLs or links in the caption.";
+        platformInstructions = "- Hook: Include a question ('?'), 'how to', or 'wait' in the first line.\n- CTA: Include 'share', 'send', or 'tag a friend'.\n- Length: Must be at least 130 characters.\n- HASHTAGS (MANDATORY): You MUST append exactly 3 to 5 relevant hashtags at the very end of the caption. Example: #keyword1 #keyword2 #keyword3\n- Links: Do NOT include any URLs or links in the caption.";
       } else if (platform === 'linkedin') {
-        platformInstructions = "Write between 1200 and 2000 characters. Use at least 5 line breaks for readability. Include a question ('?') to prompt comments. Do NOT include any URLs or links in the body. Do NOT use engagement bait like 'like if you agree', 'comment yes', or 'comment below'.";
+        platformInstructions = "- Length: Write between 1200 and 2000 characters.\n- Formatting: Use at least 5 line breaks for readability.\n- Engagement: Include a question ('?') to prompt comments.\n- Links: Do NOT include any URLs or links in the body.\n- Restrictions: Do NOT use engagement bait like 'like if you agree', 'comment yes', or 'comment below'.";
       } else if (platform === 'x') {
-        platformInstructions = "Keep it under 100 characters. Include a question ('?'), 'thoughts', or 'why do you' to invite replies. Include exactly 1 or 2 hashtags. Do NOT include any URLs or links in the tweet.";
+        platformInstructions = "- Length: Keep it under 100 characters.\n- Engagement: Include a question ('?'), 'thoughts', or 'why do you' to invite replies.\n- HASHTAGS (MANDATORY): You MUST append exactly 1 or 2 relevant hashtags at the very end. Example: #keyword\n- Links: Do NOT include any URLs or links in the tweet.";
       }
 
       await aiStream(
