@@ -3,15 +3,18 @@
  * Uses the Mistral model as specified in the user config.
  */
 
-const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
+const IS_PROD = import.meta.env.PROD;
+const NVIDIA_URL = IS_PROD ? "/api/ai" : "https://integrate.api.nvidia.com/v1/chat/completions";
 const MODEL = "mistralai/mistral-small-4-119b-2603";
 
 function getApiKey(): string {
+  // In production, the key is handled by the /api/ai proxy for security.
+  if (IS_PROD) return "PROXY_MANAGED";
   return import.meta.env.VITE_NVIDIA_API_KEY ?? "";
 }
 
 export function hasAiKey(): boolean {
-  return !!getApiKey();
+  return IS_PROD || !!import.meta.env.VITE_NVIDIA_API_KEY;
 }
 
 interface Message {
@@ -29,7 +32,7 @@ export async function aiComplete(messages: Message[]): Promise<string> {
   const res = await fetch(NVIDIA_URL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
+      ...(IS_PROD ? {} : { Authorization: `Bearer ${key}` }),
       "Content-Type": "application/json",
       Accept: "application/json",
     },
@@ -65,7 +68,7 @@ export async function aiStream(
   const res = await fetch(NVIDIA_URL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
+      ...(IS_PROD ? {} : { Authorization: `Bearer ${key}` }),
       "Content-Type": "application/json",
       Accept: "text/event-stream",
     },
