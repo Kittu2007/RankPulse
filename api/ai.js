@@ -2,7 +2,7 @@ export const config = {
   runtime: 'edge',
 };
 
-export default async function handler(req: Request) {
+export default async function (req) {
   if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 });
   }
@@ -28,7 +28,6 @@ export default async function handler(req: Request) {
       body: JSON.stringify(body),
     });
 
-    // Return the response as is (including headers like content-type for streaming)
     return new Response(response.body, {
       status: response.status,
       headers: {
@@ -37,7 +36,7 @@ export default async function handler(req: Request) {
         'Connection': 'keep-alive',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }
