@@ -133,3 +133,48 @@ export async function aiStream(
     }
   }
 }
+
+/**
+ * Vision completion — analyzes an image and returns text.
+ */
+export async function aiVision(prompt: string, base64Image: string): Promise<string> {
+  const key = getApiKey();
+  if (!key) throw new Error("NVIDIA API key not configured");
+
+  const VISION_MODEL = "meta/llama-3.2-90b-vision-instruct";
+
+  const body = {
+    model: VISION_MODEL,
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          { type: "image_url", image_url: { url: base64Image } }
+        ]
+      }
+    ],
+    max_tokens: 1024,
+    temperature: 0.7,
+    top_p: 1.0,
+    stream: false,
+  };
+
+  const res = await fetch(NVIDIA_URL, {
+    method: "POST",
+    headers: {
+      ...(IS_PROD ? {} : { Authorization: `Bearer ${key}` }),
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`NVIDIA Vision API error ${res.status}: ${err}`);
+  }
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content ?? "";
+}

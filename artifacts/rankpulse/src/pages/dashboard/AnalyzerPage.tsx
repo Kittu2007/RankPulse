@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { analyzeInstagram } from "@/lib/seo/instagram";
 import { analyzeLinkedIn } from "@/lib/seo/linkedin";
 import { analyzeX } from "@/lib/seo/x";
 import type { SEOAnalysisResult } from "@/lib/seo/types";
-import { aiStream, hasAiKey } from "@/lib/nvidia";
+import { aiStream, aiVision, hasAiKey } from "@/lib/nvidia";
 import { toast } from "sonner";
 import { Check, AlertTriangle, X as XIcon } from "lucide-react";
 
@@ -24,13 +24,17 @@ export default function AnalyzerPage() {
     }
   }, []);
 
+  const [altText, setAltText] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
+
   const analysis = useMemo<SEOAnalysisResult>(() => {
     switch (platform) {
-      case 'instagram': return analyzeInstagram(text);
+      case 'instagram': return analyzeInstagram(text, { hasAltText: !!altText });
       case 'linkedin': return analyzeLinkedIn(text);
       case 'x': return analyzeX(text);
     }
-  }, [platform, text]);
+  }, [platform, text, altText]);
 
   const [isSaving, setIsSaving] = useState(false);
   const [isRewriting, setIsRewriting] = useState(false);
@@ -83,6 +87,33 @@ Output ONLY the rewritten text without any quotes, preambles, or explanations. M
       alert(`AI Rewrite failed: ${err.message}`);
     }
     setIsRewriting(false);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!hasAiKey()) {
+      toast.error("VITE_NVIDIA_API_KEY required for Vision AI");
+      return;
+    }
+
+    setIsAnalyzingImage(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const base64 = reader.result as string;
+        const result = await aiVision("Generate short, descriptive, SEO-friendly ALT text for this image. Output ONLY the ALT text, nothing else.", base64);
+        setAltText(result.trim());
+        toast.success("ALT text generated!");
+      } catch (err: any) {
+        console.error(err);
+        toast.error(`Vision AI failed: ${err.message}`);
+      }
+      setIsAnalyzingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveAnalysis = async () => {
@@ -151,8 +182,25 @@ Output ONLY the rewritten text without any quotes, preambles, or explanations. M
                 {isRewriting ? "Rewriting..." : "AI Rewrite"}
               </button>
               <button className="btn btn-outline px-4 py-2 font-bold text-sm" onClick={() => setText('')}>Clear</button>
+              
+              <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
+              <button 
+                className="btn btn-outline px-4 py-2 font-bold text-sm flex items-center gap-1" 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isAnalyzingImage}
+              >
+                {isAnalyzingImage ? "Analyzing..." : "🖼️ Gen ALT Text"}
+              </button>
+
               <span className="body-sm ml-auto text-xs text-[#888] font-bold">{text.length} chars</span>
             </div>
+            
+            {altText && (
+              <div className="mt-3 p-3 bg-[#f0f0f0] border-2 border-[var(--black)] text-sm">
+                <div className="font-bold mb-1">Generated ALT Text:</div>
+                {altText}
+              </div>
+            )}
           </div>
 
           <div className="p-4 border-b-2 border-b-[var(--black)] bg-[#fafafa]">
