@@ -49,11 +49,25 @@ export default function AnalyzerPage() {
 
     try {
       let newText = "";
+      let platformInstructions = "";
+      if (platform === 'instagram') {
+        platformInstructions = "Include a question ('?'), 'how to', or 'wait' for a strong hook. Include 'share', 'send', or 'tag a friend' for DM shares. Write at least 130 characters. Include exactly 3 to 5 hashtags. Do NOT include any URLs or links in the caption.";
+      } else if (platform === 'linkedin') {
+        platformInstructions = "Write between 1200 and 2000 characters. Use at least 5 line breaks for readability. Include a question ('?') to prompt comments. Do NOT include any URLs or links in the body. Do NOT use engagement bait like 'like if you agree', 'comment yes', or 'comment below'.";
+      } else if (platform === 'x') {
+        platformInstructions = "Keep it under 100 characters. Include a question ('?'), 'thoughts', or 'why do you' to invite replies. Include exactly 1 or 2 hashtags. Do NOT include any URLs or links in the tweet.";
+      }
+
       await aiStream(
         [
           {
             role: "system",
-            content: `You are a social media SEO expert. Rewrite captions to maximize the ${platform} algorithm score. Current score: ${analysis.overallScore}/100. Focus on: hook strength, keyword density, engagement triggers, platform-specific signals. Output only the rewritten caption text.`,
+            content: `You are a social media SEO expert. Rewrite this content to maximize its ${platform} algorithm score. Current score: ${analysis.overallScore}/100. 
+            
+CRITICAL ALGORITHM REQUIREMENTS TO HIT 100/100:
+${platformInstructions}
+
+Output ONLY the rewritten text without any quotes, preambles, or explanations. Make it sound natural and engaging.`,
           },
           { role: "user", content: originalText },
         ],
