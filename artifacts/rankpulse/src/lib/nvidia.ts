@@ -42,7 +42,7 @@ export async function aiComplete(messages: Message[], options?: AIOptions): Prom
       model: modelName,
       messages,
       max_tokens: options?.action === "safety" ? 256 : 4096,
-      temperature: 0.2,
+      temperature: options?.action === "safety" ? 0.1 : 0.2,
       top_p: 0.7,
       stream: false,
     };
@@ -58,11 +58,23 @@ export async function aiComplete(messages: Message[], options?: AIOptions): Prom
 }
 
 export async function aiStream(messages: Message[], onChunk: (text: string) => void, options?: AIOptions): Promise<void> {
+  const body: any = {
+    action: "chat",
+    messages,
+    reasoning_effort: options?.reasoning_effort,
+    stream: true,
+  };
+
+  let res: Response;
   if (IS_PROD) {
-    throw new Error("Streaming not supported via standard proxy currently.");
+    res = await fetch(PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
   } else {
     const key = import.meta.env.VITE_NVIDIA_API_KEY;
-    const body: any = {
+    const directBody = {
       model: options?.reasoning_effort ? "deepseek-ai/deepseek-r1" : "mistralai/mistral-small-24b-instruct-2501",
       messages,
       max_tokens: 4096,
@@ -70,32 +82,33 @@ export async function aiStream(messages: Message[], onChunk: (text: string) => v
       top_p: 0.7,
       stream: true,
     };
-    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+    res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", Accept: "text/event-stream" },
-      body: JSON.stringify(body)
+      body: JSON.stringify(directBody)
     });
-    if (!res.ok) throw new Error(await res.text());
-    const reader = res.body?.getReader();
-    if (!reader) return;
-    const decoder = new TextDecoder();
-    let buffer = "";
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-      for (const line of lines) {
-        if (!line.trim().startsWith("data: ")) continue;
-        const payload = line.trim().slice(6);
-        if (payload === "[DONE]") return;
-        try {
-          const json = JSON.parse(payload);
-          const text = json.choices?.[0]?.delta?.content ?? "";
-          if (text) onChunk(text);
-        } catch {}
-      }
+  }
+
+  if (!res.ok) throw new Error(await res.text());
+  const reader = res.body?.getReader();
+  if (!reader) return;
+  const decoder = new TextDecoder();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.trim().startsWith("data: ")) continue;
+      const payload = line.trim().slice(6);
+      if (payload === "[DONE]") return;
+      try {
+        const json = JSON.parse(payload);
+        const text = json.choices?.[0]?.delta?.content ?? "";
+        if (text) onChunk(text);
+      } catch {}
     }
   }
 }

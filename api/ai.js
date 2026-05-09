@@ -8,7 +8,7 @@ export default async function handler(req) {
 
   try {
     const body = await req.json();
-    const { action, messages, text, imageUrl, prompt, reasoning_effort } = body;
+    const { action, messages, text, imageUrl, prompt, reasoning_effort, stream } = body;
 
     let endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
     let payload = {};
@@ -26,8 +26,13 @@ export default async function handler(req) {
       }
     } else if (action === 'safety') {
       payload = {
-        model: "nvidia/nemotron-4-340b-reward",
-        messages: messages
+        model: "mistralai/mistral-small-24b-instruct-2501",
+        messages: [
+          { role: "system", content: "You are a content safety filter. Evaluate the following text for harmful content, hate speech, or explicit material. Reply ONLY with the word 'safe' or 'unsafe'." },
+          ...messages
+        ],
+        temperature: 0.1,
+        max_tokens: 10
       };
     } else if (action === 'embed') {
       endpoint = 'https://integrate.api.nvidia.com/v1/embeddings';
@@ -65,6 +70,8 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ error: 'Unknown action' }), { status: 400 });
     }
 
+    payload.stream = stream || false;
+
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -77,6 +84,17 @@ export default async function handler(req) {
     if (!res.ok) {
       const errorText = await res.text();
       return new Response(JSON.stringify({ error: `NVIDIA API Error: ${res.status}`, details: errorText }), { status: res.status });
+    }
+
+    if (stream) {
+      return new Response(res.body, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        }
+      });
     }
 
     const data = await res.json();
