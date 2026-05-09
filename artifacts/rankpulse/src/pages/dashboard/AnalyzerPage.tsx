@@ -4,7 +4,7 @@ import { analyzeInstagram } from "@/lib/seo/instagram";
 import { analyzeLinkedIn } from "@/lib/seo/linkedin";
 import { analyzeX } from "@/lib/seo/x";
 import type { SEOAnalysisResult } from "@/lib/seo/types";
-import { aiStream, aiVision, hasAiKey } from "@/lib/nvidia";
+import { aiStream, aiVision, aiComplete, hasAiKey } from "@/lib/nvidia";
 import { toast } from "sonner";
 import { Check, AlertTriangle, X as XIcon } from "lucide-react";
 
