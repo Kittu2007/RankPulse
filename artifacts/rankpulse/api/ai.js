@@ -8,7 +8,7 @@ export default async function handler(req) {
 
   try {
     const body = await req.json();
-    const { action, messages, text, imageUrl, reasoning_effort } = body;
+    const { action, messages, text, imageUrl, prompt, reasoning_effort } = body;
 
     let endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
     let payload = {};
@@ -45,6 +45,21 @@ export default async function handler(req) {
         ],
         temperature: 0.2,
         max_tokens: 512
+      };
+    } else if (action === 'vision') {
+      payload = {
+        model: "meta/llama-3.2-90b-vision-instruct",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              { type: "image_url", image_url: { url: imageUrl } }
+            ]
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1024
       };
     } else {
       return new Response(JSON.stringify({ error: 'Unknown action' }), { status: 400 });

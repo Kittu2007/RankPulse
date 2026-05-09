@@ -151,3 +151,41 @@ export async function aiOcr(base64Image: string, mimeType: string): Promise<stri
     return data.choices?.[0]?.message?.content ?? "";
   }
 }
+
+export async function aiVision(prompt: string, base64Image: string): Promise<string> {
+  const imageUrl = base64Image.startsWith('data:') ? base64Image : `data:image/jpeg;base64,${base64Image}`;
+  
+  if (IS_PROD) {
+    const res = await fetch(PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "vision", prompt, imageUrl }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
+  } else {
+    const key = import.meta.env.VITE_NVIDIA_API_KEY;
+    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "meta/llama-3.2-90b-vision-instruct",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              { type: "image_url", image_url: { url: imageUrl } }
+            ]
+          }
+        ],
+        max_tokens: 1024,
+        temperature: 0.7
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
+  }
+}
