@@ -92,6 +92,7 @@ function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
+    if (!auth) { window.location.href = '/'; return; }
     await signOut(auth);
     navigate("/login", { replace: true });
   };

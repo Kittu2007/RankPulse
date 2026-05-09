@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { BarChart2, Key, Hash } from "lucide-react";
+import { BarChart2, Key, Hash, Calendar, Bot, Users, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { formatDistanceToNow } from "date-fns";
@@ -144,8 +144,12 @@ export default function DashboardHome() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { href: "/dashboard/analyzer", Icon: BarChart2, title: "Content Analyser", desc: "Score your next post" },
+          { href: "/dashboard/scheduler", Icon: Calendar, title: "Scheduler", desc: "Plan your SEO content" },
+          { href: "/dashboard/ai-studio", Icon: Bot, title: "AI Studio", desc: "Pre-scored content ideas" },
           { href: "/dashboard/keywords", Icon: Key, title: "Keyword Research", desc: "Find ranking keywords" },
-          { href: "/dashboard/hashtags", Icon: Hash, title: "Hashtag Generator", desc: "Build your hashtag set" },
+          { href: "/dashboard/hashtags", Icon: Hash, title: "Hashtag Bank", desc: "Build your hashtag sets" },
+          { href: "/dashboard/competitors", Icon: Users, title: "Competitors", desc: "Track performance gaps" },
+          { href: "/dashboard/profile-audit", Icon: Shield, title: "Profile Audit", desc: "Optimize your bio" },
         ].map((item) => (
           <Link
             key={item.href}

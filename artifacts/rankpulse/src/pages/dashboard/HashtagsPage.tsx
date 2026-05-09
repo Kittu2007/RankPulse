@@ -42,7 +42,7 @@ export default function HashtagsPage() {
           role: "user",
           content: `Generate 10 relevant hashtags for the topic: "${topic}". Return only a JSON array like ["#hashtag1", "#hashtag2", ...].`,
         },
-      ]);
+      ], { reasoning_effort: "low" });
 
       const match = raw.match(/\[.*\]/s);
       const parsed: string[] = match ? (JSON.parse(match[0]) as string[]) : [];

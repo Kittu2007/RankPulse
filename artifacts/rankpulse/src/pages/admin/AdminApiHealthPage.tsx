@@ -1,10 +1,12 @@
+import { hasAiKey } from "@/lib/nvidia";
+
 export default function AdminApiHealthPage() {
   const apis = [
-    { api: 'Instagram Graph API', status: 'live', quota: '2,847 / 5,000 req/hr', latency: '124ms', errors: '0', pct: 57 },
-    { api: 'LinkedIn API v2', status: 'live', quota: '891 / 2,000 req/hr', latency: '188ms', errors: '2', pct: 44 },
-    { api: 'X API v2 (Free Tier)', status: 'warn', quota: '1,987 / 2,000 req/hr', latency: '211ms', errors: '0', pct: 99 },
-    { api: 'OpenAI GPT-4o', status: 'live', quota: '342 / 1,000 req/hr', latency: '890ms', errors: '1', pct: 34 },
-    { api: 'Supabase PostgreSQL', status: 'live', quota: '342 MB / 500 MB', latency: '24ms', errors: '0', pct: 68 },
+    { api: 'Instagram Graph API (Simulated)', status: 'live', quota: '2,847 / 5,000 req/hr', latency: '124ms', errors: '0', pct: 57 },
+    { api: 'LinkedIn API v2 (Simulated)', status: 'live', quota: '891 / 2,000 req/hr', latency: '188ms', errors: '2', pct: 44 },
+    { api: 'X API v2 (Simulated)', status: 'warn', quota: '1,987 / 2,000 req/hr', latency: '211ms', errors: '0', pct: 99 },
+    { api: 'NVIDIA NIM AI', status: hasAiKey() ? 'live' : 'err', quota: hasAiKey() ? 'Active' : 'Missing API Key', latency: hasAiKey() ? '180ms' : '—', errors: hasAiKey() ? '0' : '1', pct: hasAiKey() ? 12 : 100 },
+    { api: 'Firebase Database (Simulated)', status: 'live', quota: '342 MB / 500 MB', latency: '24ms', errors: '0', pct: 68 },
   ];
 
   return (
@@ -22,7 +24,7 @@ export default function AdminApiHealthPage() {
           return (
             <div key={i} className={`border-2 ${isWarning ? 'border-[var(--red)]' : 'border-[var(--black)]'} bg-white shadow-[4px_4px_0px_var(--black)] p-[20px] mb-[16px] flex flex-col md:flex-row gap-5 items-start md:items-center`}>
               <div className="flex items-start gap-4 min-w-[280px]">
-                <div className={`mt-1.5 w-3 h-3 rounded-full border border-black ${a.status === 'live' ? 'bg-[#22c55e]' : 'bg-[#f59e0b]'}`}></div>
+                <div className={`mt-1.5 w-3 h-3 rounded-full border border-black ${a.status === 'live' ? 'bg-[#22c55e]' : a.status === 'warn' ? 'bg-[#f59e0b]' : 'bg-[#ef4444]'}`}></div>
                 <div>
                   <div className="text-[20px] leading-none uppercase mb-2" style={{ fontFamily: 'var(--font-d)' }}>{a.api}</div>
                   <div className="text-[11px] font-bold text-[#666] uppercase tracking-[1px]">{a.quota}</div>

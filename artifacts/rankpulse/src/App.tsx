@@ -9,10 +9,13 @@ import FeaturesPage from "@/pages/public/FeaturesPage";
 import PricingPage from "@/pages/public/PricingPage";
 import PrivacyPage from "@/pages/public/PrivacyPage";
 import TermsPage from "@/pages/public/TermsPage";
+import AboutPage from "@/pages/public/AboutPage";
+import ContactPage from "@/pages/public/ContactPage";
 
 // Auth pages
 import LoginPage from "@/pages/auth/LoginPage";
 import SignupPage from "@/pages/auth/SignupPage";
+import EmailVerificationPage from "@/pages/auth/EmailVerificationPage";
 
 // Dashboard layout & pages
 import DashboardLayout from "@/layouts/DashboardLayout";
@@ -54,10 +57,17 @@ function Router() {
       <Route path="/terms">
         <PublicLayout><TermsPage /></PublicLayout>
       </Route>
+      <Route path="/about">
+        <PublicLayout><AboutPage /></PublicLayout>
+      </Route>
+      <Route path="/contact">
+        <PublicLayout><ContactPage /></PublicLayout>
+      </Route>
 
       {/* Auth routes */}
       <Route path="/login" component={LoginPage} />
       <Route path="/signup" component={SignupPage} />
+      <Route path="/verify-email" component={EmailVerificationPage} />
 
       {/* Dashboard routes — all protected */}
       <Route path="/dashboard">

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/lib/AuthContext";
 import { useEffect } from "react";
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const { user, loading: authLoading } = useAuth();
 
   // Redirect if already logged in
@@ -25,6 +26,7 @@ export default function LoginPage() {
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!auth) { setMessage('Firebase not configured. Contact support.'); setLoading(false); return; }
     setLoading(true);
     setMessage("");
     try {
@@ -44,6 +46,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!auth) { setMessage('Firebase not configured. Contact support.'); setGoogleLoading(false); return; }
     setGoogleLoading(true);
     setMessage("");
     try {
@@ -55,6 +58,16 @@ export default function LoginPage() {
         setMessage(err?.message ?? "Google sign-in failed.");
       }
       setGoogleLoading(false);
+    }
+  };
+
+  const handleReset = async () => {
+    if (!email) { setMessage('Enter your email above first.'); return; }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetSent(true);
+    } catch(e:any) {
+      setMessage(e.message);
     }
   };
 
@@ -124,6 +137,8 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            <button type='button' onClick={handleReset} className='text-xs text-[var(--red)] font-bold hover:underline self-end'>Forgot password?</button>
+            {resetSent && <p className='text-green-600 text-sm font-bold'>Reset email sent! Check your inbox.</p>}
           </div>
 
           {message && (

@@ -27,13 +27,15 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!auth) { setError('Firebase not configured. Contact support.'); setIsLoading(false); return; }
     setIsLoading(true);
     setError(null);
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       // Set display name — Firebase doesn't require email confirmation by default
       await updateProfile(user, { displayName: `${firstName} ${lastName}` });
-      navigate("/dashboard", { replace: true });
+      localStorage.setItem('rp_verify_email', email);
+      navigate("/verify-email");
     } catch (err: any) {
       const code = err?.code ?? "";
       if (code === "auth/email-already-in-use") {
@@ -50,6 +52,7 @@ export default function SignupPage() {
   };
 
   const handleGoogleSignup = async () => {
+    if (!auth) { setError('Firebase not configured. Contact support.'); setGoogleLoading(false); return; }
     setGoogleLoading(true);
     setError(null);
     try {

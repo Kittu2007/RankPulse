@@ -1,7 +1,20 @@
+import { useState, useEffect } from "react";
+
 export default function AdminOverviewPage() {
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('rp_users') || '[]');
+      setUsers(stored);
+    } catch {
+      setUsers([]);
+    }
+  }, []);
+
   const metrics = [
-    { n: '1,247', l: 'Total Users', d: '↑ +84 this week', c: 'text-white' },
-    { n: '612', l: 'Monthly Active', d: '49% MAU rate', c: 'text-[#16a34a]' },
+    { n: users.length.toString(), l: 'Total Users', d: 'From local storage', c: 'text-white' },
+    { n: Math.floor(users.length * 0.49).toString(), l: 'Monthly Active', d: '49% MAU rate (simulated)', c: 'text-[#16a34a]' },
     { n: '0', l: 'Revenue', d: 'Free platform', c: 'text-[#f59e0b]' },
     { n: '3', l: 'Open Bugs', d: '↓ Fixed 2 today', c: 'text-[var(--red)]' },
   ];
@@ -12,12 +25,14 @@ export default function AdminOverviewPage() {
     { api: 'OpenAI API', status: 'live', rate: '342 / 1,000/hr', pct: 34 },
     { api: 'Supabase DB', status: 'live', rate: '24ms avg latency', pct: 0 },
   ];
-  const recentUsers = [
-    { name: 'Rohan K.', email: 'rohan@...', plat: 'ig', score: 72, joined: '2h ago' },
-    { name: 'Sanya M.', email: 'sanya@...', plat: 'li', score: 65, joined: '4h ago' },
-    { name: 'Arjun P.', email: 'arjun@...', plat: 'x', score: 80, joined: '6h ago' },
-    { name: 'Priya S.', email: 'priya@...', plat: 'ig', score: 58, joined: '8h ago' },
-  ];
+  const recentUsers = users.length > 0 
+    ? users.slice(-4).reverse() 
+    : [
+        { name: 'Rohan K.', email: 'rohan@...', plat: 'ig', score: 72, joined: '2h ago' },
+        { name: 'Sanya M.', email: 'sanya@...', plat: 'li', score: 65, joined: '4h ago' },
+        { name: 'Arjun P.', email: 'arjun@...', plat: 'x', score: 80, joined: '6h ago' },
+        { name: 'Priya S.', email: 'priya@...', plat: 'ig', score: 58, joined: '8h ago' },
+      ];
 
   return (
     <div className="flex flex-col min-h-screen pb-10">

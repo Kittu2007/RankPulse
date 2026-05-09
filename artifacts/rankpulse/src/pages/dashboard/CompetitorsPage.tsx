@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { aiComplete, hasAiKey } from "@/lib/nvidia";
+import { aiComplete, hasAiKey, aiOcr } from "@/lib/nvidia";
 import { addCompetitor, getCompetitors, removeCompetitor, type TrackedCompetitor } from "@/lib/storage";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -30,6 +30,8 @@ export default function CompetitorsPage() {
   const [newPlatform, setNewPlatform] = useState('instagram');
   const [analyzing, setAnalyzing] = useState(false);
   const [selectedComp, setSelectedComp] = useState<CompetitorAnalysis | null>(null);
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrText, setOcrText] = useState('');
 
   const gaps = comps.flatMap(c => c.gap.map(kw => ({
     kw,
@@ -50,6 +52,24 @@ export default function CompetitorsPage() {
   const yourScore = comps.length > 0 ? Math.round(comps.reduce((s, c) => s + Math.max(c.ig, c.li, c.x) * 0.85, 0) / comps.length) : 0;
   const marketAvg = comps.length > 0 ? Math.round(comps.reduce((s, c) => s + (c.ig + c.li + c.x) / (c.ig > 0 ? 1 : 0 + c.li > 0 ? 1 : 0 + c.x > 0 ? 1 : 0), 0) / comps.length) : 0;
   const topScore = comps.reduce((max, c) => Math.max(max, c.ig, c.li, c.x), 0);
+
+  const handleScreenshot = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !hasAiKey()) return;
+    setOcrLoading(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = (reader.result as string).split(',')[1];
+      const extracted = await aiOcr(base64, file.type).catch(() => '');
+      // Parse username from first line if it starts with @
+      const lines = extracted.split('\n').filter(Boolean);
+      const handle = lines.find(l => l.trim().startsWith('@'));
+      if (handle) setNewHandle(handle.trim());
+      setOcrText(extracted);
+      setOcrLoading(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleAddCompetitor = async () => {
     if (!newHandle.trim() || !newName.trim()) { toast.error("Fill in all fields."); return; }
@@ -215,6 +235,12 @@ export default function CompetitorsPage() {
                   <option value="linkedin">LinkedIn</option>
                   <option value="x">X / Twitter</option>
                 </select>
+              </div>
+              <div className='flex flex-col gap-1.5 mb-4'>
+                <label className='label-sm'>Or upload screenshot (optional)</label>
+                <input type='file' accept='image/*' onChange={handleScreenshot} className='text-xs' />
+                {ocrLoading && <span className='text-xs text-[#888]'>Extracting text...</span>}
+                {ocrText && <textarea className='textarea text-xs' rows={3} value={ocrText} readOnly />}
               </div>
               <div className="flex gap-2">
                 <button className="btn btn-red flex-1 justify-center" onClick={handleAddCompetitor} disabled={analyzing}>

@@ -85,7 +85,12 @@ function Footer() {
         </div>
         <div className="col-span-2 sm:col-span-1">
           <div className="text-[9px] font-bold tracking-[3px] uppercase text-[#555] mb-4">Company</div>
-          {[{ label: "Privacy Policy", href: "/privacy" }, { label: "Terms of Service", href: "/terms" }].map((link) => (
+          {[
+            { label: "About Us", href: "/about" },
+            { label: "Contact", href: "/contact" },
+            { label: "Privacy Policy", href: "/privacy" },
+            { label: "Terms of Service", href: "/terms" }
+          ].map((link) => (
             <Link key={link.label} href={link.href} className="block text-[13px] text-[#888] mb-2.5 hover:text-[var(--bg)] transition-colors duration-150">
               {link.label}
             </Link>

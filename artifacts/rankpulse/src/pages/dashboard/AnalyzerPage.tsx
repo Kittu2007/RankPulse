@@ -52,6 +52,19 @@ export default function AnalyzerPage() {
     }
 
     try {
+      // 1. Safety Check
+      const safetyResult = await aiComplete(
+        [{ role: 'user', content: `Check if this text is safe for a social media post. Reply ONLY with "safe" or "unsafe":\n\n${originalText}` }],
+        { action: 'safety' }
+      );
+      
+      if (safetyResult.toLowerCase().includes('unsafe')) {
+        toast.error('Safety Check Failed: Content flagged by Nemotron-4 as potentially unsafe. Rewrite blocked.');
+        setText(originalText);
+        setIsRewriting(false);
+        return;
+      }
+
       let newText = "";
       let platformInstructions = "";
       if (platform === 'instagram') {

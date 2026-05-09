@@ -1,17 +1,9 @@
 /**
- * NVIDIA NIM AI client — calls the NVIDIA API directly from the browser.
- * Uses the Mistral model as specified in the user config.
+ * NVIDIA NIM AI client — calls the NVIDIA API either via Edge Proxy (prod) or directly (dev).
  */
 
 const IS_PROD = import.meta.env.PROD;
-const NVIDIA_URL = IS_PROD ? "/api/ai" : "https://integrate.api.nvidia.com/v1/chat/completions";
-const MODEL = "mistralai/mistral-small-4-119b-2603";
-
-function getApiKey(): string {
-  // In production, the key is handled by the /api/ai proxy for security.
-  if (IS_PROD) return "PROXY_MANAGED";
-  return import.meta.env.VITE_NVIDIA_API_KEY ?? "";
-}
+const PROXY_URL = "/api/ai";
 
 export function hasAiKey(): boolean {
   return IS_PROD || !!import.meta.env.VITE_NVIDIA_API_KEY;
@@ -19,162 +11,143 @@ export function hasAiKey(): boolean {
 
 interface Message {
   role: "system" | "user" | "assistant";
-  content: string;
+  content: string | any[];
 }
 
 interface AIOptions {
   reasoning_effort?: "none" | "low" | "medium" | "high";
+  action?: "chat" | "safety";
 }
 
-/**
- * Non-streaming completion — returns the full text response.
- */
 export async function aiComplete(messages: Message[], options?: AIOptions): Promise<string> {
-  const key = getApiKey();
-  if (!key) throw new Error("NVIDIA API key not configured");
-
-  const body: any = {
-    model: MODEL,
-    messages,
-    max_tokens: 4096,
-    temperature: 0.7,
-    top_p: 1.0,
-    stream: false,
-  };
-
-  if (options?.reasoning_effort) {
-    body.reasoning_effort = options.reasoning_effort;
+  if (IS_PROD) {
+    const res = await fetch(PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: options?.action || "chat", messages, reasoning_effort: options?.reasoning_effort }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
+  } else {
+    const key = import.meta.env.VITE_NVIDIA_API_KEY;
+    let modelName = "mistralai/mistral-small-24b-instruct-2501";
+    if (options?.action === "safety") {
+      modelName = "nvidia/nemotron-4-340b-reward";
+    } else if (options?.reasoning_effort) {
+      modelName = "deepseek-ai/deepseek-r1";
+    }
+    
+    const body: any = {
+      model: modelName,
+      messages,
+      max_tokens: options?.action === "safety" ? 256 : 4096,
+      temperature: 0.2,
+      top_p: 0.7,
+      stream: false,
+    };
+    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
   }
-
-  const res = await fetch(NVIDIA_URL, {
-    method: "POST",
-    headers: {
-      ...(IS_PROD ? {} : { Authorization: `Bearer ${key}` }),
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`NVIDIA API error ${res.status}: ${err}`);
-  }
-
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
 }
 
-/**
- * Streaming completion — yields text chunks via a callback.
- */
-export async function aiStream(
-  messages: Message[],
-  onChunk: (text: string) => void,
-  options?: AIOptions
-): Promise<void> {
-  const key = getApiKey();
-  if (!key) throw new Error("NVIDIA API key not configured");
-
-  const body: any = {
-    model: MODEL,
-    messages,
-    max_tokens: 4096,
-    temperature: 0.7,
-    top_p: 1.0,
-    stream: true,
-  };
-
-  if (options?.reasoning_effort) {
-    body.reasoning_effort = options.reasoning_effort;
-  }
-
-  const res = await fetch(NVIDIA_URL, {
-    method: "POST",
-    headers: {
-      ...(IS_PROD ? {} : { Authorization: `Bearer ${key}` }),
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`NVIDIA API error ${res.status}: ${err}`);
-  }
-
-  const reader = res.body?.getReader();
-  if (!reader) throw new Error("No response body");
-
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("data: ")) continue;
-      const payload = trimmed.slice(6);
-      if (payload === "[DONE]") return;
-      try {
-        const json = JSON.parse(payload);
-        const text = json.choices?.[0]?.delta?.content ?? "";
-        if (text) onChunk(text);
-      } catch {
-        // skip malformed chunks
+export async function aiStream(messages: Message[], onChunk: (text: string) => void, options?: AIOptions): Promise<void> {
+  if (IS_PROD) {
+    throw new Error("Streaming not supported via standard proxy currently.");
+  } else {
+    const key = import.meta.env.VITE_NVIDIA_API_KEY;
+    const body: any = {
+      model: options?.reasoning_effort ? "deepseek-ai/deepseek-r1" : "mistralai/mistral-small-24b-instruct-2501",
+      messages,
+      max_tokens: 4096,
+      temperature: 0.2,
+      top_p: 0.7,
+      stream: true,
+    };
+    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", Accept: "text/event-stream" },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const reader = res.body?.getReader();
+    if (!reader) return;
+    const decoder = new TextDecoder();
+    let buffer = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        if (!line.trim().startsWith("data: ")) continue;
+        const payload = line.trim().slice(6);
+        if (payload === "[DONE]") return;
+        try {
+          const json = JSON.parse(payload);
+          const text = json.choices?.[0]?.delta?.content ?? "";
+          if (text) onChunk(text);
+        } catch {}
       }
     }
   }
 }
 
-/**
- * Vision completion — analyzes an image and returns text.
- */
-export async function aiVision(prompt: string, base64Image: string): Promise<string> {
-  const key = getApiKey();
-  if (!key) throw new Error("NVIDIA API key not configured");
-
-  const VISION_MODEL = "meta/llama-3.2-90b-vision-instruct";
-
-  const body = {
-    model: VISION_MODEL,
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: prompt },
-          { type: "image_url", image_url: { url: base64Image } }
-        ]
-      }
-    ],
-    max_tokens: 1024,
-    temperature: 0.7,
-    top_p: 1.0,
-    stream: false,
-  };
-
-  const res = await fetch(NVIDIA_URL, {
-    method: "POST",
-    headers: {
-      ...(IS_PROD ? {} : { Authorization: `Bearer ${key}` }),
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`NVIDIA Vision API error ${res.status}: ${err}`);
+export async function aiEmbed(text: string): Promise<number[]> {
+  if (IS_PROD) {
+    const res = await fetch(PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "embed", text }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.data?.[0]?.embedding ?? [];
+  } else {
+    const key = import.meta.env.VITE_NVIDIA_API_KEY;
+    const res = await fetch("https://integrate.api.nvidia.com/v1/embeddings", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "nvidia/nv-embedqa-e5-v5", input: [text], input_type: "query", truncate: "NONE" })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.data?.[0]?.embedding ?? [];
   }
+}
 
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "";
+export async function aiOcr(base64Image: string, mimeType: string): Promise<string> {
+  const imageUrl = `data:${mimeType};base64,${base64Image}`;
+  if (IS_PROD) {
+    const res = await fetch(PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "ocr", imageUrl }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
+  } else {
+    const key = import.meta.env.VITE_NVIDIA_API_KEY;
+    const res = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "meta/llama-3.2-90b-vision-instruct",
+        messages: [{ role: "user", content: `Extract all text from this image exactly as it appears. Image: ${imageUrl}` }],
+        max_tokens: 512,
+        temperature: 0.2
+      })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? "";
+  }
 }

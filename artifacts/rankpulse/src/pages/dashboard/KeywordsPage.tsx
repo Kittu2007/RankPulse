@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { aiComplete, hasAiKey } from "@/lib/nvidia";
+import { aiComplete, hasAiKey, aiEmbed } from "@/lib/nvidia";
 import { getKeywordSets, saveKeywordSet, deleteKeywordSet, type KeywordSet } from "@/lib/storage";
 import { Copy, Trash2, Plus } from "lucide-react";
 
@@ -20,6 +20,13 @@ const SEED_KEYWORDS: Keyword[] = [
   {rank:10,term:'hashtag strategy 2026',vol:44,trend:'+8%',diff:'med',plats:['ig','x']},
 ];
 
+function cosineSim(a: number[], b: number[]): number {
+  const dot = a.reduce((s, v, i) => s + v * b[i], 0);
+  const magA = Math.sqrt(a.reduce((s, v) => s + v * v, 0));
+  const magB = Math.sqrt(b.reduce((s, v) => s + v * v, 0));
+  return dot / (magA * magB);
+}
+
 export default function KeywordsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All Platforms');
@@ -30,6 +37,8 @@ export default function KeywordsPage() {
   const [newSetName, setNewSetName] = useState('');
   const [newSetPlatform, setNewSetPlatform] = useState<string>('ig');
   const [selectedKeywords, setSelectedKeywords] = useState<Set<string>>(new Set());
+  const [similarMap, setSimilarMap] = useState<Record<string, string[]>>({});
+  const [embedLoading, setEmbedLoading] = useState<string | null>(null);
 
   const filters = ['All Platforms','Instagram','LinkedIn','X / Twitter'];
 
@@ -96,6 +105,24 @@ export default function KeywordsPage() {
       if (next.has(term)) next.delete(term); else next.add(term);
       return next;
     });
+  };
+
+  const findSimilar = async (term: string) => {
+    if (!hasAiKey()) return;
+    setEmbedLoading(term);
+    try {
+      const [targetVec, ...otherVecs] = await Promise.all([
+        aiEmbed(term),
+        ...keywords.filter(k => k.term !== term).map(k => aiEmbed(k.term)),
+      ]);
+      const scored = keywords.filter(k => k.term !== term).map((k, i) => ({
+        term: k.term, score: cosineSim(targetVec, otherVecs[i]),
+      })).sort((a, b) => b.score - a.score).slice(0, 3).map(k => k.term);
+      setSimilarMap(prev => ({ ...prev, [term]: scored }));
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to find similar keywords.");
+    } finally { setEmbedLoading(null); }
   };
 
   const handleCreateSet = () => {
@@ -172,30 +199,45 @@ export default function KeywordsPage() {
           {/* Desktop rows */}
           <div className="hidden sm:flex flex-col bg-white flex-1">
             {filteredKeywords.map(k => (
-              <div key={k.rank} className={`flex items-center gap-3 p-[10px_16px] border-b border-b-[#eaeaea] hover:bg-[#f8f8f8] transition-colors cursor-pointer ${selectedKeywords.has(k.term) ? 'bg-[#eff6ff]' : ''}`}
-                onClick={() => toggleSelectKeyword(k.term)}>
-                <div className="w-[28px]">
-                  <input type="checkbox" checked={selectedKeywords.has(k.term)} readOnly className="cursor-pointer" />
-                </div>
-                <div className="min-w-[28px] text-[18px] font-bold" style={{ fontFamily: 'var(--font-d)' }}>{String(k.rank).padStart(2,'0')}</div>
-                <div className="flex-1 text-sm font-bold">{k.term}</div>
-                <div className="w-[100px] flex items-center gap-1.5">
-                  <div className="w-[64px] h-[6px] border border-[var(--black)] bg-[var(--bg)] relative">
-                    <div className="absolute left-0 top-0 bottom-0 bg-[var(--red)]" style={{ width: k.vol + '%' }}></div>
+              <div key={k.rank} className="flex flex-col">
+                <div className={`flex items-center gap-3 p-[10px_16px] border-b border-b-[#eaeaea] hover:bg-[#f8f8f8] transition-colors cursor-pointer ${selectedKeywords.has(k.term) ? 'bg-[#eff6ff]' : ''}`}
+                  onClick={() => toggleSelectKeyword(k.term)}>
+                  <div className="w-[28px]">
+                    <input type="checkbox" checked={selectedKeywords.has(k.term)} readOnly className="cursor-pointer" />
                   </div>
-                  <span className="text-[10px] font-bold">{k.vol}/100</span>
+                  <div className="min-w-[28px] text-[18px] font-bold" style={{ fontFamily: 'var(--font-d)' }}>{String(k.rank).padStart(2,'0')}</div>
+                  <div className="flex-1 text-sm font-bold flex items-center gap-2">
+                    {k.term}
+                    <button className="btn btn-outline btn-sm text-[9px] px-2 py-0.5" onClick={(e) => { e.stopPropagation(); findSimilar(k.term); }} disabled={embedLoading === k.term}>
+                      {embedLoading === k.term ? "..." : "Similar"}
+                    </button>
+                  </div>
+                  <div className="w-[100px] flex items-center gap-1.5">
+                    <div className="w-[64px] h-[6px] border border-[var(--black)] bg-[var(--bg)] relative">
+                      <div className="absolute left-0 top-0 bottom-0 bg-[var(--red)]" style={{ width: k.vol + '%' }}></div>
+                    </div>
+                    <span className="text-[10px] font-bold">{k.vol}/100</span>
+                  </div>
+                  <div className="w-[64px]">
+                    <span className={`text-[11px] font-bold px-1.5 py-0.5 border ${k.trend.startsWith('+') ? 'bg-[#ebfbf0] text-[#166534] border-[#22c55e]' : k.trend === 'stable' ? 'bg-[#f0f0f0] text-[#555] border-[#ccc]' : 'bg-[#fef2f2] text-[#991b1b] border-[#ef4444]'}`}>{k.trend}</span>
+                  </div>
+                  <div className="w-[60px]">
+                    <span className={`text-[10px] font-bold uppercase tracking-[1px] px-1.5 py-0.5 border-2 ${k.diff === 'hard' ? 'text-[#ef4444] border-[#ef4444]' : k.diff === 'med' ? 'text-[#f59e0b] border-[#f59e0b]' : 'text-[#22c55e] border-[#22c55e]'}`}>{k.diff}</span>
+                  </div>
+                  <div className="w-[80px] flex gap-1 flex-wrap">
+                    {k.plats.map(p => (
+                      <span key={p} className={`text-[8px] font-bold uppercase tracking-wider px-[4px] py-[1px] border text-white ${p === 'ig' ? 'bg-[#d946ef] border-[#a21caf]' : p === 'li' ? 'bg-[#3b82f6] border-[#1d4ed8]' : 'bg-[#111] border-[#000]'}`}>{p}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="w-[64px]">
-                  <span className={`text-[11px] font-bold px-1.5 py-0.5 border ${k.trend.startsWith('+') ? 'bg-[#ebfbf0] text-[#166534] border-[#22c55e]' : k.trend === 'stable' ? 'bg-[#f0f0f0] text-[#555] border-[#ccc]' : 'bg-[#fef2f2] text-[#991b1b] border-[#ef4444]'}`}>{k.trend}</span>
-                </div>
-                <div className="w-[60px]">
-                  <span className={`text-[10px] font-bold uppercase tracking-[1px] px-1.5 py-0.5 border-2 ${k.diff === 'hard' ? 'text-[#ef4444] border-[#ef4444]' : k.diff === 'med' ? 'text-[#f59e0b] border-[#f59e0b]' : 'text-[#22c55e] border-[#22c55e]'}`}>{k.diff}</span>
-                </div>
-                <div className="w-[80px] flex gap-1 flex-wrap">
-                  {k.plats.map(p => (
-                    <span key={p} className={`text-[8px] font-bold uppercase tracking-wider px-[4px] py-[1px] border text-white ${p === 'ig' ? 'bg-[#d946ef] border-[#a21caf]' : p === 'li' ? 'bg-[#3b82f6] border-[#1d4ed8]' : 'bg-[#111] border-[#000]'}`}>{p}</span>
-                  ))}
-                </div>
+                {similarMap[k.term] && (
+                  <div className="p-[8px_16px] bg-[#fdfdfd] border-b border-b-[#eaeaea] flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-[var(--red)] uppercase tracking-[1px]">Similar:</span>
+                    {similarMap[k.term].map(sim => (
+                      <span key={sim} className="text-xs font-bold px-2 py-0.5 bg-[var(--bg)] border border-[var(--black)]">{sim}</span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
             {filteredKeywords.length === 0 && (
