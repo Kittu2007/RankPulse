@@ -8,7 +8,7 @@ export default async function handler(req) {
 
   try {
     const body = await req.json();
-    const { action, messages, text, imageUrl, prompt, reasoning_effort, stream } = body;
+    const { action, messages, text, input, imageUrl, prompt, reasoning_effort, stream } = body;
 
     let endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
     let payload = {};
@@ -38,7 +38,7 @@ export default async function handler(req) {
       endpoint = 'https://integrate.api.nvidia.com/v1/embeddings';
       payload = {
         model: "nvidia/nv-embedqa-e5-v5",
-        input: [text],
+        input: input || [text],
         input_type: "query",
         truncate: "NONE"
       };

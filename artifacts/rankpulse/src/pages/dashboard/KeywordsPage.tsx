@@ -111,11 +111,12 @@ export default function KeywordsPage() {
     if (!hasAiKey()) return;
     setEmbedLoading(term);
     try {
-      const [targetVec, ...otherVecs] = await Promise.all([
-        aiEmbed(term),
-        ...keywords.filter(k => k.term !== term).map(k => aiEmbed(k.term)),
-      ]);
-      const scored = keywords.filter(k => k.term !== term).map((k, i) => ({
+      const otherKeywords = keywords.filter(k => k.term !== term);
+      const allEmbeds = await aiEmbed([term, ...otherKeywords.map(k => k.term)]);
+      const targetVec = allEmbeds[0];
+      const otherVecs = allEmbeds.slice(1);
+
+      const scored = otherKeywords.map((k, i) => ({
         term: k.term, score: cosineSim(targetVec, otherVecs[i]),
       })).sort((a, b) => b.score - a.score).slice(0, 3).map(k => k.term);
       setSimilarMap(prev => ({ ...prev, [term]: scored }));

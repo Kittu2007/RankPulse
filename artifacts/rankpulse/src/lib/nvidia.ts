@@ -113,26 +113,27 @@ export async function aiStream(messages: Message[], onChunk: (text: string) => v
   }
 }
 
-export async function aiEmbed(text: string): Promise<number[]> {
+export async function aiEmbed(input: string | string[]): Promise<number[][]> {
+  const inputArr = Array.isArray(input) ? input : [input];
   if (IS_PROD) {
     const res = await fetch(PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "embed", text }),
+      body: JSON.stringify({ action: "embed", input: inputArr }),
     });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-    return data.data?.[0]?.embedding ?? [];
+    return data.data.map((item: any) => item.embedding);
   } else {
     const key = import.meta.env.VITE_NVIDIA_API_KEY;
     const res = await fetch("https://integrate.api.nvidia.com/v1/embeddings", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "nvidia/nv-embedqa-e5-v5", input: [text], input_type: "query", truncate: "NONE" })
+      body: JSON.stringify({ model: "nvidia/nv-embedqa-e5-v5", input: inputArr, input_type: "query", truncate: "NONE" })
     });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-    return data.data?.[0]?.embedding ?? [];
+    return data.data.map((item: any) => item.embedding);
   }
 }
 
