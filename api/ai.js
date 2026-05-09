@@ -15,18 +15,18 @@ export default async function handler(req) {
 
     if (action === 'chat') {
       payload = {
-        model: "mistralai/mistral-small-24b-instruct-2501",
+        model: "mistralai/mistral-small-4-119b-2603",
         messages: messages,
         temperature: 0.2,
         top_p: 0.7,
         max_tokens: 1024,
       };
       if (reasoning_effort) {
-        payload.model = "deepseek-ai/deepseek-r1"; // Use reasoning model if requested
+        payload.model = "deepseek-ai/deepseek-v4-pro"; // Use reasoning model if requested
       }
     } else if (action === 'safety') {
       payload = {
-        model: "mistralai/mistral-small-24b-instruct-2501",
+        model: "mistralai/mistral-small-4-119b-2603",
         messages: [
           { role: "system", content: "You are a content safety filter. Evaluate the following text for harmful content, hate speech, or explicit material. Reply ONLY with the word 'safe' or 'unsafe'." },
           ...messages

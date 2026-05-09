@@ -31,11 +31,11 @@ export async function aiComplete(messages: Message[], options?: AIOptions): Prom
     return data.choices?.[0]?.message?.content ?? "";
   } else {
     const key = import.meta.env.VITE_NVIDIA_API_KEY;
-    let modelName = "mistralai/mistral-small-24b-instruct-2501";
+    let modelName = "mistralai/mistral-small-4-119b-2603";
     if (options?.action === "safety") {
-      modelName = "nvidia/nemotron-4-340b-reward";
+      modelName = "mistralai/mistral-small-4-119b-2603";
     } else if (options?.reasoning_effort) {
-      modelName = "deepseek-ai/deepseek-r1";
+      modelName = "deepseek-ai/deepseek-v4-pro";
     }
     
     const body: any = {
@@ -75,7 +75,7 @@ export async function aiStream(messages: Message[], onChunk: (text: string) => v
   } else {
     const key = import.meta.env.VITE_NVIDIA_API_KEY;
     const directBody = {
-      model: options?.reasoning_effort ? "deepseek-ai/deepseek-r1" : "mistralai/mistral-small-24b-instruct-2501",
+      model: options?.reasoning_effort ? "deepseek-ai/deepseek-v4-pro" : "mistralai/mistral-small-4-119b-2603",
       messages,
       max_tokens: 4096,
       temperature: 0.2,
