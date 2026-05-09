@@ -121,8 +121,12 @@ export async function aiEmbed(input: string | string[]): Promise<number[][]> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "embed", input: inputArr }),
     });
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Embedding Failed (${res.status}): ${errorText}`);
+    }
     const data = await res.json();
+    if (!data.data) throw new Error("Invalid embedding response from NVIDIA");
     return data.data.map((item: any) => item.embedding);
   } else {
     const key = import.meta.env.VITE_NVIDIA_API_KEY;
@@ -131,8 +135,12 @@ export async function aiEmbed(input: string | string[]): Promise<number[][]> {
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ model: "nvidia/nv-embedqa-e5-v5", input: inputArr, input_type: "query", truncate: "NONE" })
     });
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Direct Embedding Failed (${res.status}): ${errorText}`);
+    }
     const data = await res.json();
+    if (!data.data) throw new Error("Invalid embedding response from NVIDIA Direct");
     return data.data.map((item: any) => item.embedding);
   }
 }

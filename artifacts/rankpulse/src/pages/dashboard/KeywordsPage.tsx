@@ -112,17 +112,32 @@ export default function KeywordsPage() {
     setEmbedLoading(term);
     try {
       const otherKeywords = keywords.filter(k => k.term !== term);
-      const allEmbeds = await aiEmbed([term, ...otherKeywords.map(k => k.term)]);
-      const targetVec = allEmbeds[0];
-      const otherVecs = allEmbeds.slice(1);
+      
+      // Attempt 1: High-Speed Embedding Similarity
+      try {
+        const allEmbeds = await aiEmbed([term, ...otherKeywords.map(k => k.term)]);
+        const targetVec = allEmbeds[0];
+        const otherVecs = allEmbeds.slice(1);
 
-      const scored = otherKeywords.map((k, i) => ({
-        term: k.term, score: cosineSim(targetVec, otherVecs[i]),
-      })).sort((a, b) => b.score - a.score).slice(0, 3).map(k => k.term);
+        const scored = otherKeywords.map((k, i) => ({
+          term: k.term, score: cosineSim(targetVec, otherVecs[i]),
+        })).sort((a, b) => b.score - a.score).slice(0, 3).map(k => k.term);
+        setSimilarMap(prev => ({ ...prev, [term]: scored }));
+        return;
+      } catch (embedError) {
+        console.warn("Embedding similarity failed, falling back to LLM reasoning:", embedError);
+      }
+
+      // Attempt 2: LLM Fallback (Reasoning about similarity)
+      const raw = await aiComplete([
+        { role: "system", content: "You are an SEO expert. Given a target keyword and a list of other keywords, find the top 3 most semantically similar or related keywords from the list. Return ONLY the terms as a comma-separated list." },
+        { role: "user", content: `Target: "${term}"\nList: ${otherKeywords.map(k => k.term).join(", ")}` }
+      ]);
+      const scored = raw.split(",").map(t => t.trim()).filter(t => otherKeywords.some(k => k.term === t));
       setSimilarMap(prev => ({ ...prev, [term]: scored }));
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("Failed to find similar keywords.");
+      toast.error(`Similarity error: ${e.message || "Unknown error"}`);
     } finally { setEmbedLoading(null); }
   };
 
