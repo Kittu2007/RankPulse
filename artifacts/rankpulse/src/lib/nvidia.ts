@@ -35,7 +35,7 @@ export async function aiComplete(messages: Message[], options?: AIOptions): Prom
     if (options?.action === "safety") {
       modelName = "mistralai/mistral-small-4-119b-2603";
     } else if (options?.reasoning_effort) {
-      modelName = "deepseek-ai/deepseek-v4-pro";
+      modelName = "deepseek-ai/deepseek-v4-flash";
     }
     
     const body: any = {
@@ -75,7 +75,7 @@ export async function aiStream(messages: Message[], onChunk: (text: string) => v
   } else {
     const key = import.meta.env.VITE_NVIDIA_API_KEY;
     const directBody = {
-      model: options?.reasoning_effort ? "deepseek-ai/deepseek-v4-pro" : "mistralai/mistral-small-4-119b-2603",
+      model: options?.reasoning_effort ? "deepseek-ai/deepseek-v4-flash" : "mistralai/mistral-small-4-119b-2603",
       messages,
       max_tokens: 4096,
       temperature: 0.2,

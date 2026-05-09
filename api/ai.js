@@ -22,11 +22,11 @@ export default async function handler(req) {
         max_tokens: 1024,
       };
       if (reasoning_effort) {
-        payload.model = "deepseek-ai/deepseek-v4-pro"; // Use reasoning model if requested
+        payload.model = "deepseek-ai/deepseek-v4-flash"; // Use faster reasoning model
       }
     } else if (action === 'safety') {
       payload = {
-        model: "mistralai/mistral-small-4-119b-2603",
+        model: "meta/llama-3.1-8b-instruct",
         messages: [
           { role: "system", content: "You are a content safety filter. Evaluate the following text for harmful content, hate speech, or explicit material. Reply ONLY with the word 'safe' or 'unsafe'." },
           ...messages
