@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { aiComplete, hasAiKey, aiEmbed } from "@/lib/nvidia";
 import { getKeywordSets, saveKeywordSet, deleteKeywordSet, type KeywordSet } from "@/lib/storage";
-import { Copy, Trash2, Plus } from "lucide-react";
+import { Copy, Trash2, Plus, Key } from "lucide-react";
 
 type Platform = 'ig' | 'li' | 'x';
 interface Keyword { rank: number; term: string; vol: number; trend: string; diff: 'hard' | 'med' | 'easy'; plats: Platform[]; }

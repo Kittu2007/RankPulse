@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { aiComplete, hasAiKey, aiOcr } from "@/lib/nvidia";
 import { addCompetitor, getCompetitors, removeCompetitor, type TrackedCompetitor } from "@/lib/storage";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Users } from "lucide-react";
 
 interface CompetitorAnalysis {
   handle: string;
