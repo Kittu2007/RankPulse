@@ -1,0 +1,807 @@
+﻿
+RANKPULSE
+Master Build Prompt â€” Complete Feature &amp; UI Implementation
+For use in Antigravity IDE
+Version 3.0  â€¢  May 2026  â€¢  GitHub: Kittu2007/RankPulse
+Repo
+github.com/Kittu2007/RankPulse
+App root
+artifacts/rankpulse/src/
+Framework
+Vite 5 + React 18 + TypeScript + Tailwind CSS v4 + Wouter router
+Auth
+Firebase Auth (email/password + Google popup)
+Data persistence
+localStorage via lib/storage.ts (no backend required)
+AI
+NVIDIA NIM â€” Mistral Small 4 via lib/nvidia.ts + template fallback
+SEO engine
+Pure JS â€” lib/seo/{instagram,linkedin,x}.ts
+Deploy
+Vercel (SPA rewrite in vercel.json â€” already correct)
+1. Current State Audit
+This section documents exactly what is and is not working in the repo as of the latest commit (May 2026). Read this fully before making any changes.
+1.1 What Is Working
+Feature
+Status / Notes
+OK
+Firebase AuthContext + ProtectedRoute â€” redirects unauthenticated users to /login
+OK
+Login page â€” email/password + Google popup, proper error codes
+OK
+Signup page â€” createUserWithEmailAndPassword + Google popup + displayName save
+OK
+Sign out â€” signOut(auth) in DashboardLayout header
+OK
+Content Analyser â€” real-time JS SEO scoring, AI rewrite via nvidia.ts, ALT text via aiVision, save to localStorage
+OK
+Dashboard Home â€” reads localStorage, calculates per-platform averages, empty state
+OK
+AI Studio â€” aiComplete() via nvidia.ts, template fallback when no key
+OK
+Hashtags â€” aiComplete() via nvidia.ts, template fallback when no key
+OK
+Keywords â€” static data, full responsive UI with filters
+OK
+Competitors â€” static data, full responsive UI with keyword gaps
+OK
+Scheduler â€” static data, calendar + queue UI
+OK
+Analytics â€” static data, chart + weekly table
+OK
+Profile Audit â€” static checks UI, per-platform tabs, score sidebar
+OK
+Settings â€” reads/writes Firebase user.displayName
+OK
+lib/storage.ts â€” full localStorage API for analyses, ideas, keyword sets, competitors, posts, audits
+OK
+Landing page â€” animations, scroll reveal, feature grid
+OK
+PublicLayout â€” top nav (mobile hamburger) + footer
+OK
+vercel.json â€” SPA rewrite to index.html correct
+OK
+All admin pages â€” AdminOverview, Users, ApiHealth, Flags, SeoConfig
+1.2 What Is Broken / Incomplete
+Severity
+Issue &amp; File
+CRITICAL
+Firebase env vars missing = auth is null. All auth calls (signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut) receive null and crash with a confusing error. LoginPage.tsx, SignupPage.tsx, DashboardLayout.tsx all need null guards.
+CRITICAL
+NVIDIA AI proxy: nvidia.ts in production hits /api/ai endpoint which does not exist in this Vite SPA. There is no serverless function. This breaks AI Rewrite, AI Studio generate, Hashtag AI â€” only the template fallback works in prod.
+CRITICAL
+Bebas Neue font not loaded. index.html loads Inter only. CSS variables use var(--font-d) which resolves to Inter. All .d1-.d4 display headings render as Inter â€” the brutalist editorial aesthetic is lost.
+MISSING
+Competitors page uses hardcoded static data. lib/storage.ts has addCompetitor / getCompetitors / removeCompetitor but the page never calls them. Clicking &apos;+ Add Competitor&apos; does nothing.
+MISSING
+Scheduler page uses hardcoded posts. lib/storage.ts has saveScheduledPost / getScheduledPosts but page never calls them. &apos;+ Schedule Post&apos; button does nothing.
+MISSING
+Keywords page: &apos;+ Create Set&apos; button does nothing. lib/storage.ts has saveKeywordSet / getKeywordSets but page never uses them.
+MISSING
+AI Studio: &apos;Save&apos; button on each idea calls saveIdea() â€” but import from lib/storage.ts is missing. Will throw ReferenceError at runtime.
+MISSING
+/about and /contact routes missing from App.tsx. Public nav has no About/Contact links. Footer has no link to them.
+MISSING
+No email confirmation screen on signup. After signup, user lands on /dashboard with a non-verified Firebase account. A &apos;Check your email&apos; interstitial page is needed for better UX.
+MISSING
+Password reset flow missing. Login page has no &apos;Forgot Password?&apos; link or sendPasswordResetEmail() call.
+INFO
+Profile Audit page uses hardcoded static data and fake scores. It should accept user-entered username/bio and dynamically calculate the audit score.
+INFO
+Analytics page uses all hardcoded numbers. Ideally it reads from localStorage analyses to show real score trends.
+INFO
+DashboardHome Quick Links only shows Analyser, Keywords, Hashtags â€” missing Competitors, AI Studio, Scheduler shortcuts.
+INFO
+Missing /features and /pricing pages are in App.tsx but FeaturesPage.tsx and PricingPage.tsx exist â€” verify they are fully built.
+2. Environment Setup (Do This First)
+All env vars go in artifacts/rankpulse/.env.local (never commit this file).
+2.1 Required Environment Variables
+Variable
+Where to get it
+VITE_FIREBASE_API_KEY
+Firebase Console â†’ Project Settings â†’ Web App
+VITE_FIREBASE_AUTH_DOMAIN
+Firebase Console â†’ Project Settings â†’ Web App
+VITE_FIREBASE_PROJECT_ID
+Firebase Console â†’ Project Settings â†’ Web App
+VITE_FIREBASE_STORAGE_BUCKET
+Firebase Console â†’ Project Settings â†’ Web App
+VITE_FIREBASE_MESSAGING_SENDER_ID
+Firebase Console â†’ Project Settings â†’ Web App
+VITE_FIREBASE_APP_ID
+Firebase Console â†’ Project Settings â†’ Web App
+VITE_NVIDIA_API_KEY
+build.nvidia.com â†’ API Keys (for dev only)
+Vercel Env Vars
+In Vercel dashboard â†’ Settings â†’ Environment Variables, add all 7 VITE_FIREBASE_* vars. Also add VITE_NVIDIA_API_KEY if you want AI features in prod. Without them the site deploys but auth is broken.
+2.2 Firebase Console Configuration
+Authentication â†’ Sign-in method â†’ Enable Email/Password
+Authentication â†’ Sign-in method â†’ Enable Google â†’ add your support email
+Authentication â†’ Authorized domains â†’ add your Vercel deployment URL
+Firestore is NOT needed (we use localStorage only)
+Storage is NOT needed
+3. Critical Bug Fixes (Must Do In Order)
+Fix 1 â€” Bebas Neue Display Font
+File: artifacts/rankpulse/index.html
+Replace the existing Google Fonts link with:
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Inter:wght@400;500;600;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+File: artifacts/rankpulse/src/index.css
+Find &apos;--font-d: \&apos;Inter\&apos;, sans-serif;&apos; and change to:
+--font-d: &apos;Bebas Neue&apos;, &apos;Arial Black&apos;, sans-serif;
+This restores the brutalist editorial typography that every display heading (.d1-.d4) is built on.
+Fix 2 â€” Firebase Null Guards in LoginPage.tsx
+File: artifacts/rankpulse/src/pages/auth/LoginPage.tsx
+At the top of handleSignIn(), before any Firebase call, add:
+if (!auth) { setMessage(&apos;Firebase not configured. Contact support.&apos;); setLoading(false); return; }
+At the top of handleGoogleSignIn(), add the same guard but call setGoogleLoading(false) instead.
+Fix 3 â€” Firebase Null Guards in SignupPage.tsx
+File: artifacts/rankpulse/src/pages/auth/SignupPage.tsx
+At the top of handleSignup(), before createUserWithEmailAndPassword, add:
+if (!auth) { setError(&apos;Firebase not configured. Contact support.&apos;); setIsLoading(false); return; }
+Same guard in handleGoogleSignup().
+Fix 4 â€” Firebase Null Guard in DashboardLayout.tsx
+File: artifacts/rankpulse/src/layouts/DashboardLayout.tsx
+In handleSignOut(), before signOut(auth), add:
+if (!auth) { window.location.href = &apos;/&apos;; return; }
+Fix 5 â€” NVIDIA Production AI Proxy (Vercel Serverless Function)
+Create a new file: api/ai.js at the repository root (NOT inside artifacts/rankpulse/).
+This Vercel Edge Function proxies all AI requests server-side, keeping the API key secret:
+// api/ai.js
+export const config = { runtime: &apos;edge&apos; };
+export default async function handler(req) {
+  if (req.method !== &apos;POST&apos;) return new Response(&apos;Method not allowed&apos;, { status: 405 });
+  try {
+    const body = await req.json();
+    const res = await fetch(&apos;https://integrate.api.nvidia.com/v1/chat/completions&apos;, {
+      method: &apos;POST&apos;,
+      headers: {
+        &apos;Authorization&apos;: `Bearer ${process.env.NVIDIA_API_KEY}`,
+        &apos;Content-Type&apos;: &apos;application/json&apos;,
+        &apos;Accept&apos;: body.stream ? &apos;text/event-stream&apos; : &apos;application/json&apos;,
+      },
+      body: JSON.stringify(body),
+    });
+    return new Response(res.body, {
+      status: res.status,
+      headers: { &apos;Content-Type&apos;: res.headers.get(&apos;Content-Type&apos;) || &apos;application/json&apos;, &apos;Access-Control-Allow-Origin&apos;: &apos;*&apos; }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { &apos;Content-Type&apos;: &apos;application/json&apos; } });
+  }
+}
+In Vercel environment variables, add NVIDIA_API_KEY (no VITE_ prefix â€” server only).
+In artifacts/rankpulse/src/lib/nvidia.ts, the NVIDIA_URL is already &apos;/api/ai&apos; in production â€” this will now work.
+Fix 6 â€” Add Password Reset to Login Page
+File: artifacts/rankpulse/src/pages/auth/LoginPage.tsx
+Import sendPasswordResetEmail from firebase/auth. Add a &apos;Forgot password?&apos; link below the password input. On click, call sendPasswordResetEmail(auth, email) and show a success message.
+Full implementation (add to LoginPage.tsx state and JSX):
+const [resetSent, setResetSent] = useState(false);
+const handleReset = async () =&gt; { if (!email) { setMessage(&apos;Enter your email above first.&apos;); return; } try { await sendPasswordResetEmail(auth, email); setResetSent(true); } catch(e:any) { setMessage(e.message); } };
+In JSX, after the password field add: &lt;button type=&apos;button&apos; onClick={handleReset} className=&apos;text-xs text-[var(--red)] font-bold hover:underline self-end&apos;&gt;Forgot password?&lt;/button&gt;
+Show {resetSent &amp;&amp; &lt;p className=&apos;text-green-600 text-sm font-bold&apos;&gt;Reset email sent! Check your inbox.&lt;/p&gt;} below the button.
+4. Feature Completions (Wire Storage to UI)
+4.1 Competitors Page â€” Make &apos;+ Add Competitor&apos; Work
+File: artifacts/rankpulse/src/pages/dashboard/CompetitorsPage.tsx
+Import at top:
+import { getCompetitors, addCompetitor, removeCompetitor, type TrackedCompetitor } from &apos;@/lib/storage&apos;;
+Add state:
+const [tracked, setTracked] = useState&lt;TrackedCompetitor[]&gt;([]);
+const [showAddForm, setShowAddForm] = useState(false);
+const [newHandle, setNewHandle] = useState(&apos;&apos;);
+const [newName, setNewName] = useState(&apos;&apos;);
+const [newPlatform, setNewPlatform] = useState(&apos;Instagram&apos;);
+Load in useEffect:
+useEffect(() =&gt; { setTracked(getCompetitors()); }, []);
+Add handlers:
+const handleAdd = () =&gt; { if (!newHandle) return; addCompetitor({ id: Date.now(), handle: newHandle.startsWith(&apos;@&apos;) ? newHandle : &apos;@&apos; + newHandle, name: newName || newHandle, platform: newPlatform, added_at: new Date().toISOString() }); setTracked(getCompetitors()); setShowAddForm(false); setNewHandle(&apos;&apos;); setNewName(&apos;&apos;); };
+const handleRemove = (id: number) =&gt; { removeCompetitor(id); setTracked(getCompetitors()); };
+Replace the &apos;+ Add Competitor&apos; button to toggle showAddForm. Below it, render a form card (when showAddForm) with inputs for Handle, Display Name, Platform select, and Add/Cancel buttons. Render {tracked.length &gt; 0 &amp;&amp; &lt;div&gt;...tracked list with remove buttons...&lt;/div&gt;} above the hardcoded comps for now.
+4.2 Scheduler Page â€” Make &apos;+ Schedule Post&apos; Work
+File: artifacts/rankpulse/src/pages/dashboard/SchedulerPage.tsx
+Import at top:
+import { getScheduledPosts, saveScheduledPost, removeScheduledPost, type ScheduledPost } from &apos;@/lib/storage&apos;;
+Add state and load effect (same pattern as competitors above). Wire &apos;+ Schedule Post&apos; button to open a dialog/form with: Day (1-28 number input), Platform (ig/li/x select), Text (text input), Submit. On submit call saveScheduledPost() then reload. Render user posts on the calendar alongside the hardcoded ones. In the Upcoming Queue sidebar, show user posts from localStorage (sorted by day).
+4.3 AI Studio â€” Fix Missing saveIdea Import
+File: artifacts/rankpulse/src/pages/dashboard/AiStudioPage.tsx
+Add import:
+import { saveIdea, getSavedIdeas, removeSavedIdea, type SavedIdea } from &apos;@/lib/storage&apos;;
+Wire the &apos;Save&apos; button on each idea card: onClick={() =&gt; { saveIdea({ id: Date.now(), ...idea, saved_at: new Date().toISOString() }); toast.success(&apos;Idea saved!&apos;); }}
+Add a &apos;Saved Ideas&apos; tab or section that reads from getSavedIdeas() and renders them with a remove button.
+4.4 Keywords Page â€” Make &apos;+ Create Set&apos; Work
+File: artifacts/rankpulse/src/pages/dashboard/KeywordsPage.tsx
+Import:
+import { saveKeywordSet, getKeywordSets, deleteKeywordSet } from &apos;@/lib/storage&apos;;
+Add selectedKeywords state (array of strings toggled from the table). Each keyword row gets a checkbox. &apos;+ Create Set&apos; opens a dialog prompting for Set Name and Platform, then calls saveKeywordSet(). The Keyword Sets sidebar section should render sets from getKeywordSets() with a delete button.
+4.5 Dashboard Home â€” Expand Quick Links
+File: artifacts/rankpulse/src/pages/dashboard/DashboardHome.tsx
+In the Quick Links grid at the bottom, change grid-cols-1 sm:grid-cols-3 to grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 and add 3 more items:
+{ href: &apos;/dashboard/competitors&apos;, Icon: Users, title: &apos;Competitors&apos;, desc: &apos;Track &amp; compare&apos; }
+{ href: &apos;/dashboard/ai-studio&apos;, Icon: Sparkles, title: &apos;AI Studio&apos;, desc: &apos;5 ideas today&apos; }
+{ href: &apos;/dashboard/scheduler&apos;, Icon: Calendar, title: &apos;Scheduler&apos;, desc: &apos;Plan your calendar&apos; }
+Import Users, Sparkles, Calendar from lucide-react.
+5. New Pages to Create
+5.1 /about Page
+File: artifacts/rankpulse/src/pages/public/AboutPage.tsx
+Design: Black hero section, full width. Left column: large Bebas Neue display headline &apos;BUILT BY CREATORS. FOR CREATORS.&apos; Right column: origin story paragraph (see PRD section 2). Below: 3-column principle cards (Algorithm-first / Free no asterisks / Open infrastructure). Tech stack grid (Next.js 15 â†’ Vite, Supabase â†’ Firebase, Vercel, TypeScript, Tailwind CSS, Mistral AI). Red CTA bar at bottom.
+Register in App.tsx:
+&lt;Route path=&apos;/about&apos;&gt;&lt;PublicLayout&gt;&lt;AboutPage /&gt;&lt;/PublicLayout&gt;&lt;/Route&gt;
+Add to PublicLayout TopNav desktop and mobile menu: &lt;Link href=&apos;/about&apos; ...&gt;About&lt;/Link&gt;
+5.2 /contact Page
+File: artifacts/rankpulse/src/pages/public/ContactPage.tsx
+Design: Black left panel with contact details (email: hello@rankpulse.app, X: @rankpulse). White right panel with a contact form: Name, Email, Subject (select: Bug Report / Feature Request / Algorithm Question / Billing / General), Message textarea, Submit. On submit, show a success state (no actual email sending needed for MVP â€” just show &apos;Message received!&apos; with a green banner). Mark as &apos;use client&apos; component with useState.
+Register in App.tsx same pattern as /about.
+5.3 Email Verification Screen (Post-Signup)
+File: artifacts/rankpulse/src/pages/auth/EmailVerificationPage.tsx
+Shown after email/password signup (NOT after Google signup â€” Google is auto-verified). Design: centered card, same style as LoginPage. Show: &apos;Check your inbox&apos; heading, email address shown, &apos;We sent a verification link to {email}. Click it to activate your account.&apos; Resend button (calls sendEmailVerification(auth.currentUser)). &apos;Continue to Dashboard&apos; button that still lets them in (Firebase doesn&apos;t block unverified users by default). Back to login link.
+In SignupPage.tsx, after createUserWithEmailAndPassword succeeds, navigate to /verify-email instead of /dashboard. Pass email via state or localStorage.
+Register: &lt;Route path=&apos;/verify-email&apos; component={EmailVerificationPage} /&gt;
+6. UI Polish &amp; Consistency Rules
+6.1 Typography Hierarchy â€” Enforce Bebas Neue
+After loading Bebas Neue, every element with style={{ fontFamily: &apos;var(--font-d)&apos; }} will render in Bebas Neue. Verify these render correctly:
+All .d1/.d2/.d3/.d4 class elements (landing page hero, page headers)
+Score numbers in AnalyzerPage (the 110px score display)
+Score numbers in ProfileAuditPage, CompetitorsPage, AnalyticsPage
+RANKPULSE logo in all navbars and auth pages
+If any element still shows Inter after the font fix, it&apos;s using the wrong CSS variable or missing the style prop. Fix by adding style={{ fontFamily: &quot;var(--font-d)&quot; }} to the element.
+6.2 Button States â€” All Buttons Need Disabled State
+Every async button (Submit, Generate, Save, Rewrite, etc.) must show a loading state and disable during loading. Pattern already established in LoginPage (disabled={loading}) â€” apply consistently to all dashboard pages. If a button triggers a network call, it must be disabled while loading.
+6.3 Toast Notifications â€” Use Sonner Consistently
+Sonner (from &apos;sonner&apos;) is already installed and &lt;Toaster /&gt; is in App.tsx root. Use toast.success() / toast.error() / toast.loading() for all user actions. Currently missing toast feedback on: Save keyword set, Remove competitor, Remove scheduled post, Remove saved idea, Settings save success.
+6.4 Mobile Responsiveness â€” Key Rules
+All dashboard pages already use responsive classes. Key patterns to maintain:
+Page header: flex-col sm:flex-row â€” action buttons stack below title on mobile
+Main grid: flex-col md:grid â€” sidebar goes below content on mobile
+Tables: overflow-x-auto with min-w-[500px] â€” horizontal scroll on mobile
+Score sidebar: full width on mobile, fixed width (280-320px) on md+
+Test every page at 375px viewport width before considering it complete.
+6.5 Empty States
+Every page that displays user data must have an empty state. Currently:
+Dashboard Home â€” has empty state (implemented)
+Competitors â€” after wiring storage, show &apos;No competitors tracked yet. Add your first competitor.&apos; with a button
+Scheduler â€” show &apos;No posts scheduled. Add your first post.&apos;
+Keywords Sets â€” show &apos;No keyword sets yet. Select keywords and create a set.&apos;
+AI Studio Saved Ideas â€” show &apos;No saved ideas yet. Generate and save ideas from above.&apos;
+7. Analytics Page â€” Real Data from localStorage
+File: artifacts/rankpulse/src/pages/dashboard/AnalyticsPage.tsx
+The analytics page currently shows 100% hardcoded numbers. Wire it to read from localStorage analyses.
+Add at top of component:
+const [realData, setRealData] = useState&lt;{bars: number[], platformData: any[], metrics: any}&gt;({ bars: [], platformData: [], metrics: null });
+In useEffect:
+useEffect(() =&gt; {
+  const saved = JSON.parse(localStorage.getItem(&apos;rp_analyses&apos;) || &apos;[]&apos;);
+  if (saved.length === 0) return; // keep hardcoded demo data
+  const ig = saved.filter((a:any) =&gt; a.platform === &apos;instagram&apos;).map((a:any) =&gt; a.overall_score);
+  const li = saved.filter((a:any) =&gt; a.platform === &apos;linkedin&apos;).map((a:any) =&gt; a.overall_score);
+  const x = saved.filter((a:any) =&gt; a.platform === &apos;x&apos;).map((a:any) =&gt; a.overall_score);
+  const avg = (arr: number[]) =&gt; arr.length ? Math.round(arr.reduce((a,b) =&gt; a+b,0)/arr.length) : 0;
+  const last12 = saved.slice(0, 12).map((a:any) =&gt; a.overall_score).reverse();
+  setRealData({
+    bars: last12.length ? last12 : bars, // fall back to demo if less than 1 analysis
+    platformData: ig.length || li.length || x.length ? [
+      { plat: &apos;Instagram&apos;, score: avg(ig), prev: avg(ig) - 3, color: &apos;var(--ig)&apos; },
+      { plat: &apos;LinkedIn&apos;, score: avg(li), prev: avg(li) - 2, color: &apos;var(--li)&apos; },
+      { plat: &apos;X / Twitter&apos;, score: avg(x), prev: avg(x) - 1, color: &apos;#555&apos; },
+    ] : platformData,
+    metrics: { overall: avg(saved.map((a:any) =&gt; a.overall_score)), count: saved.length }
+  });
+}, []);
+Use realData.bars if it has data, otherwise the hardcoded bars. Same for platformData and the avg SEO score metric.
+8. Profile Audit â€” Dynamic Input &amp; Scoring
+File: artifacts/rankpulse/src/pages/dashboard/ProfileAuditPage.tsx
+The current audit shows static hardcoded data. Make it dynamic by letting the user enter their actual profile info.
+8.1 Add Input Form Panel
+Above the audit results grid, add a collapsible/expandable &apos;Your Profile&apos; panel:
+Username input (text)
+Bio textarea (max 150 chars with char counter)
+Highlights count (number input 0-20)
+Posts per week (number input 1-14)
+Has CTA in bio? (checkbox)
+&apos;Run Audit&apos; button
+8.2 Dynamic Score Calculation
+Create a function scoreBio(username, bio, highlightsCount, postsPerWeek, hasCTA, platform) that evaluates:
+Bio keywords: count how many niche words appear (fitness, creator, brand, tips, etc.)
+Bio length: &gt;= 120 chars = ok, 80-119 = warn, &lt; 80 = err
+Display name with keywords: checks if username contains a niche keyword
+Story highlights: &gt; 5 = ok, 1-4 = warn, 0 = err
+Posting frequency: &gt;= 4/week = ok, 2-3 = warn, &lt;= 1 = err
+CTA presence: hasCTA = ok, else warn
+Each check maps to one of the audit items. Update the sections array dynamically based on the function output. Recalculate overallScore and the score sidebar whenever the user clicks Run Audit.
+Save the input to localStorage via saveProfileAudit() from lib/storage.ts and reload it on mount.
+9. Admin Pages â€” Complete the UI
+The admin pages exist but are largely placeholder. Complete them with functional UI using localStorage data.
+9.1 AdminOverviewPage.tsx
+Show real metrics from localStorage:
+Total analyses: JSON.parse(localStorage.getItem(&apos;rp_analyses&apos;) || &apos;[]&apos;).length
+Saved ideas: JSON.parse(localStorage.getItem(&apos;rp_ideas&apos;) || &apos;[]&apos;).length
+Tracked competitors: JSON.parse(localStorage.getItem(&apos;rp_competitors&apos;) || &apos;[]&apos;).length
+Scheduled posts: JSON.parse(localStorage.getItem(&apos;rp_schedule&apos;) || &apos;[]&apos;).length
+Display in 4 metric cards at the top. Below, a Recent Activity list showing the last 5 analyses from rp_analyses.
+9.2 AdminApiHealthPage.tsx
+Show status of all external services. Make real fetch calls on mount:
+Firebase: auth.currentUser !== null â†’ &apos;Connected&apos;
+NVIDIA API: fetch a simple 1-token completion and report success/failure
+Display each as a status row with green/red indicator. Add a &apos;Refresh&apos; button that re-runs the checks.
+10. Complete File Change Checklist
+Use this as a checklist. Every item must be completed for the site to be fully functional.
+âœ“
+File
+Change Required
+[ ]
+artifacts/rankpulse/index.html
+Add Bebas Neue to Google Fonts link
+[ ]
+artifacts/rankpulse/src/index.css
+Change --font-d to &apos;Bebas Neue&apos;, &apos;Arial Black&apos;
+[ ]
+src/pages/auth/LoginPage.tsx
+Null guard, password reset, better error messages
+[ ]
+src/pages/auth/SignupPage.tsx
+Null guard, redirect to /verify-email after signup
+[ ]
+src/pages/auth/EmailVerificationPage.tsx
+CREATE NEW â€” post-signup verification screen
+[ ]
+src/layouts/DashboardLayout.tsx
+Null guard in handleSignOut
+[ ]
+src/pages/dashboard/CompetitorsPage.tsx
+Wire storage.ts: Add/Remove competitor form
+[ ]
+src/pages/dashboard/SchedulerPage.tsx
+Wire storage.ts: Schedule/Remove post form
+[ ]
+src/pages/dashboard/AiStudioPage.tsx
+Import saveIdea/getSavedIdeas, wire Save button
+[ ]
+src/pages/dashboard/KeywordsPage.tsx
+Wire Create Set, render sets from storage
+[ ]
+src/pages/dashboard/DashboardHome.tsx
+Expand Quick Links grid to 6 items
+[ ]
+src/pages/dashboard/AnalyticsPage.tsx
+Read real data from localStorage analyses
+[ ]
+src/pages/dashboard/ProfileAuditPage.tsx
+Add input form + dynamic score calculation
+[ ]
+src/pages/public/AboutPage.tsx
+CREATE NEW â€” About page with story + principles
+[ ]
+src/pages/public/ContactPage.tsx
+CREATE NEW â€” Contact form with success state
+[ ]
+src/App.tsx
+Add /about, /contact, /verify-email routes
+[ ]
+src/layouts/PublicLayout.tsx
+Add About/Contact links to TopNav and Footer
+[ ]
+src/pages/admin/AdminOverviewPage.tsx
+Show real localStorage metrics
+[ ]
+src/pages/admin/AdminApiHealthPage.tsx
+Real Firebase + NVIDIA health checks
+[ ]
+api/ai.js (root)
+CREATE NEW â€” Vercel Edge Function AI proxy
+[ ]
+vercel.json
+Verify SPA rewrite still present â€” do not remove
+11. Design Reference &amp; CSS Utilities
+11.1 Brand Tokens (Already in index.css)
+CSS Variable
+Value
+Usage
+--red
+#E63946
+Primary accent, CTAs, scores, brand
+--black
+#111111
+Borders, sidebar bg, headings
+--bg
+#F5F2E8
+Page background (warm off-white)
+--ig
+#E1306C
+Instagram platform accent
+--li
+#0A66C2
+LinkedIn platform accent
+--font-d
+Bebas Neue (after fix)
+All display/headline text
+11.2 CSS Utility Classes (Already Defined)
+Class
+Usage
+.d1 â€” .d4
+Display headlines in Bebas Neue, clamp-scaled size
+.btn
+Base button â€” all caps, 2px border, shadow
+.btn-red
+Red fill button with depth shadow
+.btn-black
+Black fill button
+.btn-outline
+White bg, black border button
+.btn-sm
+Smaller padding variant
+.card
+White card with 2px border + 4px drop shadow
+.input
+Text input â€” 2px border, red focus
+.textarea
+Textarea â€” same as .input
+.label-sm
+10px, bold, uppercase, tracked â€” section labels
+.page-header
+Page title area with 24px padding + bottom border
+.page-kicker
+Red 10px uppercase label above page title
+.section-wrap
+24px 32px padding wrapper for page content areas
+.sh-accent
+4px wide red vertical bar â€” section header accent
+.sh-title
+13px bold uppercase tracked â€” section header text
+.platform-tag
+Platform badge base â€” use with .tag-ig / .tag-li / .tag-x
+.auth-page
+2-col auth layout (1-col on mobile)
+.auth-left
+Black left panel (hidden on mobile)
+.auth-right
+Cream right panel with centered form
+11.3 Key Design Rules
+2px borders everywhere â€” no 1px, no rounded corners. RankPulse is brutalist.
+Shadow pattern: 4px 4px 0 var(--black) â€” flat offset shadow, never blur/spread.
+Hover state: translate(-1px, -1px) + stronger shadow â€” the button &apos;lifts&apos;.
+All headings: Bebas Neue via var(--font-d). Body: Inter via var(--app-font-sans).
+Color discipline: red (#E63946) for ONE primary action per view. Not for decoration.
+Score numbers: always Bebas Neue, always large (48px+), either red or white on dark bg.
+Section labels: always .label-sm (10px, bold, uppercase, red or #888).
+Loading states: button shows &apos;Loading...&apos; text AND disabled attribute.
+12. AI Model Architecture â€” Full Implementation
+RankPulse uses four NVIDIA NIM models, each assigned to a specific role. The architecture is designed for a single API proxy endpoint (/api/ai) that routes to different models based on the request body.
+Model
+Role in RankPulse
+Where Used
+mistralai/mistral-small-4-119b-2603
+PRIMARY â€” All text AI
+AI Rewrite, AI Studio, Hashtags, Audit Reports
+nvidia/nemotron-content-safety-reasoning-4b
+Safety â€” Penalty Detection
+Analyzer penalty flags, banned content check
+nvidia/nemotron-ocr-v1
+OCR â€” Screenshot ingestion
+Competitors page: upload screenshot â†’ extract text
+nvidia/llama-nemotron-embed-1b-v2
+Embeddings â€” Semantic search
+Keywords page: cluster similar keywords
+12.1 Update nvidia.ts â€” Multi-Model Support
+File: artifacts/rankpulse/src/lib/nvidia.ts
+The current nvidia.ts only supports one model (Mistral Small 4) with one endpoint. Replace the entire file with this multi-model version:
+Full nvidia.ts replacement:
+// â”€â”€ Model IDs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const MODELS = {
+  primary:  &apos;mistralai/mistral-small-4-119b-2603&apos;,    // text: rewrites, ideas, hashtags
+  safety:   &apos;nvidia/nemotron-content-safety-reasoning-4b&apos;, // penalty/banned detection
+  ocr:      &apos;nvidia/nemotron-ocr-v1&apos;,                 // competitor screenshot OCR
+  embed:    &apos;nvidia/llama-nemotron-embed-1b-v2&apos;,      // keyword clustering
+} as const;
+const IS_PROD = import.meta.env.PROD;
+const BASE_URL = IS_PROD ? &apos;/api/ai&apos; : &apos;https://integrate.api.nvidia.com/v1&apos;;
+function getKey() {
+  if (IS_PROD) return &apos;PROXY_MANAGED&apos;;
+  return import.meta.env.VITE_NVIDIA_API_KEY ?? &apos;&apos;;
+}
+export function hasAiKey() { return IS_PROD || !!import.meta.env.VITE_NVIDIA_API_KEY; }
+// â”€â”€ Interfaces â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export interface Msg { role: &apos;system&apos; | &apos;user&apos; | &apos;assistant&apos;; content: string | any[]; }
+export interface AIOptions { reasoning_effort?: &apos;none&apos; | &apos;low&apos; | &apos;medium&apos; | &apos;high&apos;; model?: string; maxTokens?: number; }
+export interface EmbedResult { embedding: number[]; }
+// â”€â”€ helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function chatUrl() { return IS_PROD ? &apos;/api/ai/chat&apos; : `${BASE_URL}/chat/completions`; }
+function embedUrl() { return IS_PROD ? &apos;/api/ai/embed&apos; : `${BASE_URL}/embeddings`; }
+function authHeader() { return IS_PROD ? {} : { Authorization: `Bearer ${getKey()}` }; }
+// â”€â”€ aiComplete â€” non-streaming â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function aiComplete(messages: Msg[], opts?: AIOptions): Promise&lt;string&gt; {
+  const body: any = {
+    model: opts?.model ?? MODELS.primary,
+    messages,
+    max_tokens: opts?.maxTokens ?? 4096,
+    temperature: 0.7,
+    stream: false,
+  };
+  if (opts?.reasoning_effort) body.reasoning_effort = opts.reasoning_effort;
+  const res = await fetch(chatUrl(), {
+    method: &apos;POST&apos;,
+    headers: { ...authHeader(), &apos;Content-Type&apos;: &apos;application/json&apos;, Accept: &apos;application/json&apos; },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`AI error ${res.status}: ${await res.text()}`);
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content ?? &apos;&apos;;
+}
+// â”€â”€ aiStream â€” streaming â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function aiStream(messages: Msg[], onChunk: (t: string) =&gt; void, opts?: AIOptions): Promise&lt;void&gt; {
+  const body: any = {
+    model: opts?.model ?? MODELS.primary,
+    messages,
+    max_tokens: opts?.maxTokens ?? 4096,
+    temperature: 0.7,
+    stream: true,
+  };
+  if (opts?.reasoning_effort) body.reasoning_effort = opts.reasoning_effort;
+  const res = await fetch(chatUrl(), {
+    method: &apos;POST&apos;,
+    headers: { ...authHeader(), &apos;Content-Type&apos;: &apos;application/json&apos;, Accept: &apos;text/event-stream&apos; },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`AI stream error ${res.status}`);
+  const reader = res.body!.getReader();
+  const dec = new TextDecoder();
+  let buf = &apos;&apos;;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const lines = buf.split(&apos;\n&apos;); buf = lines.pop() ?? &apos;&apos;;
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith(&apos;data: &apos;)) continue;
+      const payload = trimmed.slice(6);
+      if (payload === &apos;[DONE]&apos;) return;
+      try { const j = JSON.parse(payload); const t = j.choices?.[0]?.delta?.content ?? &apos;&apos;; if (t) onChunk(t); } catch {}
+    }
+  }
+}
+// â”€â”€ aiSafety â€” content safety check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export interface SafetyResult { safe: boolean; flags: string[]; confidence: number; }
+export async function aiSafety(text: string): Promise&lt;SafetyResult&gt; {
+  try {
+    const raw = await aiComplete([
+      { role: &apos;system&apos;, content: &apos;You are a content safety classifier. Analyze the text for social media policy violations. Return ONLY JSON: {safe: boolean, flags: string[], confidence: number}. Flags can include: hate_speech, harassment, misinformation, spam, banned_hashtags, explicit_content, self_harm.&apos; },
+      { role: &apos;user&apos;, content: `Analyze this social media post: &quot;${text}&quot;` },
+    ], { model: MODELS.safety, maxTokens: 512, reasoning_effort: &apos;low&apos; });
+    const match = raw.match(/\{.*\}/s);
+    if (match) return JSON.parse(match[0]);
+  } catch {}
+  return { safe: true, flags: [], confidence: 0 };
+}
+// â”€â”€ aiOcr â€” extract text from competitor screenshot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function aiOcr(base64Image: string, mimeType = &apos;image/png&apos;): Promise&lt;string&gt; {
+  const messages = [{
+    role: &apos;user&apos; as const,
+    content: [
+      { type: &apos;text&apos;, text: &apos;Extract ALL visible text from this social media screenshot. Return the raw text only, preserving line breaks. Include captions, hashtags, username, bio, and any overlay text.&apos; },
+      { type: &apos;image_url&apos;, image_url: { url: `data:${mimeType};base64,${base64Image}` } }
+    ]
+  }];
+  return aiComplete(messages as any, { model: MODELS.ocr, maxTokens: 2048 });
+}
+// â”€â”€ aiEmbed â€” get semantic embedding vector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export async function aiEmbed(text: string): Promise&lt;number[]&gt; {
+  const res = await fetch(embedUrl(), {
+    method: &apos;POST&apos;,
+    headers: { ...authHeader(), &apos;Content-Type&apos;: &apos;application/json&apos; },
+    body: JSON.stringify({ model: MODELS.embed, input: text, encoding_format: &apos;float&apos; }),
+  });
+  if (!res.ok) throw new Error(`Embed error ${res.status}`);
+  const data = await res.json();
+  return data.data?.[0]?.embedding ?? [];
+}
+// â”€â”€ aiVision â€” alias for image analysis (existing AnalyzerPage usage) â”€â”€â”€â”€â”€
+export async function aiVision(prompt: string, base64Image: string): Promise&lt;string&gt; {
+  return aiOcr(base64Image);
+}
+12.2 Update api/ai.js Proxy â€” Support All 4 Model Endpoints
+File: api/ai.js (root of repo â€” Vercel Edge Function)
+The current proxy only forwards to /chat/completions. Update it to support /embed and route to the correct NVIDIA endpoint based on the path:
+// api/ai.js â€” Vercel Edge Function, routes to NVIDIA NIM
+export const config = { runtime: &apos;edge&apos; };
+const NVIDIA_CHAT = &apos;https://integrate.api.nvidia.com/v1/chat/completions&apos;;
+const NVIDIA_EMBED = &apos;https://integrate.api.nvidia.com/v1/embeddings&apos;;
+export default async function handler(req) {
+  if (req.method === &apos;OPTIONS&apos;) return new Response(null, { status: 200, headers: corsHeaders() });
+  if (req.method !== &apos;POST&apos;) return new Response(&apos;Method not allowed&apos;, { status: 405 });
+  const url = new URL(req.url);
+  const isEmbed = url.pathname.includes(&apos;/embed&apos;);
+  const target = isEmbed ? NVIDIA_EMBED : NVIDIA_CHAT;
+  try {
+    const body = await req.json();
+    const res = await fetch(target, {
+      method: &apos;POST&apos;,
+      headers: {
+        &apos;Authorization&apos;: `Bearer ${process.env.NVIDIA_API_KEY}`,
+        &apos;Content-Type&apos;: &apos;application/json&apos;,
+        &apos;Accept&apos;: body.stream ? &apos;text/event-stream&apos; : &apos;application/json&apos;,
+      },
+      body: JSON.stringify(body),
+    });
+    return new Response(res.body, {
+      status: res.status,
+      headers: { &apos;Content-Type&apos;: res.headers.get(&apos;Content-Type&apos;) || &apos;application/json&apos;, ...corsHeaders() },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { &apos;Content-Type&apos;: &apos;application/json&apos;, ...corsHeaders() } });
+  }
+}
+function corsHeaders() {
+  return { &apos;Access-Control-Allow-Origin&apos;: &apos;*&apos;, &apos;Access-Control-Allow-Methods&apos;: &apos;POST, OPTIONS&apos;, &apos;Access-Control-Allow-Headers&apos;: &apos;Content-Type&apos; };
+}
+12.3 Wire Safety Model to Analyzer Page
+File: artifacts/rankpulse/src/pages/dashboard/AnalyzerPage.tsx
+Import the new aiSafety function:
+import { aiStream, aiVision, aiSafety, hasAiKey } from &apos;@/lib/nvidia&apos;;
+Add state for safety results:
+const [safetyResult, setSafetyResult] = useState&lt;{ safe: boolean; flags: string[]; confidence: number } | null&gt;(null);
+Add a safety check whenever text changes (debounced 1500ms):
+useEffect(() =&gt; {
+  if (!text.trim() || !hasAiKey()) return;
+  const t = setTimeout(async () =&gt; {
+    const result = await aiSafety(text).catch(() =&gt; null);
+    setSafetyResult(result);
+  }, 1500);
+  return () =&gt; clearTimeout(t);
+}, [text]);
+In the &apos;Detected Issues &amp; Signals&apos; section of the JSX, after the existing penalty flags, add:
+{safetyResult &amp;&amp; !safetyResult.safe &amp;&amp; safetyResult.flags.map((flag, i) =&gt; (
+  &lt;span key={`safety-${i}`} className=&apos;px-2 py-1 text-[11px] font-bold uppercase tracking-wide border-2 flex items-center gap-1.5 bg-[#fef2f2] text-[#991b1b] border-[#ef4444]&apos;&gt;
+    &lt;XIcon className=&apos;h-3 w-3&apos; /&gt; AI Safety: {flag.replace(/_/g, &apos; &apos;)}
+  &lt;/span&gt;
+))}
+This adds AI-powered real-time safety flags (hate speech, misinformation, banned hashtags) alongside the existing JS-based penalty detection.
+12.4 Wire OCR to Competitors Page
+File: artifacts/rankpulse/src/pages/dashboard/CompetitorsPage.tsx
+Add screenshot upload capability to the Add Competitor form. Below the handle/name inputs, add:
+const handleScreenshot = async (e: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; {
+  const file = e.target.files?.[0];
+  if (!file || !hasAiKey()) return;
+  setOcrLoading(true);
+  const reader = new FileReader();
+  reader.onload = async () =&gt; {
+    const base64 = (reader.result as string).split(&apos;,&apos;)[1];
+    const extracted = await aiOcr(base64, file.type).catch(() =&gt; &apos;&apos;);
+    // Parse username from first line if it starts with @
+    const lines = extracted.split(&apos;\n&apos;).filter(Boolean);
+    const handle = lines.find(l =&gt; l.trim().startsWith(&apos;@&apos;));
+    if (handle) setNewHandle(handle.trim());
+    setOcrText(extracted);
+    setOcrLoading(false);
+  };
+  reader.readAsDataURL(file);
+};
+In the Add Competitor form JSX, add below the name input:
+&lt;div className=&apos;flex flex-col gap-1.5&apos;&gt;
+  &lt;label className=&apos;label-sm&apos;&gt;Or upload screenshot (optional)&lt;/label&gt;
+  &lt;input type=&apos;file&apos; accept=&apos;image/*&apos; onChange={handleScreenshot} className=&apos;text-xs&apos; /&gt;
+  {ocrLoading &amp;&amp; &lt;span className=&apos;text-xs text-[#888]&apos;&gt;Extracting text...&lt;/span&gt;}
+  {ocrText &amp;&amp; &lt;textarea className=&apos;textarea text-xs&apos; rows={3} value={ocrText} readOnly /&gt;}
+&lt;/div&gt;
+Import aiOcr at the top: import { aiOcr, hasAiKey } from &apos;@/lib/nvidia&apos;;
+12.5 Wire Embeddings to Keywords Page
+File: artifacts/rankpulse/src/pages/dashboard/KeywordsPage.tsx
+Add a &apos;Find Similar&apos; button next to each keyword row. On click, it generates an embedding for that keyword and compares cosine similarity against all other keywords to find the top 3 semantically similar ones.
+Add helper at top of file:
+function cosineSim(a: number[], b: number[]): number {
+  const dot = a.reduce((s, v, i) =&gt; s + v * b[i], 0);
+  const magA = Math.sqrt(a.reduce((s, v) =&gt; s + v * v, 0));
+  const magB = Math.sqrt(b.reduce((s, v) =&gt; s + v * v, 0));
+  return dot / (magA * magB);
+}
+Add state:
+const [similarMap, setSimilarMap] = useState&lt;Record&lt;string, string[]&gt;&gt;({});
+const [embedLoading, setEmbedLoading] = useState&lt;string | null&gt;(null);
+Add handler:
+const findSimilar = async (term: string) =&gt; {
+  if (!hasAiKey()) return;
+  setEmbedLoading(term);
+  try {
+    const [targetVec, ...otherVecs] = await Promise.all([
+      aiEmbed(term),
+      ...keywords.filter(k =&gt; k.term !== term).map(k =&gt; aiEmbed(k.term)),
+    ]);
+    const scored = keywords.filter(k =&gt; k.term !== term).map((k, i) =&gt; ({
+      term: k.term, score: cosineSim(targetVec, otherVecs[i]),
+    })).sort((a, b) =&gt; b.score - a.score).slice(0, 3).map(k =&gt; k.term);
+    setSimilarMap(prev =&gt; ({ ...prev, [term]: scored }));
+  } finally { setEmbedLoading(null); }
+};
+Import aiEmbed: import { aiEmbed, hasAiKey } from &apos;@/lib/nvidia&apos;;
+In each keyword row, add a &apos;Similar&apos; button that calls findSimilar(k.term). Below the row, if similarMap[k.term] exists, render a small expansion showing the 3 similar keywords as tags.
+12.6 Per-Request Reasoning Effort â€” How Each Feature Uses It
+Mistral Small 4&apos;s key differentiator is per-request reasoning_effort. Use it correctly across RankPulse:
+Feature
+reasoning_effort
+Why
+AI Rewrite (streaming)
+medium
+Needs speed for streaming UX but must reason about SEO rules
+AI Studio â€” idea generation
+high
+Quality matters more than speed for 5 pre-scored ideas
+Hashtag AI generation
+none
+Fast lookup, no deep reasoning needed
+Full Audit Report (future)
+high
+Deep analysis of competitor + profile + content together
+Safety Check
+low
+Fast classification, model is small (4B active params)
+Keyword suggestions (future)
+none
+List generation â€” latency over depth
+Apply these by updating the existing function calls in each page:
+// In AnalyzerPage.tsx â€” AI Rewrite
+await aiStream([...messages], onChunk, { reasoning_effort: &apos;medium&apos; });
+// In AiStudioPage.tsx â€” Idea generation
+const raw = await aiComplete([...messages], { reasoning_effort: &apos;high&apos; });
+// In HashtagsPage.tsx â€” Hashtag generation
+const raw = await aiComplete([...messages], { reasoning_effort: &apos;none&apos; });
+12.7 Architecture Diagram
+The full data flow when a user submits a caption in the Analyzer:
+USER TYPES CAPTION IN ANALYZER
+         â†“
+lib/seo/instagram.ts  â†’  Real-time JS score  [&lt; 5ms, no API]
+         â†“  (1500ms debounce)
+aiSafety()  â†’  nemotron-content-safety-4b  â†’  Add AI penalty flags
+         â†“  (on &apos;AI Rewrite&apos; click)
+aiStream()  â†’  mistral-small-4 [reasoning_effort=medium]  â†’  Streaming rewrite
+         â†“  (on competitor screenshot upload)
+aiOcr()   â†’  nemotron-ocr-v1  â†’  Extract text from screenshot
+         â†“  (on &apos;Find Similar&apos; in Keywords)
+aiEmbed()  â†’  llama-nemotron-embed-1b  â†’  Cosine similarity cluster
+12.8 Updated File Checklist Additions for AI Architecture
+âœ“
+File
+Change Required
+[ ]
+src/lib/nvidia.ts
+Replace entire file with multi-model version (Section 12.1)
+[ ]
+api/ai.js (root)
+Update proxy to route /embed to embeddings endpoint (Section 12.2)
+[ ]
+src/pages/dashboard/AnalyzerPage.tsx
+Import aiSafety, add safety state + debounced check + JSX flags
+[ ]
+src/pages/dashboard/CompetitorsPage.tsx
+Import aiOcr, add screenshot upload in Add Competitor form
+[ ]
+src/pages/dashboard/KeywordsPage.tsx
+Import aiEmbed, add Find Similar button + cosine similarity logic
+[ ]
+src/pages/dashboard/AnalyzerPage.tsx
+Update aiStream call: add reasoning_effort: &apos;medium&apos;
+[ ]
+src/pages/dashboard/AiStudioPage.tsx
+Update aiComplete call: add reasoning_effort: &apos;high&apos;
+[ ]
+src/pages/dashboard/HashtagsPage.tsx
+Update aiComplete call: add reasoning_effort: &apos;none&apos;
+12. Deployment Instructions (Vercel)
+The repo is already connected to Vercel. Every push to main auto-deploys.
+Step
+Action
+Notes
+1
+Vercel â†’ Settings â†’ Build &amp; Output
+Build Command: pnpm --filter @workspace/rankpulse... build | Output: artifacts/rankpulse/dist/public
+2
+Add Env Vars in Vercel
+All 6 VITE_FIREBASE_* vars + NVIDIA_API_KEY (no VITE_ prefix, server-only)
+3
+Push main branch
+Vercel auto-builds. Check build logs for errors.
+4
+Add Vercel URL to Firebase
+Firebase Console â†’ Auth â†’ Authorized Domains â†’ Add your .vercel.app URL
+5
+Test login flow
+Try email signup, Google popup, and password reset on the deployed URL
+RankPulse Master Build Prompt v3.0  â€¢  Generated May 2026
+Built by Kittu  â€¢  github.com/Kittu2007/RankPulse
+

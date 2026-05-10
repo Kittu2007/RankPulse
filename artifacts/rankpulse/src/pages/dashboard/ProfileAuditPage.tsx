@@ -70,7 +70,7 @@ export default function ProfileAuditPage() {
       setIsAuditing(false);
     }
   };
-...
+
   const processedSections = useMemo(() => {
     return sections.map(sec => ({
       ...sec,
@@ -88,7 +88,6 @@ export default function ProfileAuditPage() {
   const allItems = processedSections.flatMap(s => s.items);
   const okCount = allItems.filter(i => i.status === 'ok').length;
   const overallScore = allItems.length > 0 ? Math.round((okCount / allItems.length) * 100) : 0;
-...
 
   const handleFixItem = async (item: AuditItem) => {
     const key = `${activePlatform}-${item.field}`;
