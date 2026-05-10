@@ -1,42 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { aiComplete } from "@/lib/nvidia";
 import { getScheduledPosts, saveScheduledPost, removeScheduledPost, type ScheduledPost } from "@/lib/storage";
-import { X as XIcon, Plus } from "lucide-react";
+import { X as XIcon, Plus, Clock } from "lucide-react";
 
 export default function SchedulerPage() {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const [posts, setPosts] = useState<ScheduledPost[]>(() => {
-    const saved = getScheduledPosts();
-    if (saved.length === 0) {
-      // Seed with defaults
-      const defaults: ScheduledPost[] = [
-        { id: 1, day: 2, platform: 'ig', text: 'Arm workout reel', score: 81, created_at: new Date().toISOString() },
-        { id: 2, day: 5, platform: 'li', text: 'LinkedIn article', score: 74, created_at: new Date().toISOString() },
-        { id: 3, day: 8, platform: 'ig', text: 'Transformation post', score: 77, created_at: new Date().toISOString() },
-        { id: 4, day: 9, platform: 'x', text: 'Hot take thread', score: 88, created_at: new Date().toISOString() },
-        { id: 5, day: 12, platform: 'ig', text: 'Tutorial carousel', score: 82, created_at: new Date().toISOString() },
-        { id: 6, day: 15, platform: 'li', text: 'Industry insight', score: 70, created_at: new Date().toISOString() },
-        { id: 7, day: 16, platform: 'x', text: 'Poll + discussion', score: 76, created_at: new Date().toISOString() },
-        { id: 8, day: 19, platform: 'ig', text: 'Q&A story backup', score: 68, created_at: new Date().toISOString() },
-        { id: 9, day: 22, platform: 'ig', text: 'New reel drop', score: 85, created_at: new Date().toISOString() },
-        { id: 10, day: 23, platform: 'li', text: 'Behind the scenes', score: 72, created_at: new Date().toISOString() },
-      ];
-      defaults.forEach(d => saveScheduledPost(d));
-      return defaults;
-    }
-    return saved;
+  const [posts, setPosts] = useState<ScheduledPost[]>(() => getScheduledPosts());
+  const [niche] = useState(() => localStorage.getItem("rp_user_niche") || "Social Media Marketing");
+  const [optimalTimes, setOptimalTimes] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('rp_optimal_times') || '[]'); }
+    catch { return []; }
   });
-
+  const [generatingTimes, setGeneratingTimes] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editDay, setEditDay] = useState(1);
   const [newText, setNewText] = useState('');
   const [newPlatform, setNewPlatform] = useState('ig');
 
-  const optimalTimes = [
-    { plat: 'Instagram', times: ['7–9 AM', '12–2 PM', '6–8 PM'], best: 'Tue, Wed, Thu' },
-    { plat: 'LinkedIn', times: ['7–9 AM', '12–1 PM'], best: 'Tue, Wed' },
-    { plat: 'X / Twitter', times: ['8–10 AM', '6–8 PM'], best: 'Wed, Fri' },
-  ];
+  const handleGenerateTimes = async () => {
+    setGeneratingTimes(true);
+    try {
+      const raw = await aiComplete([
+        { role: "system", content: `You are a social media scheduling expert. Suggest the 3 best times and days to post for a ${niche} niche on Instagram, LinkedIn, and X. Return ONLY a JSON array with objects: {plat: string, times: string[], best: string (days of week)}. No other text.` },
+        { role: "user", content: `Suggest optimal times for ${niche}.` }
+      ], { reasoning_effort: "high" });
+      const match = raw.match(/\[.*\]/s);
+      if (match) {
+        const data = JSON.parse(match[0]);
+        setOptimalTimes(data);
+        localStorage.setItem('rp_optimal_times', JSON.stringify(data));
+      }
+    } catch (err) { console.error(err); }
+    finally { setGeneratingTimes(false); }
+  };
+
+  useEffect(() => {
+    if (optimalTimes.length === 0) handleGenerateTimes();
+  }, []);
+
 
   const getPlatColor = (type: string) => type === 'ig' ? 'bg-[#fdf4ff] border-[#d946ef] text-[#a21caf]' : type === 'li' ? 'bg-[#eff6ff] border-[#3b82f6] text-[#1d4ed8]' : 'bg-[#f3f4f6] border-[#111] text-[#000]';
 
@@ -125,11 +127,18 @@ export default function SchedulerPage() {
           </div>
 
           {/* Optimal Times — responsive grid */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-6 h-[3px] bg-[var(--red)]" />
-            <span className="text-sm font-bold uppercase tracking-[2px]">Optimal Posting Times</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-[3px] bg-[var(--red)]" />
+              <span className="text-sm font-bold uppercase tracking-[2px]">Optimal Posting Times</span>
+            </div>
+            <button className="btn btn-outline btn-sm text-[10px]" onClick={handleGenerateTimes} disabled={generatingTimes}>
+              {generatingTimes ? "Thinking..." : "Refresh →"}
+            </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {optimalTimes.length === 0 && !generatingTimes && <div className="col-span-3 text-center py-8 text-[#888] text-xs">No data. Click refresh.</div>}
+            {generatingTimes && <div className="col-span-3 text-center py-8 text-[#888] text-xs">Analysing niche trends...</div>}
             {optimalTimes.map((t, i) => (
               <div key={i} className="border-2 border-[var(--black)] bg-white p-4">
                 <div className="text-[11px] font-bold uppercase tracking-[2px] text-[#888] mb-2">{t.plat}</div>

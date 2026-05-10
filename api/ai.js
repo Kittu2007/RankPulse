@@ -19,14 +19,14 @@ export default async function handler(req) {
         messages: messages,
         temperature: 0.2,
         top_p: 0.7,
-        max_tokens: 1024,
+        max_tokens: 4096,
       };
-      if (reasoning_effort) {
-        payload.model = "deepseek-ai/deepseek-v4-flash"; // Use faster reasoning model
+      if (reasoning_effort === 'high') {
+        payload.model = "mistralai/mistral-small-4-119b-2603"; // Keep consistent or use a reasoning model if needed
       }
     } else if (action === 'safety') {
       payload = {
-        model: "meta/llama-3.1-8b-instruct",
+        model: "nvidia/nemotron-content-safety-reasoning-4b",
         messages: [
           { role: "system", content: "You are a content safety filter. Evaluate the following text for harmful content, hate speech, or explicit material. Reply ONLY with the word 'safe' or 'unsafe'." },
           ...messages

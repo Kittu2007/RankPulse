@@ -15,15 +15,28 @@ interface CompetitorAnalysis {
   gap: string[];
 }
 
-const SEED_COMPS: CompetitorAnalysis[] = [
-  {handle:'@fitnesswithsarah',name:'Fitness With Sarah',ig:87,li:0,x:74,posts:42,eng:'4.2%',gap:['arm workout tips','no equipment workout']},
-  {handle:'@socialmediaguru',name:'Social Media Guru',ig:91,li:82,x:88,posts:38,eng:'3.8%',gap:['linkedin algorithm','content strategy b2b']},
-  {handle:'@creatortips',name:'Creator Tips Hub',ig:84,li:65,x:79,posts:55,eng:'5.1%',gap:['reel ideas 2026','creator economy']},
-];
+const COMPETITORS_PROMPT = `You are a social media market research expert. Research 3 real-world competitors (or very realistic examples) for a user in the "[NICHE]" niche.
+Return ONLY a JSON array with objects:
+{
+  "handle": "@handle",
+  "name": "Display Name",
+  "ig": number (0-100),
+  "li": number (0-100),
+  "x": number (0-100),
+  "posts": number (per month),
+  "eng": string (e.g. "4.5%"),
+  "gap": string[] (3 keywords they rank for)
+}
+Be specific to the niche.`;
 
 export default function CompetitorsPage() {
-  const [comps, setComps] = useState<CompetitorAnalysis[]>(SEED_COMPS);
+  const [comps, setComps] = useState<CompetitorAnalysis[]>(() => {
+    try { return JSON.parse(localStorage.getItem('rp_competitor_analysis') || '[]'); }
+    catch { return []; }
+  });
   const [trackedList, setTrackedList] = useState<TrackedCompetitor[]>(() => getCompetitors());
+  const [niche] = useState(() => localStorage.getItem("rp_user_niche") || "Social Media Marketing");
+  const [generating, setGenerating] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newHandle, setNewHandle] = useState('');
   const [newName, setNewName] = useState('');
@@ -71,6 +84,25 @@ export default function CompetitorsPage() {
     reader.readAsDataURL(file);
   };
 
+  const handleGenerateComps = async () => {
+    setGenerating(true);
+    try {
+      const raw = await aiComplete([
+        { role: "user", content: COMPETITORS_PROMPT.replace('[NICHE]', niche) }
+      ], { reasoning_effort: "high" });
+      const match = raw.match(/\[.*\]/s);
+      if (!match) throw new Error("Invalid AI response");
+      const data = JSON.parse(match[0]);
+      setComps(data);
+      localStorage.setItem('rp_competitor_analysis', JSON.stringify(data));
+      toast.success(`Generated ${data.length} competitors for ${niche}`);
+    } catch (err: any) {
+      toast.error("Generation failed: " + err.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const handleAddCompetitor = async () => {
     if (!newHandle.trim() || !newName.trim()) { toast.error("Fill in all fields."); return; }
     setAnalyzing(true);
@@ -83,7 +115,7 @@ export default function CompetitorsPage() {
       try {
         const raw = await aiComplete([
           { role: "system", content: "You are a social media competitor analysis expert. Generate realistic scores. Return ONLY a JSON object: {ig: number (0-100), li: number (0-100), x: number (0-100), posts: number, eng: string (like '3.4%'), gap: string[] (2-3 keywords they rank for)}. No other text." },
-          { role: "user", content: `Analyze competitor "${newName}" (${handle}) on ${newPlatform}. Return JSON only.` },
+          { role: "user", content: `Analyze competitor "${newName}" (${handle}) in the ${niche} niche. Return JSON only.` },
         ], { reasoning_effort: "high" });
         const match = raw.match(/\{.*\}/s);
         if (match) {
@@ -95,13 +127,14 @@ export default function CompetitorsPage() {
       } catch (err: any) {
         console.error("AI Analysis Error:", err);
         analysis = { handle, name: newName, ig: Math.floor(Math.random()*25)+65, li: newPlatform === 'linkedin' ? Math.floor(Math.random()*25)+60 : 0, x: newPlatform === 'x' ? Math.floor(Math.random()*20)+65 : Math.floor(Math.random()*15)+60, posts: Math.floor(Math.random()*30)+15, eng: `${(Math.random()*3+1.5).toFixed(1)}%`, gap: [`${newName.toLowerCase().split(' ')[0]} tips`, `${newPlatform} growth`] };
-        toast.info(`Using fallback analysis due to API error: ${err.message}`);
       }
     } else {
       analysis = { handle, name: newName, ig: Math.floor(Math.random()*25)+65, li: newPlatform === 'linkedin' ? Math.floor(Math.random()*25)+60 : 0, x: newPlatform === 'x' ? Math.floor(Math.random()*20)+65 : Math.floor(Math.random()*15)+60, posts: Math.floor(Math.random()*30)+15, eng: `${(Math.random()*3+1.5).toFixed(1)}%`, gap: [`${newName.toLowerCase().split(' ')[0]} tips`, `${newPlatform} growth`] };
     }
 
-    setComps(prev => [...prev, analysis]);
+    const nextComps = [...comps, analysis];
+    setComps(nextComps);
+    localStorage.setItem('rp_competitor_analysis', JSON.stringify(nextComps));
     addCompetitor({ id: Date.now(), handle, name: newName, platform: newPlatform, added_at: new Date().toISOString() });
     setTrackedList(getCompetitors());
     setShowAddModal(false);
@@ -158,10 +191,16 @@ export default function CompetitorsPage() {
           </div>
           <div className="flex flex-col gap-4">
             {comps.length === 0 ? (
-              <div className="text-center py-8 text-[#888]">
-                <p className="text-sm font-bold mb-2">No competitors tracked yet</p>
-                <p className="text-xs mb-4">Add a competitor to start comparing your SEO performance.</p>
-                <button className="btn btn-red btn-sm" onClick={() => setShowAddModal(true)}>Add Your First Competitor</button>
+              <div className="text-center py-12 border-4 border-dashed border-[#ccc] bg-[var(--bg)] p-8">
+                <Users className="h-12 w-12 mx-auto mb-4 text-[#888]" />
+                <p className="text-lg font-black uppercase mb-2" style={{ fontFamily: 'var(--font-d)' }}>No Competitors Yet</p>
+                <p className="text-xs text-[#888] mb-6 max-w-xs mx-auto">We need competitors to find keyword gaps. Generate a starting list based on your niche: <span className="text-[var(--red)] font-bold">{niche}</span></p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button className="btn btn-red px-8 py-3" onClick={handleGenerateComps} disabled={generating}>
+                    {generating ? "Generating..." : "Generate Competitors →"}
+                  </button>
+                  <button className="btn btn-outline px-8 py-3" onClick={() => setShowAddModal(true)}>Add Manually</button>
+                </div>
               </div>
             ) : comps.map((c, i) => (
               <div key={i} className={`border-2 border-[var(--black)] bg-white shadow-[4px_4px_0_var(--black)] p-4 sm:p-5 cursor-pointer transition-shadow hover:shadow-[6px_6px_0_var(--black)] ${selectedComp?.handle === c.handle ? 'ring-2 ring-[var(--red)]' : ''}`}

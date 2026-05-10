@@ -6,87 +6,71 @@ import { aiComplete, hasAiKey } from "@/lib/nvidia";
 type AuditItem = { field: string; status: 'ok' | 'warn' | 'err'; detail: string; fix?: string };
 type AuditSection = { section: string; items: AuditItem[] };
 
-function getAuditSections(platform: string): AuditSection[] {
-  if (platform === 'LinkedIn') return [
-    { section: 'Profile Basics', items: [
-      { field: 'Headline', status: 'warn', detail: 'Headline lacks target keywords. Add your role + specialty (e.g. "SEO Strategist | Content Marketing")', fix: 'Add 2-3 target keywords to headline' },
-      { field: 'Profile Photo', status: 'ok', detail: 'Professional headshot detected. Good quality, high contrast.' },
-      { field: 'Banner Image', status: 'err', detail: 'Default banner. Custom banners with contact info get 2x more profile views.', fix: 'Upload a custom branded banner' },
-      { field: 'Open to Work', status: 'ok', detail: 'Creator mode active — posts get algorithmic priority.' },
-    ]},
-    { section: 'About & Keywords', items: [
-      { field: 'About Section', status: 'warn', detail: 'About section is under 200 characters. LinkedIn indexes this heavily.', fix: 'Expand to 300+ characters with keywords' },
-      { field: 'Featured Section', status: 'err', detail: 'No featured posts or media. This section appears above the fold on profile.', fix: 'Add 3 featured posts or external links' },
-      { field: 'Skills', status: 'ok', detail: '12 skills listed — good coverage for endorsement signals.' },
-      { field: 'Recommendations', status: 'warn', detail: 'Only 1 recommendation. Target 5+ for social proof.', fix: 'Request 4+ recommendations from connections' },
-    ]},
-    { section: 'Content Signals', items: [
-      { field: 'Posting Frequency', status: 'warn', detail: '2 posts/week. LinkedIn rewards 3-5 posts/week.', fix: 'Increase to 3+ posts per week' },
-      { field: 'Document Posts', status: 'ok', detail: 'Carousel/document posts detected — these get 3x average reach.' },
-      { field: 'Engagement Response', status: 'err', detail: 'Average reply time: 6+ hours. Reply within 1 hour for algorithm boost.', fix: 'Enable notifications and reply within 1 hour' },
-      { field: 'Newsletter', status: 'warn', detail: 'No LinkedIn newsletter created. Newsletters auto-notify followers.', fix: 'Create a weekly newsletter' },
-    ]},
-  ];
-
-  if (platform === 'X / Twitter') return [
-    { section: 'Profile Basics', items: [
-      { field: 'Handle', status: 'ok', detail: 'Clean handle, no underscores or numbers. Easy to mention.' },
-      { field: 'Profile Photo', status: 'ok', detail: 'Photo detected. High quality avatar increases reply rates.' },
-      { field: 'Header Image', status: 'warn', detail: 'No header image. Add a branded header with your value prop.', fix: 'Upload a branded header image' },
-      { field: 'Pinned Tweet', status: 'err', detail: 'No pinned tweet. Your best-performing tweet should always be pinned.', fix: 'Pin your highest-engagement tweet' },
-    ]},
-    { section: 'Bio & Keywords', items: [
-      { field: 'Bio Keywords', status: 'warn', detail: 'Bio missing niche keywords. X indexes bio text for topic classification.', fix: 'Add 2-3 niche keywords to bio' },
-      { field: 'Bio Length', status: 'ok', detail: 'Full 160 characters used — good utilisation.' },
-      { field: 'Link in Bio', status: 'ok', detail: 'Active link detected.' },
-      { field: 'Location', status: 'warn', detail: 'No location set. Location helps with local discovery.', fix: 'Set your city or region' },
-    ]},
-    { section: 'Content Signals', items: [
-      { field: 'Thread Usage', status: 'err', detail: 'No threads in last 30 days. Threads get 2.5x more impressions.', fix: 'Post 1 thread per week' },
-      { field: 'Reply Ratio', status: 'warn', detail: 'Reply ratio below 40%. X algorithm rewards engagement.', fix: 'Reply to 5+ tweets daily in your niche' },
-      { field: 'Posting Consistency', status: 'ok', detail: '5+ tweets/day — strong consistent signal.' },
-      { field: 'Media Usage', status: 'ok', detail: '60% of tweets include images — good for engagement.' },
-    ]},
-  ];
-
-  // Default: Instagram
-  return [
-    { section: 'Profile Basics', items: [
-      { field: 'Username', status: 'ok', detail: '@yourhandle — clean, brandable, searchable' },
-      { field: 'Profile Photo', status: 'ok', detail: 'Professional photo detected. High contrast, face visible.' },
-      { field: 'Display Name', status: 'warn', detail: 'No keywords in display name. Add your niche (e.g. "Kittu | Fitness Creator")', fix: 'Add 1-2 niche keywords to display name' },
-      { field: 'Account Category', status: 'ok', detail: 'Set to "Creator" — correct for algorithmic classification' },
-      { field: 'Verified Status', status: 'warn', detail: 'Account not verified. Verification improves trust signals.', fix: 'Apply for Meta Verified' },
-    ]},
-    { section: 'Bio & Keywords', items: [
-      { field: 'Bio Keywords', status: 'err', detail: 'CRITICAL: Bio has 0 of your 3 target keywords. Instagram indexes bio text for search.', fix: 'Add target keywords to bio immediately' },
-      { field: 'Bio Length', status: 'ok', detail: '148/150 characters used — good utilisation' },
-      { field: 'Link in Bio', status: 'ok', detail: 'Active link detected. Use a link aggregator for multiple destinations.' },
-      { field: 'Call to Action', status: 'warn', detail: 'No clear CTA in bio. Add "↓ Free workout guide" or similar.', fix: 'Add a CTA with emoji pointer' },
-      { field: 'Story Highlights', status: 'err', detail: 'No story highlights active. Highlights signal account authority to the algorithm.', fix: 'Create 3-5 themed highlights' },
-    ]},
-    { section: 'Content Signals', items: [
-      { field: 'Posting Frequency', status: 'warn', detail: '3 posts/week detected. Target: 4+ to maintain topic cluster membership.', fix: 'Increase to 4+ posts per week' },
-      { field: 'Content Originality', status: 'ok', detail: 'No watermarked or duplicate content in last 30 posts.' },
-      { field: 'Reels vs Static Ratio', status: 'ok', detail: '68% Reels — good. Reels drive discovery, carousels drive engagement.' },
-      { field: 'Hashtag Consistency', status: 'err', detail: '3 banned hashtags found in recent posts (#viral, #f4f, #likeforlike). Remove immediately.', fix: 'Remove banned hashtags from all posts' },
-      { field: 'Alt Text Usage', status: 'err', detail: 'Only 2% of posts have alt text. This is a critical SEO miss. Enable for all posts.', fix: 'Add keyword-rich alt text to all future posts' },
-    ]},
-  ];
+function getInitialAuditSections(): AuditSection[] {
+  return []; // Start empty, wait for user input
 }
+
+const AUDIT_PROMPT = `You are a social media profile optimization expert. Generate a detailed SEO audit for a [PLATFORM] profile for a user in the "[NICHE]" niche (handle: [HANDLE]).
+Return ONLY a JSON object with this structure:
+{
+  "sections": [
+    {
+      "section": "Section Name",
+      "items": [
+        { "field": "Field Name", "status": "ok"|"warn"|"err", "detail": "Specific detail about the current state", "fix": "Specific action to fix" }
+      ]
+    }
+  ]
+}
+Generate 3 sections with 3-4 items each. Be realistic and specific to the niche.`;
 
 export default function ProfileAuditPage() {
   const [activePlatform, setActivePlatform] = useState('Instagram');
+  const [handle, setHandle] = useState('');
+  const [niche, setNiche] = useState(() => localStorage.getItem("rp_user_niche") || "");
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditResults, setAuditResults] = useState<Record<string, AuditSection[]>>(() => {
+    try { return JSON.parse(localStorage.getItem('rp_audit_results') || '{}'); }
+    catch { return {}; }
+  });
   const [fixingItems, setFixingItems] = useState<Set<string>>(new Set());
   const [fixedItems, setFixedItems] = useState<Set<string>>(() => {
     try { return new Set(JSON.parse(localStorage.getItem('rp_audit_fixed') || '[]')); }
     catch { return new Set(); }
   });
+  
   const platforms = ['Instagram', 'LinkedIn', 'X / Twitter'];
 
-  const sections = useMemo(() => getAuditSections(activePlatform), [activePlatform]);
+  const sections = useMemo(() => auditResults[activePlatform] || [], [auditResults, activePlatform]);
 
-  // Apply "fixed" overrides
+  const handleRunAudit = async () => {
+    if (!handle.trim()) { toast.error("Please enter your handle (e.g. @username)"); return; }
+    if (!niche.trim()) { toast.error("Please enter your niche in Settings or here."); return; }
+    
+    setIsAuditing(true);
+    try {
+      const prompt = AUDIT_PROMPT
+        .replace('[PLATFORM]', activePlatform)
+        .replace('[NICHE]', niche)
+        .replace('[HANDLE]', handle);
+      
+      const raw = await aiComplete([{ role: "user", content: prompt }], { reasoning_effort: "high" });
+      const match = raw.match(/\{.*\}/s);
+      if (!match) throw new Error("Invalid AI response format");
+      
+      const data = JSON.parse(match[0]);
+      const newResults = { ...auditResults, [activePlatform]: data.sections };
+      setAuditResults(newResults);
+      localStorage.setItem('rp_audit_results', JSON.stringify(newResults));
+      toast.success(`${activePlatform} audit complete!`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Audit failed: " + err.message);
+    } finally {
+      setIsAuditing(false);
+    }
+  };
+...
   const processedSections = useMemo(() => {
     return sections.map(sec => ({
       ...sec,
@@ -103,7 +87,8 @@ export default function ProfileAuditPage() {
 
   const allItems = processedSections.flatMap(s => s.items);
   const okCount = allItems.filter(i => i.status === 'ok').length;
-  const overallScore = Math.round((okCount / allItems.length) * 100);
+  const overallScore = allItems.length > 0 ? Math.round((okCount / allItems.length) * 100) : 0;
+...
 
   const handleFixItem = async (item: AuditItem) => {
     const key = `${activePlatform}-${item.field}`;
@@ -164,41 +149,75 @@ export default function ProfileAuditPage() {
         </div>
       </div>
 
-      {/* Main grid — stacks on mobile */}
-      <div className="flex flex-col md:grid md:grid-cols-[1fr_280px] flex-1">
-        <div className="border-b-2 md:border-b-0 md:border-r-2 border-[var(--black)] bg-white">
-          {processedSections.map((sec, si) => (
-            <div key={si}>
-              <div className="p-3 sm:p-[14px_24px] border-b-2 border-b-[var(--black)] bg-[var(--black)] flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-[2px] text-white">{sec.section}</span>
-                <span className="text-[10px] font-bold text-[#888]">{sec.items.filter(i => i.status === 'ok').length}/{sec.items.length} passed</span>
-              </div>
-              {sec.items.map((item, ii) => {
-                const key = `${activePlatform}-${item.field}`;
-                const isFixing = fixingItems.has(key);
-                return (
-                  <div key={ii} className="flex items-start gap-3 sm:gap-4 p-3 sm:p-[14px_24px] border-b border-b-[#eaeaea]">
-                    <span className={`text-[11px] font-bold px-2 py-0.5 border-2 shrink-0 mt-0.5 flex items-center gap-1 ${statusBg[item.status]}`}>
-                      <StatusIcon s={item.status} />{item.status.toUpperCase()}
-                    </span>
-                    <div className="flex-1">
-                      <div className="text-sm font-bold mb-0.5">{item.field}</div>
-                      <div className="text-xs text-[#555] leading-relaxed">{item.detail}</div>
-                      {item.status !== 'ok' && item.fix && (
-                        <button
-                          className="mt-2 text-[10px] font-bold text-[var(--red)] hover:underline uppercase tracking-wider"
-                          onClick={() => handleFixItem(item)}
-                          disabled={isFixing}>
-                          {isFixing ? "Fixing..." : `→ ${item.fix}`}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+      {/* Audit Setup if no results */}
+      {sections.length === 0 && (
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="card max-w-md w-full p-8 text-center border-4 border-[var(--black)] shadow-[12px_12px_0_var(--black)]">
+            <Shield className="h-12 w-12 mx-auto mb-4 text-[var(--red)]" />
+            <div className="text-2xl font-black uppercase mb-2" style={{ fontFamily: 'var(--font-d)' }}>Run {activePlatform} Audit</div>
+            <p className="text-sm text-[#888] mb-6">Enter your details and our AI will perform a deep SEO audit of your profile visibility.</p>
+            
+            <div className="text-left mb-4">
+              <label className="label-sm block mb-1">Your Handle</label>
+              <input className="input" placeholder="@yourhandle" value={handle} onChange={e => setHandle(e.target.value)} />
             </div>
-          ))}
+            
+            <div className="text-left mb-6">
+              <label className="label-sm block mb-1">Your Niche</label>
+              <input className="input" placeholder="e.g. Fitness & Wellness" value={niche} onChange={e => setNiche(e.target.value)} />
+            </div>
+
+            <button className="btn btn-red w-full justify-center py-4 font-bold text-lg" onClick={handleRunAudit} disabled={isAuditing}>
+              {isAuditing ? "Auditing Profile..." : "Start Deep Audit →"}
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* Main grid — stacks on mobile */}
+      {sections.length > 0 && (
+        <div className="flex flex-col md:grid md:grid-cols-[1fr_280px] flex-1">
+          <div className="border-b-2 md:border-b-0 md:border-r-2 border-[var(--black)] bg-white">
+            <div className="p-4 bg-[var(--bg)] border-b-2 border-b-[var(--black)] flex flex-wrap gap-4 items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider">Auditing: <span className="text-[var(--red)]">{handle}</span></span>
+                <span className="text-xs text-[#888]">|</span>
+                <span className="text-xs font-bold uppercase tracking-wider">Niche: <span className="text-[var(--red)]">{niche}</span></span>
+              </div>
+              <button className="btn btn-outline btn-sm text-[10px]" onClick={() => setAuditResults(prev => { const n = {...prev}; delete n[activePlatform]; return n; })}>New Audit</button>
+            </div>
+            {processedSections.map((sec, si) => (
+              <div key={si}>
+                <div className="p-3 sm:p-[14px_24px] border-b-2 border-b-[var(--black)] bg-[var(--black)] flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-[2px] text-white">{sec.section}</span>
+                  <span className="text-[10px] font-bold text-[#888]">{sec.items.filter(i => i.status === 'ok').length}/{sec.items.length} passed</span>
+                </div>
+                {sec.items.map((item, ii) => {
+                  const key = `${activePlatform}-${item.field}`;
+                  const isFixing = fixingItems.has(key);
+                  return (
+                    <div key={ii} className="flex items-start gap-3 sm:gap-4 p-3 sm:p-[14px_24px] border-b border-b-[#eaeaea]">
+                      <span className={`text-[11px] font-bold px-2 py-0.5 border-2 shrink-0 mt-0.5 flex items-center gap-1 ${statusBg[item.status]}`}>
+                        <StatusIcon s={item.status} />{item.status.toUpperCase()}
+                      </span>
+                      <div className="flex-1">
+                        <div className="text-sm font-bold mb-0.5">{item.field}</div>
+                        <div className="text-xs text-[#555] leading-relaxed">{item.detail}</div>
+                        {item.status !== 'ok' && item.fix && (
+                          <button
+                            className="mt-2 text-[10px] font-bold text-[var(--red)] hover:underline uppercase tracking-wider"
+                            onClick={() => handleFixItem(item)}
+                            disabled={isFixing}>
+                            {isFixing ? "Fixing..." : `→ ${item.fix}`}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
 
         {/* Score sidebar */}
         <div className="bg-[var(--black)] flex flex-col">

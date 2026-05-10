@@ -7,18 +7,16 @@ import { Copy, Trash2, Plus } from "lucide-react";
 type Platform = 'ig' | 'li' | 'x';
 interface Keyword { rank: number; term: string; vol: number; trend: string; diff: 'hard' | 'med' | 'easy'; plats: Platform[]; }
 
-const SEED_KEYWORDS: Keyword[] = [
-  {rank:1,term:'social media tips',vol:92,trend:'+34%',diff:'easy',plats:['ig','li','x']},
-  {rank:2,term:'instagram reels 2026',vol:88,trend:'+22%',diff:'med',plats:['ig']},
-  {rank:3,term:'content strategy',vol:75,trend:'stable',diff:'med',plats:['ig','li']},
-  {rank:4,term:'linkedin growth',vol:70,trend:'+18%',diff:'med',plats:['li']},
-  {rank:5,term:'arm workout home',vol:68,trend:'+41%',diff:'easy',plats:['ig']},
-  {rank:6,term:'twitter algorithm 2026',vol:60,trend:'-8%',diff:'hard',plats:['x']},
-  {rank:7,term:'social seo',vol:55,trend:'+29%',diff:'easy',plats:['ig','li','x']},
-  {rank:8,term:'reel ideas for creators',vol:52,trend:'+16%',diff:'easy',plats:['ig']},
-  {rank:9,term:'b2b content marketing',vol:48,trend:'+12%',diff:'hard',plats:['li']},
-  {rank:10,term:'hashtag strategy 2026',vol:44,trend:'+8%',diff:'med',plats:['ig','x']},
-];
+const KEYWORDS_PROMPT = `You are a social media keyword research expert. Generate 10 trending and high-volume keywords for a user in the "[NICHE]" niche.
+Return ONLY a JSON array with objects:
+{
+  "term": "keyword",
+  "vol": number (0-100),
+  "trend": string (e.g. "+34%" or "stable"),
+  "diff": "easy"|"med"|"hard",
+  "plats": string[] (from 'ig','li','x')
+}
+Be specific to the niche.`;
 
 function cosineSim(a: number[], b: number[]): number {
   const dot = a.reduce((s, v, i) => s + v * b[i], 0);
@@ -30,15 +28,40 @@ function cosineSim(a: number[], b: number[]): number {
 export default function KeywordsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All Platforms');
-  const [keywords, setKeywords] = useState<Keyword[]>(SEED_KEYWORDS);
+  const [keywords, setKeywords] = useState<Keyword[]>(() => {
+    try { return JSON.parse(localStorage.getItem('rp_keywords_data') || '[]'); }
+    catch { return []; }
+  });
   const [sets, setSets] = useState<KeywordSet[]>(() => getKeywordSets());
+  const [niche] = useState(() => localStorage.getItem("rp_user_niche") || "Social Media Marketing");
   const [searching, setSearching] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [showNewSet, setShowNewSet] = useState(false);
   const [newSetName, setNewSetName] = useState('');
   const [newSetPlatform, setNewSetPlatform] = useState<string>('ig');
   const [selectedKeywords, setSelectedKeywords] = useState<Set<string>>(new Set());
   const [similarMap, setSimilarMap] = useState<Record<string, string[]>>({});
   const [embedLoading, setEmbedLoading] = useState<string | null>(null);
+
+  const handleGenerateKeywords = async () => {
+    setGenerating(true);
+    try {
+      const raw = await aiComplete([
+        { role: "user", content: KEYWORDS_PROMPT.replace('[NICHE]', niche) }
+      ], { reasoning_effort: "high" });
+      const match = raw.match(/\[.*\]/s);
+      if (!match) throw new Error("Invalid AI response");
+      const data = JSON.parse(match[0]);
+      const ranked = data.map((k: any, i: number) => ({ ...k, rank: i + 1 }));
+      setKeywords(ranked);
+      localStorage.setItem('rp_keywords_data', JSON.stringify(ranked));
+      toast.success(`Generated ${data.length} keywords for ${niche}`);
+    } catch (err: any) {
+      toast.error("Generation failed: " + err.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const filters = ['All Platforms','Instagram','LinkedIn','X / Twitter'];
 
@@ -79,6 +102,7 @@ export default function KeywordsPage() {
         { rank: 5, term: `${q} 2026`, vol: Math.floor(Math.random()*20)+30, trend: `+${Math.floor(Math.random()*25)+10}%`, diff: 'hard', plats: [platCode, 'x'] },
       ];
       setKeywords(newResults);
+      localStorage.setItem('rp_keywords_data', JSON.stringify(newResults));
       toast.success(`Found ${newResults.length} keywords for "${searchQuery}"`);
       setSearching(false);
       return;
@@ -86,13 +110,15 @@ export default function KeywordsPage() {
 
     try {
       const raw = await aiComplete([
-        { role: "system", content: "You are a social media keyword research expert. Generate keyword research data. Return ONLY a JSON array with objects: {term: string, vol: number (0-100), trend: string (like '+34%' or '-8%' or 'stable'), diff: 'easy'|'med'|'hard', plats: string[] (from 'ig','li','x')}. No other text." },
-        { role: "user", content: `Research 8 keywords related to "${searchQuery}" for social media SEO. Return JSON only.` },
+        { role: "system", content: `You are a social media keyword research expert for the ${niche} niche. Generate keyword research data. Return ONLY a JSON array with objects: {term: string, vol: number (0-100), trend: string (like '+34%' or '-8%' or 'stable'), diff: 'easy'|'med'|'hard', plats: string[] (from 'ig','li','x')}. No other text.` },
+        { role: "user", content: `Research 8 keywords related to "${searchQuery}". Return JSON only.` },
       ]);
       const match = raw.match(/\[.*\]/s);
       if (match) {
         const parsed = JSON.parse(match[0]);
-        setKeywords(parsed.map((k: any, i: number) => ({ ...k, rank: i + 1 })));
+        const ranked = parsed.map((k: any, i: number) => ({ ...k, rank: i + 1 }));
+        setKeywords(ranked);
+        localStorage.setItem('rp_keywords_data', JSON.stringify(ranked));
         toast.success(`Found ${parsed.length} keywords for "${searchQuery}"`);
       }
     } catch (err) { console.error(err); toast.error("Keyword search failed."); }
@@ -257,7 +283,14 @@ export default function KeywordsPage() {
               </div>
             ))}
             {filteredKeywords.length === 0 && (
-              <div className="p-8 text-center text-[#888] text-sm font-bold">No keywords match your filters. Try a different search.</div>
+              <div className="p-12 text-center border-4 border-dashed border-[#ccc] m-6 bg-[var(--bg)]">
+                <Key className="h-12 w-12 mx-auto mb-4 text-[#888]" />
+                <p className="text-lg font-black uppercase mb-2" style={{ fontFamily: 'var(--font-d)' }}>No Keywords Yet</p>
+                <p className="text-xs text-[#888] mb-6 max-w-xs mx-auto">Explore trending keywords for your niche: <span className="text-[var(--red)] font-bold">{niche}</span></p>
+                <button className="btn btn-red px-8 py-3" onClick={handleGenerateKeywords} disabled={generating}>
+                  {generating ? "Generate Trending Keywords →" : "Generate Trending Keywords →"}
+                </button>
+              </div>
             )}
           </div>
 

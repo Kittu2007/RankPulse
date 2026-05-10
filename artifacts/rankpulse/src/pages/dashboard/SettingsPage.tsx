@@ -7,12 +7,14 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
+  const [niche, setNiche] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName ?? "");
       setEmail(user.email ?? "");
+      setNiche(localStorage.getItem("rp_user_niche") || "Social Media Marketing");
     }
   }, [user]);
 
@@ -21,7 +23,8 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       await updateProfile(user, { displayName });
-      toast.success("Profile updated successfully!");
+      localStorage.setItem("rp_user_niche", niche);
+      toast.success("Profile and niche updated successfully!");
     } catch (err: any) {
       console.error(err);
       toast.error(err?.message ?? "Failed to update profile.");
@@ -58,6 +61,17 @@ export default function SettingsPage() {
                 value={email}
                 disabled
               />
+            </div>
+            <div className="mb-4">
+              <label className="block text-[10px] font-bold tracking-[2px] uppercase mb-1.5">Your Niche / Industry</label>
+              <input
+                type="text"
+                placeholder="e.g. Fitness, Tech, B2B SaaS"
+                className="input"
+                value={niche}
+                onChange={(e) => setNiche(e.target.value)}
+              />
+              <p className="text-[10px] text-[#888] mt-1">This helps us personalise your keyword and competitor data.</p>
             </div>
             <button className="btn btn-black btn-sm" onClick={handleSave} disabled={saving}>
               {saving ? "Saving..." : "Save Changes"}
