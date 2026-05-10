@@ -46,7 +46,13 @@ export default function AiStudioPage() {
       const raw = await aiComplete([
         {
           role: "system",
-          content: `You are a social media SEO expert. Generate pre-scored content ideas for ${platform}. Each idea should be optimized for the algorithm with a score from 60-95. Return ONLY a JSON array with objects: {score: number, title: string, hook: string}. No other text.`,
+          content: `You are a social media SEO expert. Generate high-performance, pre-scored content ideas for ${platform}. 
+Each idea must include:
+1. title: A punchy headline using a "Curiosity Gap" or "Negative Hook".
+2. hook: A specific explanation of why this works for the algorithm (e.g., "Dwell time anchor", "Shareability multiplier").
+3. score: A realistic SEO score from 85-98 based on current platform trends.
+
+Return ONLY a JSON array with these objects. No other text.`,
         },
         {
           role: "user",

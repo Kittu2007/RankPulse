@@ -18,7 +18,7 @@ export function analyzeInstagram(text: string, options: SEOScoringOptions = {}):
   if (length < 30) {
     watchTimeScore = 30; // Too short to hold attention
   } else if (text.includes("?") || text.toLowerCase().includes("how to") || text.toLowerCase().includes("wait")) {
-    watchTimeScore = 85; 
+    watchTimeScore = 100; 
   }
   
   params.push({
@@ -36,7 +36,7 @@ export function analyzeInstagram(text: string, options: SEOScoringOptions = {}):
   // 2. DM Sends per Reach (25%)
   let dmScore = 40;
   if (text.toLowerCase().includes("share") || text.toLowerCase().includes("send") || text.toLowerCase().includes("tag a friend")) {
-    dmScore = 90;
+    dmScore = 100;
   }
   params.push({
     name: "DM Sends per Reach",
@@ -52,7 +52,7 @@ export function analyzeInstagram(text: string, options: SEOScoringOptions = {}):
 
   // 3. Caption Keyword Density (10%)
   // Target 2-5% keyword density. Hard to compute semantically without dictionary, we'll estimate based on length > 125 chars
-  const keywordScore = length > 125 ? 85 : 40;
+  const keywordScore = length > 125 ? 100 : 40;
   params.push({
     name: "Caption Keywords",
     weight: 10,
@@ -98,7 +98,7 @@ export function analyzeInstagram(text: string, options: SEOScoringOptions = {}):
   params.push({
     name: "Profile Completeness",
     weight: 4,
-    score: profileComplete ? 95 : 30,
+    score: profileComplete ? 100 : 30,
     color: profileComplete ? 'hi' : 'lo',
     note: profileComplete ? "Profile strong. Category, bio keywords, and link all set." : "Incomplete profile limits authority score."
   });
@@ -108,7 +108,7 @@ export function analyzeInstagram(text: string, options: SEOScoringOptions = {}):
   params.push({
     name: "Posting Consistency",
     weight: 3,
-    score: consistencyScore,
+    score: consistencyScore >= 80 ? 100 : 40,
     color: consistencyScore >= 80 ? 'hi' : 'lo',
     note: consistencyScore >= 80 ? "Consistent posting detected." : "Target minimum 4x/week to maintain topic cluster."
   });
@@ -119,7 +119,7 @@ export function analyzeInstagram(text: string, options: SEOScoringOptions = {}):
   params.push({
     name: "Content Originality",
     weight: 5,
-    score: origScore,
+    score: origScore >= 80 ? 100 : 10,
     color: origScore >= 80 ? 'hi' : 'lo',
     note: origScore >= 80 ? "Original content detected." : "Warning: Over 10+ reposts in 30 days limits recommendation reach."
   });

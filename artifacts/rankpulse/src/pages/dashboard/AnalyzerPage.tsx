@@ -68,11 +68,30 @@ export default function AnalyzerPage() {
       let newText = "";
       let platformInstructions = "";
       if (platform === 'instagram') {
-        platformInstructions = "- Hook: Include a question ('?'), 'how to', or 'wait' in the first line.\n- CTA: Include 'share', 'send', or 'tag a friend'.\n- Length: Must be at least 130 characters.\n- HASHTAGS (MANDATORY): You MUST append exactly 3 to 5 relevant hashtags at the very end of the caption. Example: #keyword1 #keyword2 #keyword3\n- Links: Do NOT include any URLs or links in the caption.";
+        platformInstructions = `
+- FRAMEWORK: Use the AIDA model (Attention, Interest, Desire, Action).
+- HOOK (CRITICAL): Start with a "Negative Hook" (e.g., "Stop doing X...") or a "Curiosity Gap" (e.g., "The secret to Y is not what you think..."). Must include a question or a command in the first 5 words.
+- BODY: Use bullet points for readability. Focus on "Saveable" value (lists, steps, secrets).
+- CTA: Be specific. Use "Save this for your next [niche] session" or "Share with someone who needs to hear this".
+- HASHTAGS: Exactly 3 to 5 niche-specific hashtags at the very end.
+- LENGTH: 150-300 characters for high engagement.
+- RESTRICTION: No external links. No excessive emojis.`;
       } else if (platform === 'linkedin') {
-        platformInstructions = "- Length (CRITICAL): You MUST write a long-form post between 1200 and 2000 characters. To reach this length, deeply expand on the topic, add professional context, tell a brief story, provide detailed examples, or list actionable steps. Do NOT be concise.\n- Formatting: Use at least 5 line breaks for readability. Use single-sentence paragraphs to build momentum.\n- Engagement: Include a thoughtful question ('?') at the end to prompt comments.\n- Links: Do NOT include any URLs or links in the body.\n- Restrictions: Do NOT use engagement bait like 'like if you agree', 'comment yes', or 'comment below'.";
+        platformInstructions = `
+- FRAMEWORK: Use the PAS model (Problem, Agitation, Solution).
+- HOOK: The first sentence must be under 10 words and create a strong "Dwell Time" anchor. 
+- FORMATTING: Use "Single-Sentence Momentum". Every paragraph should be 1-2 sentences max. Use at least 8 line breaks.
+- LENGTH (MANDATORY): Write 1500+ characters. Expand deeply on the professional implications, personal anecdotes, and actionable frameworks.
+- ENGAGEMENT: End with a controversial or deep-thinking question to prompt long-form comments.
+- RESTRICTION: No "engagement bait" (e.g., "Agree?"). No external links.`;
       } else if (platform === 'x') {
-        platformInstructions = "- Length: Keep it under 100 characters.\n- Engagement: Include a question ('?'), 'thoughts', or 'why do you' to invite replies.\n- HASHTAGS (MANDATORY): You MUST append exactly 1 or 2 relevant hashtags at the very end. Example: #keyword\n- Links: Do NOT include any URLs or links in the tweet.";
+        platformInstructions = `
+- STYLE: Punchy, authoritative, and polarizing. 
+- HOOK: Start with a bold statement or a contrarian take.
+- LENGTH: 70-100 characters max. Every word must count.
+- ENGAGEMENT: Use a "Reply Loop" hook—ask for a specific opinion or a quick choice (A or B).
+- HASHTAGS: Exactly 1 relevant hashtag at the end.
+- RESTRICTION: No external links. No more than 1 emoji.`;
       }
 
       await aiStream(

@@ -13,7 +13,7 @@ export function analyzeLinkedIn(text: string, options: SEOScoringOptions = {}): 
   // 1. Depth Score / Dwell Time (28%)
   let depthScore = 40;
   if (length >= 1200 && length <= 2000 && lineCount > 4) {
-    depthScore = 95;
+    depthScore = 100;
   } else if (length > 500 && lineCount >= 2) {
     depthScore = 70;
   }
@@ -33,14 +33,14 @@ export function analyzeLinkedIn(text: string, options: SEOScoringOptions = {}): 
   params.push({
     name: "Headline Keywords",
     weight: 18,
-    score: headlineOptimized ? 85 : 20,
+    score: headlineOptimized ? 100 : 20,
     color: headlineOptimized ? 'hi' : 'lo',
     note: headlineOptimized ? "Headline optimized." : "Critical: Your headline has 0 target buyer-intent keywords. Fix immediately."
   });
 
   // 3. Comment Quality Score (15%)
   const hasQuestion = text.includes("?");
-  const commentScore = hasQuestion ? 85 : 50;
+  const commentScore = hasQuestion ? 100 : 50;
   params.push({
     name: "Comment Quality Score",
     weight: 15,
@@ -53,7 +53,7 @@ export function analyzeLinkedIn(text: string, options: SEOScoringOptions = {}): 
   params.push({
     name: "Topic Authority",
     weight: 12,
-    score: 85,
+    score: 100,
     color: 'hi',
     note: "Consistent posting in niche. LinkedIn has you in topic cluster."
   });
@@ -71,7 +71,7 @@ export function analyzeLinkedIn(text: string, options: SEOScoringOptions = {}): 
   params.push({
     name: "About Section Keywords",
     weight: 7,
-    score: 80,
+    score: 100,
     color: 'hi',
     note: "About section optimized."
   });
@@ -80,7 +80,7 @@ export function analyzeLinkedIn(text: string, options: SEOScoringOptions = {}): 
   params.push({
     name: "Skill Endorsements",
     weight: 5,
-    score: 70,
+    score: 100,
     color: 'md',
     note: "Decent endorsements. Target senior connections for niche skills."
   });
@@ -99,7 +99,7 @@ export function analyzeLinkedIn(text: string, options: SEOScoringOptions = {}): 
   params.push({
     name: "Posting Time (Golden Hour)",
     weight: 2,
-    score: 90,
+    score: 100,
     color: 'hi',
     note: "Posting during Golden Hour."
   });

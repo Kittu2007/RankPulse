@@ -13,7 +13,7 @@ export function analyzeX(text: string, options: SEOScoringOptions = {}): SEOAnal
 
   // 1. Reply Depth (Conversation) (25%)
   const invitesReplies = text.includes("?") || text.toLowerCase().includes("thoughts") || text.toLowerCase().includes("why do you");
-  const replyScore = invitesReplies ? 90 : 50;
+  const replyScore = invitesReplies ? 100 : 50;
   params.push({
     name: "Reply Depth Score",
     weight: 25,
@@ -26,7 +26,7 @@ export function analyzeX(text: string, options: SEOScoringOptions = {}): SEOAnal
 
   // 2. Retweet Velocity (First 30 min) (20%)
   const hasBoldStance = length < 100 ? true : false; // simulating punchy hooks
-  const rtScore = hasBoldStance ? 85 : 55;
+  const rtScore = hasBoldStance ? 100 : 55;
   params.push({
     name: "Retweet Velocity (30min)",
     weight: 20,
@@ -40,14 +40,14 @@ export function analyzeX(text: string, options: SEOScoringOptions = {}): SEOAnal
   params.push({
     name: "TweepCred Score",
     weight: 18,
-    score: tweepCred,
+    score: tweepCred >= 65 ? 100 : tweepCred,
     color: tweepCred >= 65 ? 'hi' : 'lo',
     note: tweepCred >= 65 ? "Above critical threshold (65). All posts eligible for distribution." : "CRITICAL: Score below 65. Distribution severely limited."
   });
 
   // 4. Keyword / Hashtag Match (12%)
   let hashScore = 0;
-  if (hashtagCount >= 1 && hashtagCount <= 2) hashScore = 95;
+  if (hashtagCount >= 1 && hashtagCount <= 2) hashScore = 100;
   else if (hashtagCount === 0) hashScore = 70;
   else hashScore = 30; // Multiple hashtag penalty
   
@@ -81,7 +81,7 @@ export function analyzeX(text: string, options: SEOScoringOptions = {}): SEOAnal
   params.push({
     name: "Content Format Score",
     weight: 8,
-    score: 85,
+    score: 100,
     color: 'hi',
     note: "Text-first content. X rewards text over video by 30%."
   });
@@ -90,7 +90,7 @@ export function analyzeX(text: string, options: SEOScoringOptions = {}): SEOAnal
   params.push({
     name: "Recency Score",
     weight: 5,
-    score: 75,
+    score: 100,
     color: 'hi',
     note: "Optimized. Posts decay 50% every 6 hours."
   });
