@@ -12,17 +12,27 @@ type Platform = 'instagram' | 'linkedin' | 'x';
 
 export default function AnalyzerPage() {
   const [platform, setPlatform] = useState<Platform>('instagram');
-  const [text, setText] = useState("Just dropped a new reel — save this for later if you want quick arm workouts at home. No equipment needed. These 5 moves hit triceps, biceps and shoulders. Try them today! Link in bio for full program.");
+  const [platformTexts, setPlatformTexts] = useState<Record<Platform, string>>({
+    instagram: "Just dropped a new reel — save this for later if you want quick arm workouts at home. No equipment needed. These 5 moves hit triceps, biceps and shoulders. Try them today! Link in bio for full program.",
+    linkedin: "I've spent the last 5 years analyzing what makes a successful home workout routine. Most people fail because they lack consistency, not equipment. Here is my 3-step framework for sustainable fitness...",
+    x: "Fitness secret: consistency > intensity. Stop overcomplicating your workouts. Thoughts?"
+  });
+  
+  const text = platformTexts[platform];
+  const setText = (newVal: string) => setPlatformTexts(prev => ({ ...prev, [platform]: newVal }));
 
   // Check for prefilled content from AI Studio "Use This Idea"
   useEffect(() => {
     const prefill = localStorage.getItem("rp_analyzer_prefill");
     if (prefill) {
+      // If prefilled, we might not know the platform, but usually it comes from AI Studio which sets a platform.
+      // For now, update the current platform's text.
       setText(prefill);
       localStorage.removeItem("rp_analyzer_prefill");
       toast.success("Idea loaded — see your score!");
     }
-  }, []);
+  }, [platform]); // Re-run if platform changes? No, only on mount for prefill.
+
 
   const [altText, setAltText] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,9 +75,10 @@ export default function AnalyzerPage() {
         return;
       }
 
+      const targetPlatform = platform;
       let newText = "";
       let platformInstructions = "";
-      if (platform === 'instagram') {
+      if (targetPlatform === 'instagram') {
         platformInstructions = `
 - FRAMEWORK: Use the AIDA model (Attention, Interest, Desire, Action).
 - HOOK (CRITICAL): Start with a "Negative Hook" (e.g., "Stop doing X...") or a "Curiosity Gap" (e.g., "The secret to Y is not what you think..."). Must include a question or a command in the first 5 words.
@@ -76,7 +87,7 @@ export default function AnalyzerPage() {
 - HASHTAGS: Exactly 3 to 5 niche-specific hashtags at the very end.
 - LENGTH: 150-300 characters for high engagement.
 - RESTRICTION: No external links. No excessive emojis.`;
-      } else if (platform === 'linkedin') {
+      } else if (targetPlatform === 'linkedin') {
         platformInstructions = `
 - FRAMEWORK: Use the PAS model (Problem, Agitation, Solution).
 - HOOK: The first sentence must be under 10 words and create a strong "Dwell Time" anchor. 
@@ -84,7 +95,7 @@ export default function AnalyzerPage() {
 - LENGTH (MANDATORY): Write 1500+ characters. Expand deeply on the professional implications, personal anecdotes, and actionable frameworks.
 - ENGAGEMENT: End with a controversial or deep-thinking question to prompt long-form comments.
 - RESTRICTION: No "engagement bait" (e.g., "Agree?"). No external links.`;
-      } else if (platform === 'x') {
+      } else if (targetPlatform === 'x') {
         platformInstructions = `
 - STYLE: Punchy, authoritative, and polarizing. 
 - HOOK: Start with a bold statement or a contrarian take.
@@ -98,7 +109,7 @@ export default function AnalyzerPage() {
         [
           {
             role: "system",
-            content: `You are a social media SEO expert. Rewrite this content to maximize its ${platform} algorithm score. Current score: ${analysis.overallScore}/100. 
+            content: `You are a social media SEO expert. Rewrite this content to maximize its ${targetPlatform} algorithm score. Current score: ${analysis.overallScore}/100. 
             
 CRITICAL ALGORITHM REQUIREMENTS TO HIT 100/100:
 ${platformInstructions}
@@ -109,7 +120,7 @@ Output ONLY the rewritten text without any quotes, preambles, or explanations. M
         ],
         (chunk) => {
           newText += chunk;
-          setText(newText);
+          setPlatformTexts(prev => ({ ...prev, [targetPlatform]: newText }));
         },
         { reasoning_effort: "high" }
       );
