@@ -180,7 +180,7 @@ export default function ProfileAuditPage() {
             <div className="p-4 bg-[var(--bg)] border-b-2 border-b-[var(--black)] flex flex-wrap gap-4 items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-xs font-bold uppercase tracking-wider">Auditing: <span className="text-[var(--red)]">{handle}</span></span>
-                <span className="text-xs text-[#888]">|</span>
+                <span className="text-xs text-[#888]">{"|"}</span>
                 <span className="text-xs font-bold uppercase tracking-wider">Niche: <span className="text-[var(--red)]">{niche}</span></span>
               </div>
               <button className="btn btn-outline btn-sm text-[10px]" onClick={() => setAuditResults(prev => { const n = {...prev}; delete n[activePlatform]; return n; })}>New Audit</button>
@@ -189,7 +189,7 @@ export default function ProfileAuditPage() {
               <div key={si}>
                 <div className="p-3 sm:p-[14px_24px] border-b-2 border-b-[var(--black)] bg-[var(--black)] flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-[2px] text-white">{sec.section}</span>
-                  <span className="text-[10px] font-bold text-[#888]">{sec.items.filter(i => i.status === 'ok').length}/{sec.items.length} passed</span>
+                  <span className="text-[10px] font-bold text-[#888]">{sec.items.filter(i => i.status === 'ok').length} / {sec.items.length} passed</span>
                 </div>
                 {sec.items.map((item, ii) => {
                   const key = `${activePlatform}-${item.field}`;
@@ -223,7 +223,7 @@ export default function ProfileAuditPage() {
           <div className="p-5 sm:p-6 text-center border-b border-b-[#222]">
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-2">Profile Score</div>
             <div className="text-[70px] sm:text-[80px] leading-none text-[var(--red)]" style={{ fontFamily: 'var(--font-d)' }}>{overallScore}</div>
-            <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mt-2">/ 100 — {overallScore >= 70 ? 'GOOD' : overallScore >= 50 ? 'AVERAGE' : 'NEEDS WORK'}</div>
+            <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mt-2">{" / "} 100 — {overallScore >= 70 ? 'GOOD' : overallScore >= 50 ? 'AVERAGE' : 'NEEDS WORK'}</div>
           </div>
           <div className="p-4 sm:p-5">
             <div className="text-[10px] uppercase tracking-[2px] font-bold text-[#888] mb-3">Quick Stats</div>
@@ -250,6 +250,7 @@ export default function ProfileAuditPage() {
           </div>
         </div>
       </div>
+    )}
     </div>
   );
 }
