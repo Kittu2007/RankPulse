@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { aiComplete, hasAiKey } from "@/lib/nvidia";
 
